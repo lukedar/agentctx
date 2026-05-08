@@ -2,10 +2,18 @@ node_modules/
 .pnpm-store/
 .DS_Store
 
+# local generated context
+.agentctx/
+
+# dual-agent runner artifacts
+.dual-agent-runner/
+
 # build outputs
 **/dist/
+**/dist-server/
 **/.vite/
+**/.vitepress/cache/
 **/.turbo/
 
-# runner cache (future)
-.agentctx/
+# local scratch files
+*.diff

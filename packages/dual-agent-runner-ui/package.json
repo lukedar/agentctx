@@ -1,0 +1,30 @@
+{
+  "name": "dual-agent-runner-ui",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build:server": "pnpm -C ../dual-agent-runner build && tsup server/index.ts --format esm --target es2022 --outDir dist-server --clean",
+    "build": "pnpm -C ../dual-agent-runner build && pnpm build:server && vite build",
+    "server": "node dist-server/index.js",
+    "dev:server": "pnpm build:server && node dist-server/index.js",
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "pnpm -C ../dual-agent-runner build && tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "dual-agent-runner": "workspace:*",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.29",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.7.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^3.2.4"
+  }
+}

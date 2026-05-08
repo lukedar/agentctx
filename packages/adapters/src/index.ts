@@ -1,0 +1,42 @@
+export * from './plugins/packageManager'
+export * from './plugins/packageMetadata'
+export * from './plugins/packageDependencies'
+export * from './plugins/workspace'
+export * from './plugins/languageTs'
+export * from './plugins/frameworksFromPackageJson'
+export * from './plugins/testRunnersFromPackageJson'
+export * from './plugins/envExample'
+export * from './plugins/configFiles'
+export * from './plugins/packageScripts'
+export * from './plugins/apiDatabaseFiles'
+export * from './plugins/routesFromFiles'
+
+import type { AgentCtxPlugin } from '@agentctx/core'
+
+import { apiDatabaseFilesPlugin } from './plugins/apiDatabaseFiles'
+import { configFilesPlugin } from './plugins/configFiles'
+import { envExamplePlugin } from './plugins/envExample'
+import { frameworksFromPackageJsonPlugin } from './plugins/frameworksFromPackageJson'
+import { packageDependenciesPlugin } from './plugins/packageDependencies'
+import { packageMetadataPlugin } from './plugins/packageMetadata'
+import { packageManagerPlugin } from './plugins/packageManager'
+import { packageScriptsPlugin } from './plugins/packageScripts'
+import { routesFromFilesPlugin } from './plugins/routesFromFiles'
+import { testRunnersFromPackageJsonPlugin } from './plugins/testRunnersFromPackageJson'
+import { typescriptPlugin } from './plugins/languageTs'
+import { workspacePlugin } from './plugins/workspace'
+
+export const mvpPlugins: readonly AgentCtxPlugin[] = [
+  packageManagerPlugin,
+  packageMetadataPlugin,
+  packageDependenciesPlugin,
+  workspacePlugin,
+  typescriptPlugin,
+  frameworksFromPackageJsonPlugin,
+  testRunnersFromPackageJsonPlugin,
+  packageScriptsPlugin,
+  routesFromFilesPlugin,
+  configFilesPlugin,
+  apiDatabaseFilesPlugin,
+  envExamplePlugin,
+]

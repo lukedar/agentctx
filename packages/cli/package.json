@@ -1,0 +1,33 @@
+{
+  "name": "agentctx",
+  "version": "0.0.0",
+  "description": "Local-first repo context compiler for AI coding agents",
+  "keywords": ["ai", "cli", "context", "agents", "developer-tools"],
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "agentctx": "./dist/cli.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "pnpm -C ../core build && pnpm -C ../adapters build && pnpm -C ../targets build && tsup src/cli.ts --format esm --sourcemap --clean --outDir dist",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@agentctx/core": "workspace:*",
+    "@agentctx/adapters": "workspace:*",
+    "@agentctx/targets": "workspace:*",
+    "cac": "^6.7.14",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.29",
+    "tsup": "^8.5.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

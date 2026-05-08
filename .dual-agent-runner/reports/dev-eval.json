@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "task": {
+    "id": "dev-eval",
+    "title": "Development evaluation gate",
+    "goal": "Evaluate current workspace changes using the dual-agent rubric and deterministic checks.",
+    "constraints": [
+      "local-first",
+      "deterministic outputs",
+      "no network calls"
+    ],
+    "successCriteria": [
+      "All typechecks pass",
+      "All tests pass",
+      "All builds pass",
+      "Evaluation status is PASS"
+    ],
+    "filesLikelyAffected": [],
+    "riskLevel": "low"
+  },
+  "checks": [
+    {
+      "label": "typecheck",
+      "ok": true,
+      "code": 0
+    },
+    {
+      "label": "test",
+      "ok": true,
+      "code": 0
+    },
+    {
+      "label": "build",
+      "ok": true,
+      "code": 0
+    }
+  ],
+  "evaluation": {
+    "taskId": "dev-eval",
+    "status": "pass",
+    "scores": {
+      "correctness": 5,
+      "testability": 4,
+      "security": 4,
+      "performance": 4,
+      "tokenUsage": 4,
+      "usability": 4,
+      "readability": 4,
+      "simplicity": 4,
+      "maintainability": 4
+    },
+    "average": 4.111111111111111,
+    "blockingIssues": [],
+    "requiredChanges": [],
+    "approvedNextStep": "Proceed"
+  }
+}

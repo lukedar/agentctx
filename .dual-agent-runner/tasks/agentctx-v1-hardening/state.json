@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "taskId": "agentctx-v1-hardening",
+  "taskTitle": "Execute the AgentCtx hardening backlog",
+  "planFile": "/Users/lukedarham/Documents/apps/agentctx/implementation-plan/003-dual-agent-execution-plan.json",
+  "steps": [
+    {
+      "id": "step-01",
+      "title": "Fix sync target semantics for context files",
+      "status": "passed",
+      "attempts": 2,
+      "lastEvaluation": {
+        "taskId": "agentctx-v1-hardening:step-01",
+        "status": "pass",
+        "scores": {
+          "correctness": 5,
+          "testability": 4,
+          "security": 4,
+          "performance": 4,
+          "tokenUsage": 4,
+          "usability": 4,
+          "readability": 4,
+          "simplicity": 4,
+          "maintainability": 4
+        },
+        "average": 4.111111111111111,
+        "blockingIssues": [],
+        "requiredChanges": [],
+        "approvedNextStep": "Proceed to step-02: Remove no-op public targets from the MVP surface"
+      }
+    },
+    {
+      "id": "step-02",
+      "title": "Remove no-op public targets from the MVP surface",
+      "status": "passed",
+      "attempts": 2,
+      "lastEvaluation": {
+        "taskId": "agentctx-v1-hardening:step-02",
+        "status": "pass",
+        "scores": {
+          "correctness": 5,
+          "testability": 4,
+          "security": 4,
+          "performance": 4,
+          "tokenUsage": 4,
+          "usability": 4,
+          "readability": 4,
+          "simplicity": 4,
+          "maintainability": 4
+        },
+        "average": 4.111111111111111,
+        "blockingIssues": [],
+        "requiredChanges": [],
+        "approvedNextStep": "Proceed to step-03: Add core tests for config, indexing, and section planning"
+      }
+    },
+    {
+      "id": "step-03",
+      "title": "Add core tests for config, indexing, and section planning",
+      "status": "passed",
+      "attempts": 1,
+      "lastEvaluation": {
+        "taskId": "agentctx-v1-hardening:step-03",
+        "status": "pass",
+        "scores": {
+          "correctness": 5,
+          "testability": 4,
+          "security": 4,
+          "performance": 4,
+          "tokenUsage": 4,
+          "usability": 4,
+          "readability": 4,
+          "simplicity": 4,
+          "maintainability": 4
+        },
+        "average": 4.111111111111111,
+        "blockingIssues": [],
+        "requiredChanges": [],
+        "approvedNextStep": "Proceed to step-04: Add adapter fixture tests"
+      }
+    },
+    {
+      "id": "step-04",
+      "title": "Add adapter fixture tests",
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-05",
+      "title": "Implement a real graph builder",
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-06",
+      "title": "Expand sync and target coverage",
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-07",
+      "title": "Dogfood context points in this repo",
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-08",
+      "title": "Align workflow scripts and docs with the dogfooded model",
+      "status": "pending",
+      "attempts": 0
+    }
+  ]
+}

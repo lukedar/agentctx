@@ -1,0 +1,25 @@
+{
+  "name": "agentctx-workspace",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.12.1",
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
+    "context:build": "pnpm -C packages/cli build && node packages/cli/dist/cli.js build",
+    "context:sync": "pnpm -C packages/cli build && node packages/cli/dist/cli.js sync",
+    "context:check": "pnpm -C packages/cli build && node packages/cli/dist/cli.js check",
+    "da:eval": "pnpm -C packages/dual-agent-runner build && node packages/dual-agent-runner/dist/cli.js eval --check",
+    "da:report": "pnpm -C packages/dual-agent-runner build && node packages/dual-agent-runner/dist/cli.js eval",
+    "da:task:template": "pnpm -C packages/dual-agent-runner build && node packages/dual-agent-runner/dist/cli.js task template",
+    "da:plan:template": "pnpm -C packages/dual-agent-runner build && node packages/dual-agent-runner/dist/cli.js plan template",
+    "da:step": "pnpm -C packages/dual-agent-runner build && node packages/dual-agent-runner/dist/cli.js plan eval --check"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.29",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

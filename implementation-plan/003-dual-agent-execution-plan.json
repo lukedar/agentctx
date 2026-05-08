@@ -1,0 +1,151 @@
+{
+  "task": {
+    "id": "agentctx-v1-hardening",
+    "title": "Execute the AgentCtx hardening backlog",
+    "goal": "Improve AgentCtx step by step by fixing contract bugs, increasing test coverage, and making the repo dogfood its own workflow under the dual-agent gate.",
+    "constraints": [
+      "local-first",
+      "deterministic outputs",
+      "no placeholder public behavior without intent",
+      "every implementation step must pass the dual-agent evaluation gate before continuing"
+    ],
+    "successCriteria": [
+      "Each step passes the deterministic evaluator gate",
+      "The repo remains buildable and testable after every completed step",
+      "The highest-risk MVP gaps are reduced in priority order"
+    ],
+    "filesLikelyAffected": [
+      "packages/core/src/graph.ts",
+      "packages/core/src/sections.ts",
+      "packages/cli/src/lib/sync/sync.ts",
+      "packages/targets/src/index.ts",
+      "packages/adapters/src/plugins",
+      "agentctx.config.ts",
+      "docs-agentctx"
+    ],
+    "riskLevel": "medium"
+  },
+  "steps": [
+    {
+      "id": "step-01",
+      "title": "Fix sync target semantics for context files",
+      "instructions": "Make context markdown syncing independent of pseudo-target names so using --targets does not silently skip .agentctx/context outputs. Add regression tests for the new sync behavior.",
+      "successCriteria": [
+        "Context files still sync when target filters are used",
+        "CLI package tests cover the regression",
+        "The full evaluator gate passes"
+      ],
+      "filesLikelyAffected": [
+        "packages/cli/src/lib/sync/sync.ts",
+        "packages/cli/tests/sync.test.ts",
+        "docs-agentctx/cli.md"
+      ]
+    },
+    {
+      "id": "step-02",
+      "title": "Remove no-op public targets from the MVP surface",
+      "instructions": "Stop advertising placeholder targets that render nothing, or constrain them so they are not configurable by default. Keep the target registry aligned with actual shipped behavior.",
+      "successCriteria": [
+        "No-op targets are removed or isolated from the public configuration contract",
+        "Target registry and docs stay consistent",
+        "The full evaluator gate passes"
+      ],
+      "filesLikelyAffected": [
+        "packages/core/src/types.ts",
+        "packages/core/src/config.ts",
+        "packages/targets/src/index.ts",
+        "docs-agentctx/targets.md"
+      ]
+    },
+    {
+      "id": "step-03",
+      "title": "Add core tests for config, indexing, and section planning",
+      "instructions": "Increase confidence in the core package by adding direct tests for config normalization, repo indexing behavior, and section rendering or budgeting.",
+      "successCriteria": [
+        "Core package has direct automated coverage",
+        "Config and indexing behavior are protected by tests",
+        "The full evaluator gate passes"
+      ],
+      "filesLikelyAffected": [
+        "packages/core/tests",
+        "packages/core/src/config.ts",
+        "packages/core/src/repoFileIndex.ts",
+        "packages/core/src/sections.ts"
+      ]
+    },
+    {
+      "id": "step-04",
+      "title": "Add adapter fixture tests",
+      "instructions": "Add fixture-driven tests for the existing adapter plugins so positive and negative detection cases are protected against regressions.",
+      "successCriteria": [
+        "Adapter plugin behavior is tested with fixtures",
+        "Positive and negative detection cases are covered",
+        "The full evaluator gate passes"
+      ],
+      "filesLikelyAffected": [
+        "packages/adapters/tests",
+        "packages/adapters/src/plugins"
+      ]
+    },
+    {
+      "id": "step-05",
+      "title": "Implement a real graph builder",
+      "instructions": "Replace the graph stub with a deterministic graph that discovers workspace packages or apps and basic dependency relationships from package manifests.",
+      "successCriteria": [
+        "Graph includes meaningful nodes and relationships",
+        "Graph behavior is tested directly",
+        "The full evaluator gate passes"
+      ],
+      "filesLikelyAffected": [
+        "packages/core/src/graph.ts",
+        "packages/core/src/types.ts",
+        "packages/core/tests"
+      ]
+    },
+    {
+      "id": "step-06",
+      "title": "Expand sync and target coverage",
+      "instructions": "Add more tests around target rendering and sync behavior, especially idempotence, point sync paths, and generated block merging.",
+      "successCriteria": [
+        "Sync and target behavior have stronger regression coverage",
+        "Point and workspace sync paths are validated",
+        "The full evaluator gate passes"
+      ],
+      "filesLikelyAffected": [
+        "packages/cli/tests",
+        "packages/targets/tests",
+        "packages/cli/src/lib/sync"
+      ]
+    },
+    {
+      "id": "step-07",
+      "title": "Dogfood context points in this repo",
+      "instructions": "Add real context points to the repo configuration so AgentCtx exercises its own point-scoped workflows and outputs.",
+      "successCriteria": [
+        "The repo defines meaningful context points",
+        "Build and sync can run against those points",
+        "The full evaluator gate passes"
+      ],
+      "filesLikelyAffected": [
+        "agentctx.config.ts",
+        "docs-agentctx/context-points.md"
+      ]
+    },
+    {
+      "id": "step-08",
+      "title": "Align workflow scripts and docs with the dogfooded model",
+      "instructions": "Add explicit context scripts at the root and update docs so the project uses the same workflow it recommends, including the new dual-agent step plan mechanism.",
+      "successCriteria": [
+        "Root scripts cover context build, sync, and check",
+        "Docs reflect the actual supported workflow",
+        "The full evaluator gate passes"
+      ],
+      "filesLikelyAffected": [
+        "package.json",
+        "docs-agentctx/index.md",
+        "docs-agentctx/cli.md",
+        "docs-agentctx/quality-gate.md"
+      ]
+    }
+  ]
+}

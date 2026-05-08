@@ -1,0 +1,20 @@
+---
+description: Project-wide coding rules
+globs: ["**/*.{ts,tsx,js,jsx}"]
+alwaysApply: true
+---
+
+<!-- agentctx:start -->
+# Project coding rules
+
+## Shape
+
+- Prefer existing package boundaries.
+- Keep changes deterministic and reviewable.
+- Do not include secrets or `.env` values in generated context.
+
+## Validation
+
+- Run typecheck and tests before finalizing changes.
+- Keep diffs small enough to review in one pass.
+<!-- agentctx:end -->

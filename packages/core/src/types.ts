@@ -19,6 +19,7 @@ export type TargetName =
 export type ContextBlockName =
   | 'architecture'
   | 'conventions'
+  | 'runtime'
   | 'api'
   | 'database'
   | 'frontend'

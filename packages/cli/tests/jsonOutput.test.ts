@@ -17,6 +17,7 @@ describe('json output formatters', () => {
         contextBlocks: {
           architecture: true,
           conventions: true,
+          runtime: true,
           api: true,
           database: true,
           frontend: true,

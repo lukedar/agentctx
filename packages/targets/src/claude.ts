@@ -41,6 +41,7 @@ export const claudeTarget: TargetAdapter = {
       '',
       joinContextBlocks(contextBlocks, [
         'architecture',
+        'runtime',
         'frontend',
         'api',
         'database',

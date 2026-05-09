@@ -100,6 +100,7 @@ const configSchema = z.object({
     .object({
       architecture: z.boolean().optional(),
       conventions: z.boolean().optional(),
+      runtime: z.boolean().optional(),
       api: z.boolean().optional(),
       database: z.boolean().optional(),
       frontend: z.boolean().optional(),
@@ -177,6 +178,7 @@ const applyDefaults = (rootDir: string, user: UserAgentCtxConfig): AgentCtxConfi
     contextBlocks: {
       architecture: user.contextBlocks?.architecture ?? true,
       conventions: user.contextBlocks?.conventions ?? true,
+      runtime: user.contextBlocks?.runtime ?? true,
       api: user.contextBlocks?.api ?? true,
       database: user.contextBlocks?.database ?? true,
       frontend: user.contextBlocks?.frontend ?? true,

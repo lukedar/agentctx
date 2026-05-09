@@ -52,37 +52,37 @@
 - `packages/dual-agent-runner/package.json`: Package/app manifest in scope
 - `packages/targets/package.json`: Package/app manifest in scope
 
+# Runtime
+
+## Summary
+
+- Runtimes detected: node
+- Runtime markers: docs-agentctx/package.json
+
+## Rules
+
+- Keep package scripts and runtime entrypoints aligned when changing startup behavior.
+
+## Important files
+
+- `docs-agentctx/package.json`: Runtime manifest or entrypoint
+
 # Frontend
 
 ## Summary
 
 - Frontend-related frameworks detected: react, vite
-- Frontend-relevant scope entries: @agentctx/adapters (packages/adapters), @agentctx/core (packages/core), @agentctx/targets (packages/targets), agentctx (packages/cli), dual-agent-runner (packages/dual-agent-runner), …
+- Frontend-relevant scope entries: @agentctx/adapters (packages/adapters), @agentctx/core (packages/core), @agentctx/targets (packages/targets), agentctx (packages/cli), agentctx-docs (docs-agentctx), …
 
-# API
+# api
 
-## Summary
+_(not generated)_
 
-- API-related frameworks detected: (none)
-- API artifacts detected: (none)
-- Route paths detected: (none)
-- Route conventions detected: (none)
-- Spec files: (none)
 
-## Rules
+# database
 
-- No API specs or route files were found in the scanned scope; rely on source code and existing backend docs.
+_(not generated)_
 
-# Database
-
-## Summary
-
-- Database artifacts detected: (none)
-- Spec/migration files: (none)
-
-## Rules
-
-- No DB schema/migration artifacts were found in the scanned scope.
 
 # Testing
 
@@ -107,5 +107,7 @@
 - Build: `pnpm run build`
 - Update context: `agentctx build && agentctx sync`
 
-# Glossary
+# glossary
+
+_(not generated)_
 <!-- agentctx:end -->

@@ -28,12 +28,10 @@
 <h2>Context map</h2>
 - Architecture: `.agentctx/context/architecture.md`
 - Conventions: `.agentctx/context/conventions.md`
+- Runtime: `.agentctx/context/runtime.md`
 - Frontend: `.agentctx/context/frontend.md`
-- API: `.agentctx/context/api.md`
-- Database: `.agentctx/context/database.md`
 - Testing: `.agentctx/context/testing.md`
 - Workflows: `.agentctx/context/workflows.md`
-- Glossary: `.agentctx/context/glossary.md`
 
 <h2>Reading order</h2>
 <div class="docs-grid">

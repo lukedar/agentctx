@@ -47,37 +47,35 @@
 - `package.json`: Project manifest and scripts
 - `packages/targets/package.json`: Package/app manifest in scope
 
-# Frontend
+# Runtime
 
 ## Summary
 
-- (MVP) No frontend framework detected
-- Frontend-relevant scope entries: @agentctx/targets (packages/targets)
-
-# API
-
-## Summary
-
-- API-related frameworks detected: (none)
-- API artifacts detected: (none)
-- Route paths detected: (none)
-- Route conventions detected: (none)
-- Spec files: (none)
+- Runtimes detected: node
+- Runtime markers: package.json
 
 ## Rules
 
-- No API specs or route files were found in the scanned scope; rely on source code and existing backend docs.
+- Keep package scripts and runtime entrypoints aligned when changing startup behavior.
 
-# Database
+## Important files
 
-## Summary
+- `package.json`: Runtime manifest or entrypoint
 
-- Database artifacts detected: (none)
-- Spec/migration files: (none)
+# frontend
 
-## Rules
+_(not generated)_
 
-- No DB schema/migration artifacts were found in the scanned scope.
+
+# api
+
+_(not generated)_
+
+
+# database
+
+_(not generated)_
+
 
 # Testing
 
@@ -101,5 +99,7 @@
 - Build: `pnpm run build`
 - Update context: `agentctx build && agentctx sync`
 
-# Glossary
+# glossary
+
+_(not generated)_
 <!-- agentctx:end -->

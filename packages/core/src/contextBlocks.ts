@@ -43,6 +43,8 @@ const contextBlockToTitle = (name: ContextBlockName): string => {
       return 'Architecture'
     case 'conventions':
       return 'Conventions'
+    case 'runtime':
+      return 'Runtime'
     case 'api':
       return 'API'
     case 'database':
@@ -81,6 +83,7 @@ export const planContextBlocks = (graph: ContextGraph, config: AgentCtxConfig): 
   const envVars = getFactStrings(graph.facts, 'env-var', 'name')
   const scripts = getFactStrings(graph.facts, 'script', 'name')
   const conventionTools = getFactStrings(graph.facts, 'convention', 'tool')
+  const runtimes = getFactStrings(graph.facts, 'runtime', 'name')
   const apiKinds = getFactStrings(graph.facts, 'api', 'name')
   const dbKinds = getFactStrings(graph.facts, 'database', 'name')
   const routeKinds = getFactStrings(graph.facts, 'route', 'kind')
@@ -104,6 +107,11 @@ export const planContextBlocks = (graph: ContextGraph, config: AgentCtxConfig): 
   const dbFiles = getPathsFor('database', 'path')
   const routeFiles = getPathsFor('route', 'file')
   const routePaths = getPathsFor('route', 'path')
+  const runtimeSources = uniqueStrings(
+    graph.facts
+      .filter((fact) => fact.kind === 'runtime' && fact.source.trim())
+      .map((fact) => fact.source.trim()),
+  )
 
   const models: Partial<Record<ContextBlockName, ContextBlockModel>> = {}
 
@@ -205,6 +213,37 @@ export const planContextBlocks = (graph: ContextGraph, config: AgentCtxConfig): 
     })
   }
 
+  if (enabled('runtime') && (runtimes.length || runtimeSources.length)) {
+    const rules: string[] = []
+
+    if (runtimes.includes('node')) {
+      rules.push('Keep package scripts and runtime entrypoints aligned when changing startup behavior.')
+    }
+    if (runtimes.includes('dotnet')) {
+      rules.push('Keep project files and runtime entrypoints aligned when changing hosting or SDK configuration.')
+    }
+    if (runtimes.includes('python')) {
+      rules.push('Keep project manifests and runtime entrypoints aligned when changing startup or dependency behavior.')
+    }
+    if (!rules.length) {
+      rules.push('Keep runtime manifests and startup files aligned when changing execution behavior.')
+    }
+
+    models.runtime = model({
+      summary: [
+        runtimes.length ? `Runtimes detected: ${runtimes.join(', ')}` : 'Runtimes detected: (none)',
+        runtimeSources.length
+          ? `Runtime markers: ${limitList(runtimeSources, 6)}`
+          : 'Runtime markers: (none detected)',
+      ],
+      rules,
+      files: runtimeSources.slice(0, 8).map((path) => ({
+        path,
+        reason: 'Runtime manifest or entrypoint',
+      })),
+    })
+  }
+
   if (enabled('testing')) {
     const pm = packageManagers[0] ?? config.workspace?.packageManager ?? 'npm'
 
@@ -256,65 +295,76 @@ export const planContextBlocks = (graph: ContextGraph, config: AgentCtxConfig): 
   }
 
   if (enabled('api')) {
-    const backendFrameworks = frameworks.filter((f) => ['express', 'fastify', 'nestjs', 'hono', 'next', 'sveltekit', 'nuxt', 'astro', 'remix'].includes(f))
-    models.api = model({
-      summary: [
-        backendFrameworks.length ? `API-related frameworks detected: ${backendFrameworks.join(', ')}` : 'API-related frameworks detected: (none)',
-        apiKinds.length ? `API artifacts detected: ${apiKinds.join(', ')}` : 'API artifacts detected: (none)',
-        routePaths.length ? `Route paths detected: ${routePaths.slice(0, 6).join(', ')}${routePaths.length > 6 ? ', …' : ''}` : 'Route paths detected: (none)',
-        routeKinds.length ? `Route conventions detected: ${routeKinds.join(', ')}` : 'Route conventions detected: (none)',
-        apiFiles.length ? `Spec files: ${apiFiles.slice(0, 5).join(', ')}${apiFiles.length > 5 ? ', …' : ''}` : 'Spec files: (none)',
-      ],
-      rules: apiFiles.length || routeFiles.length
-        ? [
-            'Prefer updating API specs alongside endpoint changes when spec files exist.',
-            'Keep route contracts and handlers aligned when changing endpoint behavior.',
-          ]
-        : ['No API specs or route files were found in the scanned scope; rely on source code and existing backend docs.'],
-      files: [
-        ...apiFiles.slice(0, 6).map((p) => ({ path: p, reason: 'API spec/artifact' })),
-        ...routeFiles.slice(0, 6).map((p) => ({ path: p, reason: 'Route handler/module' })),
-      ],
-    })
+    const backendFrameworks = frameworks.filter((f) =>
+      ['express', 'fastify', 'nestjs', 'hono', 'next', 'sveltekit', 'nuxt', 'astro', 'remix', 'aspnetcore', 'fastapi', 'django', 'flask'].includes(f),
+    )
+    if (backendFrameworks.length || apiKinds.length || routePaths.length || routeKinds.length || apiFiles.length || routeFiles.length) {
+      models.api = model({
+        summary: [
+          backendFrameworks.length ? `API-related frameworks detected: ${backendFrameworks.join(', ')}` : 'API-related frameworks detected: (none)',
+          apiKinds.length ? `API artifacts detected: ${apiKinds.join(', ')}` : 'API artifacts detected: (none)',
+          routePaths.length ? `Route paths detected: ${routePaths.slice(0, 6).join(', ')}${routePaths.length > 6 ? ', …' : ''}` : 'Route paths detected: (none)',
+          routeKinds.length ? `Route conventions detected: ${routeKinds.join(', ')}` : 'Route conventions detected: (none)',
+          apiFiles.length ? `Spec files: ${apiFiles.slice(0, 5).join(', ')}${apiFiles.length > 5 ? ', …' : ''}` : 'Spec files: (none)',
+        ],
+        rules: apiFiles.length || routeFiles.length
+          ? [
+              'Prefer updating API specs alongside endpoint changes when spec files exist.',
+              'Keep route contracts and handlers aligned when changing endpoint behavior.',
+            ]
+          : ['Use the detected framework and routing markers to trace request flow before making endpoint changes.'],
+        files: [
+          ...apiFiles.slice(0, 6).map((p) => ({ path: p, reason: 'API spec/artifact' })),
+          ...routeFiles.slice(0, 6).map((p) => ({ path: p, reason: 'Route handler/module' })),
+        ],
+      })
+    }
   }
 
   if (enabled('database')) {
-    models.database = model({
-      summary: [
-        dbKinds.length ? `Database artifacts detected: ${dbKinds.join(', ')}` : 'Database artifacts detected: (none)',
-        dbFiles.length ? `Spec/migration files: ${dbFiles.slice(0, 5).join(', ')}${dbFiles.length > 5 ? ', …' : ''}` : 'Spec/migration files: (none)',
-      ],
-      rules: dbFiles.length
-        ? ['When changing schemas/migrations, keep changes incremental and reversible.', 'Avoid destructive migration defaults unless explicitly requested.']
-        : ['No DB schema/migration artifacts were found in the scanned scope.'],
-      files: dbFiles.slice(0, 10).map((p) => ({ path: p, reason: 'DB schema/migration artifact' })),
-    })
+    if (dbKinds.length || dbFiles.length) {
+      models.database = model({
+        summary: [
+          dbKinds.length ? `Database artifacts detected: ${dbKinds.join(', ')}` : 'Database artifacts detected: (none)',
+          dbFiles.length ? `Spec/migration files: ${dbFiles.slice(0, 5).join(', ')}${dbFiles.length > 5 ? ', …' : ''}` : 'Spec/migration files: (none)',
+        ],
+        rules: [
+          'When changing schemas or migrations, keep changes incremental and reversible.',
+          'Avoid destructive migration defaults unless explicitly requested.',
+        ],
+        files: dbFiles.slice(0, 10).map((p) => ({ path: p, reason: 'DB schema/migration artifact' })),
+      })
+    }
   }
 
   if (enabled('frontend')) {
     const frontend = frameworks.filter((f) => ['react', 'next', 'angular', 'vite', 'sveltekit', 'nuxt', 'astro', 'remix'].includes(f))
     const frontendScopes = [...graph.apps, ...graph.packages]
-      .filter((node) => node.path === 'apps' || node.path.startsWith('apps/') || node.path === 'packages' || node.path.startsWith('packages/'))
       .map((node) => node.name ? `${node.name} (${node.path})` : node.path)
       .sort((a, b) => a.localeCompare(b))
+    const configuredFrontend = scope?.kind === 'point'
+      ? (scope.frameworks ?? []).filter((framework) => ['react', 'next', 'angular', 'vite', 'sveltekit', 'nuxt', 'astro', 'remix'].includes(framework))
+      : []
 
-    models.frontend = model({
-      summary: [
-        frameworks.length
-          ? `Frontend-related frameworks detected: ${frontend.join(', ') || '(none)'}`
-          : '(MVP) No frontend framework detected',
-        ...(routePaths.length ? [`Frontend/API route files detected: ${routePaths.slice(0, 5).join(', ')}${routePaths.length > 5 ? ', …' : ''}`] : []),
-        ...(scope?.kind === 'point' && scope.frameworks?.length
-          ? [`Configured point frameworks: ${scope.frameworks.join(', ')}`]
-          : []),
-        frontendScopes.length
-          ? `Frontend-relevant scope entries: ${limitList(frontendScopes)}`
-          : 'Frontend-relevant scope entries: (none detected)',
-      ],
-    })
+    if (frontend.length || configuredFrontend.length || (scope?.kind === 'point' && scope.type === 'frontend')) {
+      models.frontend = model({
+        summary: [
+          frontend.length
+            ? `Frontend-related frameworks detected: ${frontend.join(', ')}`
+            : 'Frontend-related frameworks detected: (none)',
+          ...(routePaths.length ? [`Frontend/API route files detected: ${routePaths.slice(0, 5).join(', ')}${routePaths.length > 5 ? ', …' : ''}`] : []),
+          ...(configuredFrontend.length
+            ? [`Configured point frameworks: ${configuredFrontend.join(', ')}`]
+            : []),
+          frontendScopes.length
+            ? `Frontend-relevant scope entries: ${limitList(frontendScopes)}`
+            : 'Frontend-relevant scope entries: (none detected)',
+        ],
+      })
+    }
   }
 
-  if (enabled('glossary')) {
+  if (enabled('glossary') && envVars.length) {
     models.glossary = model({
       summary: envVars.length ? ['Environment variable names referenced in the repo:'] : [],
       rules: envVars,
@@ -421,6 +471,8 @@ export const fitContextBlocksToBudget = (
         return 100
       case 'conventions':
         return 90
+      case 'runtime':
+        return 85
       case 'testing':
         return 80
       case 'workflows':

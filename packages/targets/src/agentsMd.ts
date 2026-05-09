@@ -7,7 +7,7 @@ export const agentsMdTarget: TargetAdapter = {
 
   async render(input): Promise<readonly ContextFile[]> {
     const contextBlocks = getContextBlocks(input)
-    const ordered = ['architecture', 'conventions', 'frontend', 'api', 'database', 'testing', 'workflows', 'glossary'] as const
+    const ordered = ['architecture', 'conventions', 'runtime', 'frontend', 'api', 'database', 'testing', 'workflows', 'glossary'] as const
 
     const contextBlockNames = ordered.filter((name) => contextBlocks.some((block) => block.name === name))
 

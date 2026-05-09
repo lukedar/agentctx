@@ -29,6 +29,7 @@ const createConfig = (rootDir: string): AgentCtxConfig => ({
   contextBlocks: {
     architecture: true,
     conventions: true,
+    runtime: true,
     api: true,
     database: true,
     frontend: true,

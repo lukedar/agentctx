@@ -12,6 +12,7 @@ const createConfig = (budget: AgentCtxConfig['budgets']['default'] = 'large'): A
   contextBlocks: {
     architecture: true,
     conventions: true,
+    runtime: true,
     api: true,
     database: true,
     frontend: true,
@@ -71,7 +72,6 @@ describe('planContextBlocks', () => {
       'api',
       'architecture',
       'conventions',
-      'database',
       'frontend',
       'glossary',
       'testing',
@@ -118,6 +118,27 @@ describe('planContextBlocks', () => {
     expect(contextBlocks.find((contextBlock) => contextBlock.name === 'frontend')?.content).toContain('Configured point frameworks: react, vite')
     expect(contextBlocks.find((contextBlock) => contextBlock.name === 'architecture')?.content).toContain('`packages/ui/package.json`: Package/app manifest in scope')
     expect(contextBlocks.find((contextBlock) => contextBlock.name === 'architecture')?.content).not.toContain('`package.json`: Package/app manifest in scope')
+  })
+
+  it('generates runtime context for non-frontend stacks without inventing frontend output', () => {
+    const graph: ContextGraph = {
+      rootDir: '/repo',
+      facts: [
+        { kind: 'runtime', source: 'pyproject.toml', confidence: 1, data: { name: 'python' } },
+        { kind: 'framework', source: 'pyproject.toml', confidence: 1, data: { name: 'fastapi' } },
+        { kind: 'route', source: 'app/main.py', confidence: 0.8, data: { kind: 'api-module', path: '/health', file: 'app/main.py' } },
+      ],
+      apps: [],
+      packages: [],
+      relationships: [],
+      contextBlocks: {},
+    }
+
+    const contextBlocks = planContextBlocks(graph, createConfig())
+
+    expect(contextBlocks.find((contextBlock) => contextBlock.name === 'runtime')?.content).toContain('Runtimes detected: python')
+    expect(contextBlocks.find((contextBlock) => contextBlock.name === 'api')?.content).toContain('API-related frameworks detected: fastapi')
+    expect(contextBlocks.find((contextBlock) => contextBlock.name === 'frontend')).toBeUndefined()
   })
 
   it('fits context-block output to the configured budget', () => {

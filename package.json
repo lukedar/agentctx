@@ -14,7 +14,10 @@
     "da:report": "pnpm -C packages/dual-agent-runner build && node packages/dual-agent-runner/dist/cli.js eval",
     "da:task:template": "pnpm -C packages/dual-agent-runner build && node packages/dual-agent-runner/dist/cli.js task template",
     "da:plan:template": "pnpm -C packages/dual-agent-runner build && node packages/dual-agent-runner/dist/cli.js plan template",
-    "da:step": "pnpm -C packages/dual-agent-runner build && node packages/dual-agent-runner/dist/cli.js plan eval --check"
+    "da:step": "pnpm -C packages/dual-agent-runner build && node packages/dual-agent-runner/dist/cli.js plan eval --check",
+    "benchmark:template": "pnpm -C packages/dual-agent-runner build && node packages/dual-agent-runner/dist/cli.js benchmark template",
+    "benchmark:run": "pnpm -C packages/dual-agent-runner build && node packages/dual-agent-runner/dist/cli.js benchmark run",
+    "benchmark:report": "pnpm -C packages/dual-agent-runner build && node packages/dual-agent-runner/dist/cli.js benchmark report"
   },
   "devDependencies": {
     "@types/node": "^22.15.29",

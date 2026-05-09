@@ -6,6 +6,13 @@ import { renderRunReportMarkdown } from './report'
 import { createDefaultDecisionRecord, createDefaultTask, createGateEvaluation, runDeterministicChecks } from './qualityGate'
 import { createTaskPlanTemplate, runTaskPlanStep } from './taskRunner'
 import type { RunnerTask } from './types'
+import {
+  createBenchmarkSuiteForRepo,
+  loadBenchmarkSuite,
+  prepareBenchmarkRun,
+  renderBenchmarkReportMarkdown,
+  summarizeBenchmarkRun,
+} from './benchmark'
 
 const parseArgs = (argv: readonly string[]): {
   cmd: string
@@ -18,6 +25,9 @@ const parseArgs = (argv: readonly string[]): {
   out: string | undefined
   outJson: string | undefined
   outDir: string | undefined
+  repo: string | undefined
+  suite: string | undefined
+  runDir: string | undefined
   check: boolean
 } => {
   const [cmd = 'help', maybeSubcmd, ...rest] = argv
@@ -34,6 +44,9 @@ const parseArgs = (argv: readonly string[]): {
     else if (a === '--out') out.out = rest[++i] ?? ''
     else if (a === '--out-json') out['out-json'] = rest[++i] ?? ''
     else if (a === '--out-dir') out['out-dir'] = rest[++i] ?? ''
+    else if (a === '--repo') out.repo = rest[++i] ?? ''
+    else if (a === '--suite') out.suite = rest[++i] ?? ''
+    else if (a === '--run-dir') out['run-dir'] = rest[++i] ?? ''
   }
 
   const norm = (v: unknown): string | undefined => (typeof v === 'string' && v.trim() ? v.trim() : undefined)
@@ -49,13 +62,16 @@ const parseArgs = (argv: readonly string[]): {
     out: norm(out.out),
     outJson: norm(out['out-json']),
     outDir: norm(out['out-dir']),
+    repo: norm(out.repo),
+    suite: norm(out.suite),
+    runDir: norm(out['run-dir']),
     check: Boolean(out.check),
   }
 }
 
 const help = (): void => {
   // eslint-disable-next-line no-console
-  console.log(`dual-agent-runner\n\nUsage:\n  dar eval [--cwd <dir>] [--task-id <id>] [--task-file <json>] [--out <file.md>] [--out-json <file.json>] [--check]\n  dar task template\n  dar plan template\n  dar plan eval --plan-file <json> [--step <id>] [--cwd <dir>] [--out-dir <dir>] [--check]\n  dar prompt\n\nCommands:\n  eval            Run deterministic evaluation gate (typecheck/test/build) + write markdown & JSON reports\n  task template   Print a RunnerTask JSON template to stdout\n  plan template   Print a RunnerTaskPlan JSON template to stdout\n  plan eval       Evaluate the next or named task-plan step and persist step reports/state\n  prompt          Print the reusable dual-agent execution prompt template\n`)
+  console.log(`dual-agent-runner\n\nUsage:\n  dar eval [--cwd <dir>] [--task-id <id>] [--task-file <json>] [--out <file.md>] [--out-json <file.json>] [--check]\n  dar task template\n  dar plan template\n  dar plan eval --plan-file <json> [--step <id>] [--cwd <dir>] [--out-dir <dir>] [--check]\n  dar benchmark template --repo <dir> --out <suite.json>\n  dar benchmark run --repo <dir> --suite <suite.json> [--out-dir <dir>]\n  dar benchmark report --run-dir <dir>\n  dar prompt\n\nCommands:\n  eval                 Run deterministic evaluation gate (typecheck/test/build) + write markdown & JSON reports\n  task template        Print a RunnerTask JSON template to stdout\n  plan template        Print a RunnerTaskPlan JSON template to stdout\n  plan eval            Evaluate the next or named task-plan step and persist step reports/state\n  benchmark template   Create a benchmark suite for a repo\n  benchmark run        Create prompts/result templates for no-context vs agentctx-context\n  benchmark report     Rebuild benchmark comparison report from filled result files\n  prompt               Print the reusable dual-agent execution prompt template\n`)
 }
 
 const ensureDir = async (dir: string): Promise<void> => {
@@ -114,6 +130,59 @@ const main = async (): Promise<void> => {
       `Step ${result.step.id} status: ${result.evaluation.status.toUpperCase()} (avg ${result.evaluation.average.toFixed(2)}/5)`,
     )
     if (args.check && !result.ok) process.exitCode = 1
+    return
+  }
+
+  if (args.cmd === 'benchmark' && args.subcmd === 'template') {
+    if (!args.repo) throw new Error('Missing required --repo <dir>')
+    if (!args.out) throw new Error('Missing required --out <suite.json>')
+
+    const repoDir = path.resolve(process.cwd(), args.repo)
+    const outPath = path.resolve(process.cwd(), args.out)
+    const suite = await createBenchmarkSuiteForRepo(repoDir)
+    await ensureDir(path.dirname(outPath))
+    await fs.writeFile(outPath, JSON.stringify(suite, null, 2) + '\n', 'utf8')
+
+    // eslint-disable-next-line no-console
+    console.log(`Benchmark suite written: ${outPath}`)
+    // eslint-disable-next-line no-console
+    console.log(`Tasks: ${suite.tasks.length}`)
+    return
+  }
+
+  if (args.cmd === 'benchmark' && args.subcmd === 'run') {
+    if (!args.repo) throw new Error('Missing required --repo <dir>')
+    if (!args.suite) throw new Error('Missing required --suite <suite.json>')
+
+    const repoDir = path.resolve(process.cwd(), args.repo)
+    const suitePath = path.resolve(process.cwd(), args.suite)
+    const suite = await loadBenchmarkSuite(suitePath)
+    const outDir = args.outDir
+      ? path.resolve(process.cwd(), args.outDir)
+      : path.join(repoDir, '.dual-agent-runner', 'benchmarks', suite.id)
+
+    const summary = await prepareBenchmarkRun({ suite, repoDir, outDir })
+
+    // eslint-disable-next-line no-console
+    console.log(`Benchmark run prepared: ${outDir}`)
+    // eslint-disable-next-line no-console
+    console.log(`Report written: ${path.join(outDir, 'report.md')}`)
+    // eslint-disable-next-line no-console
+    console.log(`Generated AgentCtx context estimate: ${summary.contextEstimatedTokens} tokens`)
+    return
+  }
+
+  if (args.cmd === 'benchmark' && args.subcmd === 'report') {
+    if (!args.runDir) throw new Error('Missing required --run-dir <dir>')
+
+    const runDir = path.resolve(process.cwd(), args.runDir)
+    const suite = await loadBenchmarkSuite(path.join(runDir, 'suite.json'))
+    const summary = await summarizeBenchmarkRun({ suite, runDir })
+    await fs.writeFile(path.join(runDir, 'report.md'), renderBenchmarkReportMarkdown(summary), 'utf8')
+    await fs.writeFile(path.join(runDir, 'report.json'), JSON.stringify(summary, null, 2) + '\n', 'utf8')
+
+    // eslint-disable-next-line no-console
+    console.log(`Benchmark report written: ${path.join(runDir, 'report.md')}`)
     return
   }
 

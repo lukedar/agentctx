@@ -1,6 +1,6 @@
 export default {
   targets: ["agents-md", "claude", "cursor", "copilot", "llms"],
-  contextPoints: [
+  ctxPoints: [
     { name: "core", path: "packages/core", type: "package" },
     { name: "cli", path: "packages/cli", type: "package", dependsOn: ["core", "adapters", "targets"] },
     { name: "adapters", path: "packages/adapters", type: "package", dependsOn: ["core"] },

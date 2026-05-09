@@ -1,6 +1,6 @@
 import path from 'node:path'
 
-import type { AgentCtxConfig, AppNode, ContextGraph, Fact, PackageNode, Relationship } from './types'
+import type { AgentCtxConfig, AppNode, CtxGraph, Fact, PackageNode, Relationship } from './types'
 
 const packageId = (pkgPath: string, pkgName?: string): string => pkgName && pkgName.trim() ? pkgName.trim() : pkgPath
 
@@ -38,7 +38,7 @@ const isGeneratedPackagePath = (pkgPath: string): boolean => {
   )
 }
 
-export const buildGraph = (facts: readonly Fact[], config: AgentCtxConfig): ContextGraph => {
+export const buildGraph = (facts: readonly Fact[], config: AgentCtxConfig): CtxGraph => {
   const pointPath = config.scope?.kind === 'point' ? config.scope.path.replace(/\/$/, '') : undefined
 
   const packageFacts = facts
@@ -118,6 +118,6 @@ export const buildGraph = (facts: readonly Fact[], config: AgentCtxConfig): Cont
     apps,
     packages,
     relationships,
-    contextBlocks: {},
+    ctxBlocks: {},
   }
 }

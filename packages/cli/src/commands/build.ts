@@ -15,8 +15,8 @@ export const registerBuildCommand = (cli: CAC): void => {
     .option('--dry-run', 'Compute without writing files')
     .option('--json', 'Machine-readable output')
     .option('--targets <list>', 'Comma-separated target names')
-    .option('--point <name>', 'Build a single context point (plus workspace)')
-    .option('--points <list>', 'Comma-separated context point names (plus workspace)')
+    .option('--point <name>', 'Build a single CtxPoint (plus workspace)')
+    .option('--points <list>', 'Comma-separated CtxPoint names (plus workspace)')
     .action(async (flags: any) => {
       const cwd = resolveCwd(flags.cwd)
       const targets = parseTargetNames(flags.targets)
@@ -40,6 +40,6 @@ export const registerBuildCommand = (cli: CAC): void => {
 
       log('success', `Built context (wrote ${result.filesWritten} files) in ${result.durationMs}ms`)
       log('info', `Compiled token estimate: ~${result.tokenEstimate.compiled}`)
-      if (result.points.length > 0) log('info', `Built ${result.points.length} context point(s)`)
+      if (result.points.length > 0) log('info', `Built ${result.points.length} CtxPoint(s)`)
     })
 }

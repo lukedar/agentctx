@@ -5,7 +5,7 @@ import {
   createRepoFileIndex,
   extractFacts,
   loadConfig,
-  planContextBlocks,
+  planCtxBlocks,
   type AgentCtxConfig,
   type ContextFile,
   type Fact,
@@ -116,7 +116,7 @@ const buildScope = async (input: {
   }
 
   const graph = buildGraph(facts, input.config)
-  const contextBlocks = planContextBlocks(graph, input.config)
+  const ctxBlocks = planCtxBlocks(graph, input.config)
 
   const selectedTargets = pickTargets(input.config, input.targetsOverride)
 
@@ -126,14 +126,14 @@ const buildScope = async (input: {
 
     const files = await adapter.render({
       graph,
-      contextBlocks,
+      ctxBlocks,
       config: input.config,
     })
     for (const f of files) renderedFiles.push(f)
   }
 
   let written = 0
-  const compiledTokens = contextBlocks.reduce((acc, block) => acc + block.tokenEstimate, 0)
+  const compiledTokens = ctxBlocks.reduce((acc, block) => acc + block.tokenEstimate, 0)
 
   if (!input.dryRun) {
     await ensureDir(input.scopeDirAbs)
@@ -165,7 +165,7 @@ const buildScope = async (input: {
       if (r.changed) written++
     }
 
-    for (const block of contextBlocks) {
+    for (const block of ctxBlocks) {
       const p = path.join(input.contextDirAbs, `${block.name}.md`)
       const safe = redactSecrets(block.content)
       const r = await writeTextIfChanged(p, safe)

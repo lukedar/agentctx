@@ -10,16 +10,18 @@ describe('json output formatters', () => {
       config: {
         rootDir: '/repo',
         scope: { kind: 'workspace' },
-        contextPoints: [],
+        ctxPoints: [],
         targets: ['agents-md'],
         include: [],
         exclude: [],
-        contextBlocks: {
+        ctxBlocks: {
           architecture: true,
           conventions: true,
           runtime: true,
           api: true,
           database: true,
+          operations: true,
+          data: true,
           frontend: true,
           testing: true,
           workflows: true,

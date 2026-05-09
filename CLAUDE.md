@@ -72,17 +72,48 @@
 ## Summary
 
 - Frontend-related frameworks detected: react, vite
+- Frontend implementation shape: Component-driven React UI detected. Bundler-led frontend entrypoint detected.
 - Frontend-relevant scope entries: @agentctx/adapters (packages/adapters), @agentctx/core (packages/core), @agentctx/targets (packages/targets), agentctx (packages/cli), agentctx-docs (docs-agentctx), …
 
-# api
+## Rules
 
-_(not generated)_
+- Keep components, state boundaries, and adjacent route or data-loading code aligned when changing UI behavior.
 
+# Operations
 
-# database
+## Summary
 
-_(not generated)_
+- Operational surfaces detected: github-actions
+- Operations implementation shape: Automation workflow definitions detected.
+- Operational artifacts: .github/workflows/dual-agent-gate.yml, .github/workflows/runner-docs.yml
 
+## Rules
+
+- Keep CI and deployment workflow changes deterministic and scoped to the environments they affect.
+
+## Important files
+
+- `.github/workflows/dual-agent-gate.yml`: Operational artifact
+- `.github/workflows/runner-docs.yml`: Operational artifact
+
+# Data
+
+## Summary
+
+- Data surfaces detected: job
+- Data implementation shape: Scheduled or batch job definitions detected.
+- Data artifacts: .github/workflows/dual-agent-gate.yml, .github/workflows/runner-docs.yml
+
+## Rules
+
+- Keep job boundaries, dependencies, and runtime assumptions aligned when changing batch or orchestration behavior.
+
+## Important files
+
+- `.github/workflows/dual-agent-gate.yml`: Data job or pipeline definition
+- `.github/workflows/runner-docs.yml`: Data job or pipeline definition
+- `.github/workflows/dual-agent-gate.yml`: Data or analysis artifact
+- `.github/workflows/runner-docs.yml`: Data or analysis artifact
 
 # Testing
 
@@ -106,8 +137,4 @@ _(not generated)_
 - Test: `pnpm run test`
 - Build: `pnpm run build`
 - Update context: `agentctx build && agentctx sync`
-
-# glossary
-
-_(not generated)_
 <!-- agentctx:end -->

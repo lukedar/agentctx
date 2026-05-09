@@ -1,19 +1,19 @@
 import type { ContextFile, TargetAdapter } from '@agentctx/core'
 
-import { getContextBlocks, joinContextBlocks, renderCardGrid, renderGeneratedBlock, renderHero, renderSectionHeading } from './utils'
+import { getCtxBlocks, joinCtxBlocks, renderCardGrid, renderGeneratedBlock, renderHero, renderSectionHeading } from './utils'
 
 export const agentsMdTarget: TargetAdapter = {
   name: 'agents-md',
 
   async render(input): Promise<readonly ContextFile[]> {
-    const contextBlocks = getContextBlocks(input)
-    const ordered = ['architecture', 'conventions', 'runtime', 'frontend', 'api', 'database', 'testing', 'workflows', 'glossary'] as const
+    const ctxBlocks = getCtxBlocks(input)
+    const ordered = ['architecture', 'conventions', 'runtime', 'frontend', 'api', 'database', 'operations', 'data', 'testing', 'workflows', 'glossary'] as const
 
-    const contextBlockNames = ordered.filter((name) => contextBlocks.some((block) => block.name === name))
+    const ctxBlockNames = ordered.filter((name) => ctxBlocks.some((block) => block.name === name))
 
-    const links = contextBlockNames
+    const links = ctxBlockNames
       .map((name) => {
-        const block = contextBlocks.find((candidate) => candidate.name === name)
+        const block = ctxBlocks.find((candidate) => candidate.name === name)
         const title = block?.title ?? name
         return `- ${title}: \`.agentctx/context/${name}.md\``
       })
@@ -24,7 +24,7 @@ export const agentsMdTarget: TargetAdapter = {
         kicker: 'AGENTS.md',
         title: 'Agent Instructions',
         summary: 'Primary operating guide for repo-aware changes in this workspace.',
-        chips: ['Deterministic outputs', 'Metadata-first scanning', 'Generated context blocks'],
+        chips: ['Deterministic outputs', 'Metadata-first scanning', 'Generated CtxBlocks'],
       }),
       '',
       renderSectionHeading('Snapshot', 'How to read this file quickly'),
@@ -74,7 +74,7 @@ export const agentsMdTarget: TargetAdapter = {
         },
       ]),
       '',
-      joinContextBlocks(contextBlocks, ['architecture', 'conventions', 'testing', 'workflows']),
+      joinCtxBlocks(ctxBlocks, ['architecture', 'conventions', 'testing', 'workflows']),
     ].join('\n')
 
     return [

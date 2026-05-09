@@ -9,9 +9,15 @@ Read it as the map of how the framework works:
 - why each package owns its own concern
 - how the runtime stays deterministic
 
+<div class="docs-callout" style="margin-top: 1rem;">
+  <h3>Core principle</h3>
+  <p>AgentCtx is designed for any repo, any framework, and any agent. The architecture keeps repo detection, CtxBlock planning, and target rendering separate so each layer can evolve without forcing changes into the others.</p>
+</div>
+
 ## Contents
 
 - [Language of the framework](#language-of-the-framework)
+- [Universal compiler contract](#universal-compiler-contract)
 - [Compiler model](#compiler-model)
 - [Application flow](#application-flow)
 - [Data contracts](#data-contracts)
@@ -24,11 +30,11 @@ Read it as the map of how the framework works:
 
 <div class="docs-grid">
   <div class="docs-card docs-span-6">
-    <h3>Context point</h3>
+    <h3>CtxPoint</h3>
     <p>A directory boundary selected for scoped generation, such as <code>apps/api</code> or <code>packages/core</code>.</p>
   </div>
   <div class="docs-card docs-span-6">
-    <h3>Context block</h3>
+    <h3>CtxBlock</h3>
     <p>One thematic slice of generated context for that point, such as architecture, testing, or workflows.</p>
   </div>
   <div class="docs-card docs-span-6">
@@ -51,8 +57,27 @@ Read it as the map of how the framework works:
 
 <div class="docs-callout" style="margin-top: 1rem;">
   <h3>How they relate</h3>
-  <p>A point produces multiple context blocks. Each block references and summarizes the important files for one topic inside that point rather than embedding the whole directory.</p>
+  <p>A CtxPoint produces multiple CtxBlocks. Each block references and summarizes the important files for one topic inside that point rather than embedding the whole directory.</p>
 </div>
+
+## Universal compiler contract
+
+<div class="docs-grid">
+  <div class="docs-card docs-span-4 docs-card--accent">
+    <h3>Repo signals</h3>
+    <p>The scanner reads manifests, config files, package metadata, routes, workflow files, and other high-signal artifacts.</p>
+  </div>
+  <div class="docs-card docs-span-4 docs-card--accent">
+    <h3>Normalized facts</h3>
+    <p>Adapters translate framework-specific evidence into compact facts such as <code>framework</code>, <code>runtime</code>, <code>api</code>, <code>operations</code>, and <code>data</code>.</p>
+  </div>
+  <div class="docs-card docs-span-4 docs-card--accent">
+    <h3>Agent outputs</h3>
+    <p>Targets render the same CtxBlocks for different agents. They format context; they do not reinterpret the repo.</p>
+  </div>
+</div>
+
+This contract is what makes the framework portable. A new frontend, API stack, data tool, or agent target should fit into one layer instead of forcing a rewrite across the pipeline.
 
 ## Compiler model
 
@@ -90,8 +115,8 @@ Important contracts:
 - `AgentCtxConfig` is the normalized runtime config
 - `RepoFileIndex` is the filtered, hashed file view
 - `Fact` is a normalized signal from a detector
-- `ContextGraph` is the compiled structural model
-- `RenderedContextBlock` is the rendered context-block output
+- `CtxGraph` is the compiled structural model
+- `RenderedCtxBlock` is the rendered CtxBlock output
 - `ContextFile` is the final render artifact
 
 Each contract narrows the allowed shape of the data. That is how the framework avoids passing opaque objects across layers.
@@ -107,7 +132,7 @@ Responsibilities:
 - repo file indexing
 - fact execution context
 - graph compilation
-- context-block planning
+- CtxBlock planning
 
 ### `adapters`
 
@@ -126,7 +151,7 @@ Responsibilities:
 - render `AGENTS.md`
 - render `CLAUDE.md`
 - render editor and runtime target files
-- format the shared context-block model
+- format the shared CtxBlock model
 
 ### `cli`
 
@@ -172,12 +197,13 @@ That keeps the scan:
 
 ### Shared model, many outputs
 
-The same graph and context-block model feed every target.
+The same graph and CtxBlock model feed every target.
 
 That means:
 - targets should not rescan the repo
 - output differences should come from formatting only
 - drift is easier to reason about because there is one compiler path
+- adding an agent target should not require new framework detection logic
 
 ## Sync and validation
 
@@ -204,7 +230,7 @@ The execution details live on the <a href="/pipeline">Pipeline</a> page and the 
 
 1. `Pipeline`
 2. `Architecture`
-3. `Context Points`
+3. `CtxPoints`
 4. `Config`
 5. `CLI`
 6. `Targets`

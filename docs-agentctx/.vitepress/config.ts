@@ -28,7 +28,7 @@ export default defineConfig({
   base: process.env.VITEPRESS_BASE ?? '/',
   lang: 'en-US',
   title: 'AgentCtx',
-  description: 'Compile your repo into deterministic AI-agent context.',
+  description: 'Agent context for any repo, any framework, and any agent.',
 
   vite: {
     plugins: [
@@ -96,7 +96,8 @@ export default defineConfig({
       { text: 'Architecture', link: '/architecture' },
       { text: 'Pipeline', link: '/pipeline' },
       { text: 'Dual Agent Runner', link: '/quality-gate' },
-      { text: 'Context Points', link: '/context-points' },
+      { text: 'CtxPoints', link: '/context-points' },
+      { text: 'CtxBlocks', link: '/context-blocks' },
       { text: 'Targets', link: '/targets' },
       { text: 'Config', link: '/config' },
       { text: 'CLI', link: '/cli' },
@@ -106,7 +107,8 @@ export default defineConfig({
       { text: 'Architecture', link: '/architecture' },
       { text: 'Pipeline', link: '/pipeline' },
       { text: 'Dual Agent Runner', link: '/quality-gate' },
-      { text: 'Context Points', link: '/context-points' },
+      { text: 'CtxPoints', link: '/context-points' },
+      { text: 'CtxBlocks', link: '/context-blocks' },
       { text: 'Targets', link: '/targets' },
       { text: 'Config', link: '/config' },
       { text: 'CLI', link: '/cli' },

@@ -67,17 +67,12 @@
 ## Summary
 
 - Frontend-related frameworks detected: react, vite
+- Frontend implementation shape: Component-driven React UI detected. Bundler-led frontend entrypoint detected.
 - Frontend-relevant scope entries: dual-agent-runner-ui (packages/dual-agent-runner-ui)
 
-# api
+## Rules
 
-_(not generated)_
-
-
-# database
-
-_(not generated)_
-
+- Keep components, state boundaries, and adjacent route or data-loading code aligned when changing UI behavior.
 
 # Testing
 
@@ -101,8 +96,4 @@ _(not generated)_
 - Test: `pnpm run test`
 - Build: `pnpm run build`
 - Update context: `agentctx build && agentctx sync`
-
-# glossary
-
-_(not generated)_
 <!-- agentctx:end -->

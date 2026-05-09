@@ -16,12 +16,14 @@ export type TargetName =
   | 'copilot'
   | 'llms'
 
-export type ContextBlockName =
+export type CtxBlockName =
   | 'architecture'
   | 'conventions'
   | 'runtime'
   | 'api'
   | 'database'
+  | 'operations'
+  | 'data'
   | 'frontend'
   | 'testing'
   | 'workflows'
@@ -47,7 +49,7 @@ export type SecurityConfig = Readonly<{
   allowSourceSnippets: boolean
 }>
 
-export type ContextPointType =
+export type CtxPointType =
   | 'frontend'
   | 'backend'
   | 'worker'
@@ -62,10 +64,10 @@ export type WorkspaceConfig = Readonly<{
   packageManager?: 'pnpm' | 'npm' | 'yarn' | 'unknown'
 }>
 
-export type ContextPointConfig = Readonly<{
+export type CtxPointConfig = Readonly<{
   name: string
   path: string
-  type?: ContextPointType
+  type?: CtxPointType
   frameworks?: readonly string[]
   dependsOn?: readonly string[]
   targets?: readonly TargetName[]
@@ -83,17 +85,17 @@ export type AgentCtxConfig = Readonly<{
         kind: 'point'
         name: string
         path: string
-        type?: ContextPointType
+        type?: CtxPointType
         frameworks?: readonly string[]
         dependsOn?: readonly string[]
       }
   >
-  contextPoints: readonly ContextPointConfig[]
+  ctxPoints: readonly CtxPointConfig[]
 
   targets: readonly TargetName[]
   include: readonly string[]
   exclude: readonly string[]
-  contextBlocks: Readonly<Record<ContextBlockName, boolean>>
+  ctxBlocks: Readonly<Record<CtxBlockName, boolean>>
   budgets: TokenBudgets
   drift: DriftConfig
   security: SecurityConfig
@@ -116,6 +118,8 @@ export type FactKind =
   | 'route'
   | 'api'
   | 'database'
+  | 'operations'
+  | 'data'
   | 'auth'
   | 'env-var'
   | 'script'
@@ -154,7 +158,7 @@ export type ImportantFile = Readonly<{
   reason: string
 }>
 
-export type ContextBlockModel = Readonly<{
+export type CtxBlockModel = Readonly<{
   summary: readonly string[]
   rules: readonly string[]
   workflows: readonly string[]
@@ -162,13 +166,13 @@ export type ContextBlockModel = Readonly<{
   warnings: readonly string[]
 }>
 
-export type ContextGraph = Readonly<{
+export type CtxGraph = Readonly<{
   rootDir: string
   facts: readonly Fact[]
   apps: readonly AppNode[]
   packages: readonly PackageNode[]
   relationships: readonly Relationship[]
-  contextBlocks: Partial<Record<ContextBlockName, ContextBlockModel>>
+  ctxBlocks: Partial<Record<CtxBlockName, CtxBlockModel>>
 }>
 
 export type RepoFile = Readonly<{
@@ -245,16 +249,16 @@ export type FrameworkAdapter = Readonly<{
   detect: (ctx: ScanContext) => Promise<readonly FrameworkDetection[]>
 }>
 
-export type RenderedContextBlock = Readonly<{
-  name: ContextBlockName
+export type RenderedCtxBlock = Readonly<{
+  name: CtxBlockName
   title: string
   content: string
   tokenEstimate: number
 }>
 
 export type TargetRenderInput = Readonly<{
-  graph: ContextGraph
-  contextBlocks: readonly RenderedContextBlock[]
+  graph: CtxGraph
+  ctxBlocks: readonly RenderedCtxBlock[]
   config: AgentCtxConfig
 }>
 

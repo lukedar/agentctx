@@ -1,12 +1,12 @@
 import type { ContextFile, TargetAdapter } from '@agentctx/core'
 
-import { getContextBlocks, joinContextBlocks, renderCardGrid, renderGeneratedBlock, renderHero, renderSectionHeading } from './utils'
+import { getCtxBlocks, joinCtxBlocks, renderCardGrid, renderGeneratedBlock, renderHero, renderSectionHeading } from './utils'
 
 export const claudeTarget: TargetAdapter = {
   name: 'claude',
 
   async render(input): Promise<readonly ContextFile[]> {
-    const contextBlocks = getContextBlocks(input)
+    const ctxBlocks = getCtxBlocks(input)
     const body = [
       renderHero({
         kicker: 'CLAUDE.md',
@@ -39,12 +39,14 @@ export const claudeTarget: TargetAdapter = {
         },
       ]),
       '',
-      joinContextBlocks(contextBlocks, [
+      joinCtxBlocks(ctxBlocks, [
         'architecture',
         'runtime',
         'frontend',
         'api',
         'database',
+        'operations',
+        'data',
         'testing',
         'workflows',
         'glossary',

@@ -3,7 +3,7 @@
 <div class="docs-kicker">AGENTS.md</div>
 <h1>Agent Instructions</h1>
 <p class="docs-lead">Primary operating guide for repo-aware changes in this workspace.</p>
-<div class="docs-chip-row"><span class="docs-chip">Deterministic outputs</span><span class="docs-chip">Metadata-first scanning</span><span class="docs-chip">Generated context blocks</span></div>
+<div class="docs-chip-row"><span class="docs-chip">Deterministic outputs</span><span class="docs-chip">Metadata-first scanning</span><span class="docs-chip">Generated CtxBlocks</span></div>
 </div>
 
 <div class="docs-section-heading"><h2>Snapshot</h2><span class="docs-note">How to read this file quickly</span></div>
@@ -30,6 +30,8 @@
 - Conventions: `.agentctx/context/conventions.md`
 - Runtime: `.agentctx/context/runtime.md`
 - Frontend: `.agentctx/context/frontend.md`
+- Operations: `.agentctx/context/operations.md`
+- Data: `.agentctx/context/data.md`
 - Testing: `.agentctx/context/testing.md`
 - Workflows: `.agentctx/context/workflows.md`
 

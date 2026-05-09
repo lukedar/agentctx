@@ -1,10 +1,10 @@
-# Context Points
+# CtxPoints
 
 <div class="docs-hero">
   <span class="docs-kicker">Boundary-aware context</span>
-  <h1>Context points make the compiler work per domain, not just per repo.</h1>
+  <h1>CtxPoints make the compiler work per domain, not just per repo.</h1>
   <p class="docs-lead">
-    A context point is a deliberate boundary inside your repo that gets its own curated agent context.
+    A CtxPoint is a deliberate boundary inside your repo that gets its own curated agent context.
     Use it for apps, packages, services, and docs surfaces that need focused outputs.
   </p>
 </div>
@@ -27,27 +27,22 @@
 
 ## Mental model
 
-<img src="/diagrams/context-points.svg" alt="Workspace vs context points diagram" />
+<img src="/diagrams/context-points.svg" alt="Workspace vs CtxPoints diagram" />
 
 <div class="docs-grid">
   <div class="docs-card docs-span-6">
     <h3>Workspace scope</h3>
-    <p>Repo-wide conventions, tooling, and shared facts that apply across the whole monorepo.</p>
+    <p>Repo-wide output that applies across the whole monorepo.</p>
   </div>
   <div class="docs-card docs-span-6">
     <h3>Point scope</h3>
-    <p>The local rules, APIs, and files for one boundary. The compiler uses the same pipeline, but with a narrower view.</p>
+    <p>The local rules, files, and output for one boundary. The compiler uses the same pipeline, but with a narrower view.</p>
   </div>
 </div>
 
 <div class="docs-callout" style="margin-top: 1rem;">
-  <h3>Point vs block</h3>
-  <p>A <code>context point</code> is the directory scope. A point produces multiple <code>context blocks</code>, such as architecture, testing, and workflows. Each block is one thematic slice of context for that point and references the files that matter for that topic.</p>
-</div>
-
-<div class="docs-callout" style="margin-top: 1rem;">
-  <h3>Pipeline reference</h3>
-  <p>Use <a href="/pipeline">Pipeline</a> for the canonical definitions of scope, facts, graph, targets, sync, and drift.</p>
+  <h3>CtxBlocks</h3>
+  <p>Points define the boundary. For the block catalog and team-specific guidance, go to <a href="/context-blocks">CtxBlocks</a>.</p>
 </div>
 
 ## Point workflow
@@ -76,34 +71,13 @@
   </div>
 </div>
 
-## Output layout
-
-<div class="docs-grid">
-  <div class="docs-panel docs-span-6">
-    <h3>Workspace outputs</h3>
-    <p><code>.agentctx/workspace/facts.json</code></p>
-    <p><code>.agentctx/workspace/graph.json</code></p>
-    <p><code>.agentctx/workspace/metrics.json</code></p>
-    <p><code>.agentctx/workspace/context/*.md</code></p>
-    <p><code>.agentctx/workspace/out/*</code></p>
-  </div>
-  <div class="docs-panel docs-span-6">
-    <h3>Point outputs</h3>
-    <p><code>.agentctx/points/&lt;point&gt;/facts.json</code></p>
-    <p><code>.agentctx/points/&lt;point&gt;/graph.json</code></p>
-    <p><code>.agentctx/points/&lt;point&gt;/metrics.json</code></p>
-    <p><code>.agentctx/points/&lt;point&gt;/context/*.md</code></p>
-    <p><code>.agentctx/points/&lt;point&gt;/out/*</code></p>
-  </div>
-</div>
-
 ## Configuration
 
 <div class="docs-panel">
   <h3>Define points in `agentctx.config.ts`</h3>
 <pre><code>export default {
   targets: ["agents-md", "claude", "cursor", "copilot", "llms"],
-  contextPoints: [
+  ctxPoints: [
     { name: "api", path: "apps/api" },
     { name: "web", path: "apps/web" },
   ],

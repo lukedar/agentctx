@@ -12,16 +12,18 @@ const tempDirs: string[] = []
 const createConfig = (rootDir: string): AgentCtxConfig => ({
   rootDir,
   scope: { kind: 'workspace' },
-  contextPoints: [],
+  ctxPoints: [],
   targets: ['agents-md'],
   include: ['README.md', 'src/**', 'packages/**', 'docs-agentctx/**'],
   exclude: ['src/ignore.ts', '**/.agentctx/**', '**/.vitepress/cache/**', '**/dist/**'],
-  contextBlocks: {
+  ctxBlocks: {
     architecture: true,
     conventions: true,
     runtime: true,
     api: true,
     database: true,
+    operations: true,
+    data: true,
     frontend: true,
     testing: true,
     workflows: true,

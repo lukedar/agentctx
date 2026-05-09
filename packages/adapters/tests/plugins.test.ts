@@ -8,6 +8,7 @@ import { createRepoFileIndex, createScanContext, type AgentCtxConfig, type ScanC
 
 import { apiDatabaseFilesPlugin } from '../src/plugins/apiDatabaseFiles'
 import { configFilesPlugin } from '../src/plugins/configFiles'
+import { domainFilesPlugin } from '../src/plugins/domainFiles'
 import { envExamplePlugin } from '../src/plugins/envExample'
 import { frameworkAdapterRegistry, frameworkAdaptersPlugin } from '../src/frameworkAdapters'
 import { frameworksFromPackageJsonPlugin } from '../src/plugins/frameworksFromPackageJson'
@@ -22,16 +23,18 @@ const tempDirs: string[] = []
 
 const createConfig = (rootDir: string): AgentCtxConfig => ({
   rootDir,
-  contextPoints: [],
+  ctxPoints: [],
   targets: ['agents-md'],
   include: ['**/*'],
   exclude: [],
-  contextBlocks: {
+  ctxBlocks: {
     architecture: true,
     conventions: true,
     runtime: true,
     api: true,
     database: true,
+    operations: true,
+    data: true,
     frontend: true,
     testing: true,
     workflows: true,
@@ -179,6 +182,29 @@ describe('adapter plugins', () => {
     expect(routeFacts).toEqual(expect.arrayContaining([
       expect.objectContaining({ kind: 'route', data: expect.objectContaining({ kind: 'filesystem-route', path: '/blog/[slug]' }) }),
       expect.objectContaining({ kind: 'route', data: expect.objectContaining({ kind: 'next-app-api', path: '/health' }) }),
+    ]))
+  })
+
+  it('extracts operations and data facts from domain-specific files', async () => {
+    const ctx = await buildContext({
+      'sources/schema.yml': 'version: 2\n',
+      'jobs/daily_refresh.ts': 'export const run = () => {}\n',
+      'quality/great_expectations.yml': 'config_version: 3\n',
+      'infra/main.tf': 'terraform {}\n',
+      '.github/workflows/deploy.yml': 'name: deploy\n',
+      'research/alpha.ipynb': '{ "cells": [] }\n',
+      'dbt_project.yml': 'name: fixture\n',
+    })
+
+    const domainFacts = await domainFilesPlugin.extract(ctx)
+    expect(domainFacts).toEqual(expect.arrayContaining([
+      expect.objectContaining({ kind: 'operations', data: expect.objectContaining({ name: 'terraform' }) }),
+      expect.objectContaining({ kind: 'operations', data: expect.objectContaining({ name: 'github-actions' }) }),
+      expect.objectContaining({ kind: 'data', data: expect.objectContaining({ name: 'source' }) }),
+      expect.objectContaining({ kind: 'data', data: expect.objectContaining({ name: 'job' }) }),
+      expect.objectContaining({ kind: 'data', data: expect.objectContaining({ name: 'quality' }) }),
+      expect.objectContaining({ kind: 'data', data: expect.objectContaining({ name: 'notebook' }) }),
+      expect.objectContaining({ kind: 'data', data: expect.objectContaining({ name: 'dbt' }) }),
     ]))
   })
 

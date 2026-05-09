@@ -1,12 +1,12 @@
 import type { ContextFile, TargetAdapter } from '@agentctx/core'
 
-import { getContextBlocks, joinContextBlocks, renderCardGrid, renderGeneratedBlock, renderHero, renderSectionHeading } from './utils'
+import { getCtxBlocks, joinCtxBlocks, renderCardGrid, renderGeneratedBlock, renderHero, renderSectionHeading } from './utils'
 
 export const copilotTarget: TargetAdapter = {
   name: 'copilot',
 
   async render(input): Promise<readonly ContextFile[]> {
-    const contextBlocks = getContextBlocks(input)
+    const ctxBlocks = getCtxBlocks(input)
     const body = [
       renderHero({
         kicker: 'Copilot',
@@ -31,7 +31,7 @@ export const copilotTarget: TargetAdapter = {
         },
       ]),
       '',
-      joinContextBlocks(contextBlocks, ['conventions', 'testing', 'workflows']),
+      joinCtxBlocks(ctxBlocks, ['conventions', 'testing', 'workflows']),
     ].join('\n')
 
     return [

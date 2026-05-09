@@ -131,11 +131,11 @@
   </g>
   <g>
     <rect class="chip" x="484" y="446" width="300" height="28" rx="999" />
-    <text class="text" x="498" y="465">ContextGraph → structural model</text>
+    <text class="text" x="498" y="465">CtxGraph → structural model</text>
   </g>
   <g>
     <rect class="chip" x="484" y="484" width="300" height="28" rx="999" />
-    <text class="text" x="498" y="503">Rendered context block / ContextFile → generated outputs</text>
+    <text class="text" x="498" y="503">Rendered CtxBlock / ContextFile → generated outputs</text>
   </g>
 
   <rect class="panel" x="872" y="276" width="424" height="230" rx="20" />

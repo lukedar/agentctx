@@ -14,7 +14,7 @@
 </div>
 <div class="docs-card docs-span-6">
 <h3>CLAUDE.md</h3>
-<p>Claude project context with the same underlying context blocks.</p>
+<p>Claude project context with the same underlying CtxBlocks.</p>
 </div>
 <div class="docs-card docs-span-6">
 <h3>.cursor/rules/project.mdc</h3>

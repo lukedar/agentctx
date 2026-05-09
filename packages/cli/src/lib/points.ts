@@ -1,4 +1,4 @@
-import type { AgentCtxConfig, ContextPointConfig } from '@agentctx/core'
+import type { AgentCtxConfig, CtxPointConfig } from '@agentctx/core'
 
 type PointScope = Readonly<{ kind: 'point'; name: string; pointPath: string }>
 
@@ -17,7 +17,7 @@ export const parsePointFlagList = (flags: { point?: unknown; points?: unknown })
 
 export const createPointConfig = (
   workspace: AgentCtxConfig,
-  point: ContextPointConfig,
+  point: CtxPointConfig,
 ): AgentCtxConfig => {
   const pointPath = point.path.replace(/\\/g, '/').replace(/\/$/, '')
   const include = point.include ?? [
@@ -52,17 +52,17 @@ export const createPointConfig = (
       ...workspace.budgets,
       default: point.budget ?? workspace.budgets.default,
     },
-    contextPoints: [],
+    ctxPoints: [],
   }
 }
 
 export const selectContextPoints = (
   workspace: AgentCtxConfig,
   explicitPointNamesRaw: readonly string[],
-): readonly ContextPointConfig[] => {
+): readonly CtxPointConfig[] => {
   const explicitPointNames = explicitPointNamesRaw.map(normalizePointName)
 
-  return workspace.contextPoints
+  return workspace.ctxPoints
     .map((p) => ({ ...p, name: normalizePointName(p.name) }))
     .filter((p) => (explicitPointNames.length > 0 ? explicitPointNames.includes(p.name) : true))
     .sort((a, b) => a.name.localeCompare(b.name))
@@ -73,8 +73,8 @@ export const resolvePointScope = (
   pointName: string,
 ): PointScope => {
   const normalizedName = normalizePointName(pointName)
-  const point = workspace.contextPoints.find((p) => normalizePointName(p.name) === normalizedName)
-  if (!point) throw new Error(`Unknown context point: ${normalizedName}`)
+  const point = workspace.ctxPoints.find((p) => normalizePointName(p.name) === normalizedName)
+  if (!point) throw new Error(`Unknown CtxPoint: ${normalizedName}`)
   return { kind: 'point', name: normalizedName, pointPath: point.path }
 }
 

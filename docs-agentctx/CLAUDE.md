@@ -61,21 +61,6 @@
 
 - `docs-agentctx/package.json`: Runtime manifest or entrypoint
 
-# frontend
-
-_(not generated)_
-
-
-# api
-
-_(not generated)_
-
-
-# database
-
-_(not generated)_
-
-
 # Testing
 
 ## Summary
@@ -98,8 +83,4 @@ _(not generated)_
 - Test: `pnpm run test`
 - Build: `pnpm run build`
 - Update context: `agentctx build && agentctx sync`
-
-# glossary
-
-_(not generated)_
 <!-- agentctx:end -->

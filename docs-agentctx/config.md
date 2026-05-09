@@ -3,7 +3,7 @@
 <div class="docs-hero">
   <span class="docs-kicker">Runtime contract</span>
   <h1>Configure the compiler once, then let the pipeline stay deterministic.</h1>
-  <p class="docs-lead">`agentctx.config.ts` defines targets, scope behavior, and point boundaries. Everything else is derived from that normalized config.</p>
+  <p class="docs-lead">`agentctx.config.ts` defines targets, scan rules, budgets, security defaults, and CtxPoint boundaries. Everything else is derived from that normalized config.</p>
 </div>
 
 <div class="docs-callout" style="margin-top: 1rem;">
@@ -19,14 +19,14 @@
 }</code></pre>
 </div>
 
-## Context points
+## CtxPoints
 
-Use `contextPoints` to define boundaries inside your repo that should get **their own** context outputs.
+Use `ctxPoints` to define boundaries inside your repo that should get **their own** context outputs.
 
 <div class="docs-panel">
 <pre><code>export default {
   targets: ["agents-md", "claude", "cursor", "copilot", "llms"],
-  contextPoints: [
+  ctxPoints: [
     {
       name: "api",
       path: "apps/api",
@@ -44,7 +44,7 @@ Use `contextPoints` to define boundaries inside your repo that should get **thei
 
 <div class="docs-grid">
   <div class="docs-card docs-span-4">
-    <h3>`name`</h3>
+  <h3>`name`</h3>
     <p>Identifier used by `--point` and sync/build selection.</p>
   </div>
   <div class="docs-card docs-span-4">
@@ -68,5 +68,29 @@ Use `contextPoints` to define boundaries inside your repo that should get **thei
 ## Notes
 <div class="docs-callout">
   <h3>Scanning rules</h3>
-  <p>Common generated paths are excluded by default even inside nested points, including <code>.agentctx</code>, <code>dist</code>, <code>build</code>, <code>dist-server</code>, and <code>.vitepress/cache</code>.</p>
+  <p>Default scanning is metadata-first and polyglot. It prioritizes manifests, config, docs, source boundaries, workflow files, infrastructure markers, Python files, .NET project files, and data workflow markers while excluding generated, dependency, cache, secret, and build-output paths.</p>
+</div>
+
+<div class="docs-panel">
+<pre><code>export default {
+  include: [
+    "package.json",
+    "pyproject.toml",
+    "*.sln",
+    "**/*.csproj",
+    "src/**",
+    "apps/**",
+    "packages/**",
+    "infra/**",
+    ".github/workflows/**",
+  ],
+  exclude: [
+    "node_modules/**",
+    ".venv/**",
+    "bin/**",
+    "obj/**",
+    ".terraform/**",
+    "**/.env*",
+  ],
+}</code></pre>
 </div>

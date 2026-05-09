@@ -39,5 +39,5 @@
   <path class="arrow" d="M 720 105 L 750 105" />
 
   <text class="text" x="30" y="40">AgentCtx compiles repo signals into deterministic, reviewable agent context.</text>
-  <text class="muted" x="30" y="190">Run per scope: workspace or a specific context point.</text>
+  <text class="muted" x="30" y="190">Run per scope: workspace or a specific CtxPoint.</text>
 </svg>

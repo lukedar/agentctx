@@ -11,11 +11,13 @@ export * from './plugins/configFiles'
 export * from './plugins/packageScripts'
 export * from './plugins/apiDatabaseFiles'
 export * from './plugins/routesFromFiles'
+export * from './plugins/domainFiles'
 
 import type { AgentCtxPlugin } from '@agentctx/core'
 
 import { apiDatabaseFilesPlugin } from './plugins/apiDatabaseFiles'
 import { configFilesPlugin } from './plugins/configFiles'
+import { domainFilesPlugin } from './plugins/domainFiles'
 import { envExamplePlugin } from './plugins/envExample'
 import { frameworkAdaptersPlugin } from './frameworkAdapters'
 import { packageDependenciesPlugin } from './plugins/packageDependencies'
@@ -39,5 +41,6 @@ export const mvpPlugins: readonly AgentCtxPlugin[] = [
   routesFromFilesPlugin,
   configFilesPlugin,
   apiDatabaseFilesPlugin,
+  domainFilesPlugin,
   envExamplePlugin,
 ]

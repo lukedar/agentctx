@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import type { AgentCtxConfig, ContextGraph, RenderedContextBlock, TargetRenderInput } from '@agentctx/core'
+import type { AgentCtxConfig, CtxGraph, RenderedCtxBlock, TargetRenderInput } from '@agentctx/core'
 
 import { agentsMdTarget } from '../src/agentsMd'
 import { claudeTarget } from '../src/claude'
@@ -11,16 +11,18 @@ import { llmsTarget } from '../src/llms'
 const config: AgentCtxConfig = {
   rootDir: '/repo',
   scope: { kind: 'workspace' },
-  contextPoints: [],
+  ctxPoints: [],
   targets: ['agents-md', 'claude', 'cursor', 'copilot', 'llms'],
   include: [],
   exclude: [],
-  contextBlocks: {
+  ctxBlocks: {
     architecture: true,
     conventions: true,
     runtime: true,
     api: true,
     database: true,
+    operations: true,
+    data: true,
     frontend: true,
     testing: true,
     workflows: true,
@@ -43,16 +45,16 @@ const config: AgentCtxConfig = {
   },
 }
 
-const graph: ContextGraph = {
+const graph: CtxGraph = {
   rootDir: '/repo',
   facts: [],
   apps: [],
   packages: [],
   relationships: [],
-  contextBlocks: {},
+  ctxBlocks: {},
 }
 
-const contextBlocks: readonly RenderedContextBlock[] = [
+const ctxBlocks: readonly RenderedCtxBlock[] = [
   { name: 'architecture', title: 'Architecture', content: '# Architecture\n\n- summary\n', tokenEstimate: 5 },
   { name: 'conventions', title: 'Conventions', content: '# Conventions\n\n- rules\n', tokenEstimate: 5 },
   { name: 'testing', title: 'Testing', content: '# Testing\n\n- tests\n', tokenEstimate: 5 },
@@ -60,7 +62,7 @@ const contextBlocks: readonly RenderedContextBlock[] = [
   { name: 'glossary', title: 'Glossary', content: '# Glossary\n\n- TERM\n', tokenEstimate: 5 },
 ]
 
-const input: TargetRenderInput = { config, graph, contextBlocks }
+const input: TargetRenderInput = { config, graph, ctxBlocks }
 
 describe('target renderers', () => {
   it('renders AGENTS.md with context links and generated block markers', async () => {

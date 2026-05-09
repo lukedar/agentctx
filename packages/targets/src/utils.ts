@@ -1,4 +1,4 @@
-import type { ContextBlockName, RenderedContextBlock, TargetRenderInput } from '@agentctx/core'
+import type { CtxBlockName, RenderedCtxBlock, TargetRenderInput } from '@agentctx/core'
 
 export const GENERATED_START = '<!-- agentctx:start -->'
 export const GENERATED_END = '<!-- agentctx:end -->'
@@ -76,19 +76,22 @@ export const renderSectionHeading = (title: string, note?: string): string =>
     ? `<div class="docs-section-heading"><h2>${escapeHtml(title)}</h2><span class="docs-note">${escapeHtml(note)}</span></div>`
     : `<h2>${escapeHtml(title)}</h2>`
 
-export const getContextBlocks = (input: TargetRenderInput): readonly RenderedContextBlock[] => input.contextBlocks
+export const getCtxBlocks = (input: TargetRenderInput): readonly RenderedCtxBlock[] => input.ctxBlocks
 
-export const findContextBlock = (
-  contextBlocks: readonly RenderedContextBlock[],
-  name: ContextBlockName,
-): RenderedContextBlock | undefined => contextBlocks.find((block) => block.name === name)
+export const findCtxBlock = (
+  ctxBlocks: readonly RenderedCtxBlock[],
+  name: CtxBlockName,
+): RenderedCtxBlock | undefined => ctxBlocks.find((block) => block.name === name)
 
-export const renderContextBlockContent = (
-  contextBlocks: readonly RenderedContextBlock[],
-  name: ContextBlockName,
-): string => findContextBlock(contextBlocks, name)?.content.trimEnd() ?? `# ${name}\n\n_(not generated)_\n`
+export const renderCtxBlockContent = (
+  ctxBlocks: readonly RenderedCtxBlock[],
+  name: CtxBlockName,
+): string => findCtxBlock(ctxBlocks, name)?.content.trimEnd() ?? `# ${name}\n\n_(not generated)_\n`
 
-export const joinContextBlocks = (
-  contextBlocks: readonly RenderedContextBlock[],
-  names: readonly ContextBlockName[],
-): string => names.map((name) => renderContextBlockContent(contextBlocks, name)).join('\n\n')
+export const joinCtxBlocks = (
+  ctxBlocks: readonly RenderedCtxBlock[],
+  names: readonly CtxBlockName[],
+): string => names
+  .filter((name) => ctxBlocks.some((block) => block.name === name))
+  .map((name) => renderCtxBlockContent(ctxBlocks, name))
+  .join('\n\n')

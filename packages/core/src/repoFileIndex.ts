@@ -6,6 +6,8 @@ import fg from 'fast-glob'
 
 import type { AgentCtxConfig, RepoFile, RepoFileIndex, Result } from './types'
 
+const DEFAULT_INDEX_CONCURRENCY = 32
+
 export const hashFileSha256 = async (absolutePath: string): Promise<string> => {
   const hash = createHash('sha256')
 
@@ -17,6 +19,27 @@ export const hashFileSha256 = async (absolutePath: string): Promise<string> => {
   })
 
   return hash.digest('hex')
+}
+
+const mapConcurrent = async <T, U>(
+  items: readonly T[],
+  concurrency: number,
+  mapper: (item: T) => Promise<U>,
+): Promise<readonly U[]> => {
+  const limit = Math.max(1, Math.min(concurrency, items.length || 1))
+  const output = new Array<U>(items.length)
+  let nextIndex = 0
+
+  const worker = async (): Promise<void> => {
+    while (nextIndex < items.length) {
+      const currentIndex = nextIndex
+      nextIndex += 1
+      output[currentIndex] = await mapper(items[currentIndex] as T)
+    }
+  }
+
+  await Promise.all(Array.from({ length: limit }, () => worker()))
+  return output
 }
 
 export const createRepoFileIndex = async (config: AgentCtxConfig): Promise<Result<RepoFileIndex>> => {
@@ -34,22 +57,23 @@ export const createRepoFileIndex = async (config: AgentCtxConfig): Promise<Resul
 
     const sorted = [...paths].sort((a, b) => a.localeCompare(b))
 
-    const files: RepoFile[] = []
-    const byPath: Record<string, RepoFile> = {}
-
-    for (const relPath of sorted) {
+    const indexedFiles = await mapConcurrent(sorted, DEFAULT_INDEX_CONCURRENCY, async (relPath) => {
       const absPath = path.join(rootDir, relPath)
       const stat = await fs.stat(absPath)
-      if (!stat.isFile()) continue
+      if (!stat.isFile()) return undefined
 
-      const file: RepoFile = {
+      return {
         path: relPath,
         size: stat.size,
         mtimeMs: stat.mtimeMs,
         hash: await hashFileSha256(absPath),
-      }
+      } satisfies RepoFile
+    })
 
-      files.push(file)
+    const files: RepoFile[] = indexedFiles.filter((file): file is RepoFile => Boolean(file))
+    const byPath: Record<string, RepoFile> = {}
+
+    for (const file of files) {
       byPath[file.path] = file
     }
 

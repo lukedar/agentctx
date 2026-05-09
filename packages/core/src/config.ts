@@ -14,15 +14,56 @@ export const DEFAULT_INCLUDE = [
   'yarn.lock',
   'package-lock.json',
   'tsconfig.json',
+  'jsconfig.json',
   '**/package.json',
   '**/tsconfig.json',
+  '**/jsconfig.json',
+
+  // Python
+  'pyproject.toml',
+  'requirements*.txt',
+  'Pipfile',
+  'poetry.lock',
+  'uv.lock',
+  'setup.py',
+  'setup.cfg',
+
+  // .NET
+  '*.sln',
+  '*.slnx',
+  'Directory.Build.props',
+  'Directory.Build.targets',
+  '**/*.csproj',
+  '**/*.fsproj',
+  '**/*.vbproj',
 
   // Common code/docs locations
   'apps/**',
   'packages/**',
   'src/**',
+  'app/**',
+  'services/**',
+  'libs/**',
   'README.md',
   'docs/**',
+
+  // Infrastructure, automation, and data workflow markers
+  'infra/**',
+  'infrastructure/**',
+  'ops/**',
+  'deploy/**',
+  'k8s/**',
+  'helm/**',
+  'charts/**',
+  'Dockerfile*',
+  'docker-compose*.yml',
+  '.github/workflows/**',
+  '.gitlab-ci.yml',
+  'azure-pipelines.yml',
+  'dbt_project.yml',
+  'dags/**',
+  'notebooks/**',
+  'data/**',
   '.env.example',
   '**/.env.example',
 ] as const
@@ -35,6 +76,20 @@ export const DEFAULT_EXCLUDE = [
   'dist-server/**',
   '.next/**',
   'coverage/**',
+  '.cache/**',
+  '.turbo/**',
+  '.parcel-cache/**',
+  '.venv/**',
+  'venv/**',
+  '__pycache__/**',
+  '.pytest_cache/**',
+  '.mypy_cache/**',
+  '.ruff_cache/**',
+  'bin/**',
+  'obj/**',
+  '.terraform/**',
+  '.gradle/**',
+  'target/**',
   '.git/**',
   '.vitepress/cache/**',
   '.vitepress/dist/**',
@@ -45,6 +100,20 @@ export const DEFAULT_EXCLUDE = [
   '**/dist-server/**',
   '**/.next/**',
   '**/coverage/**',
+  '**/.cache/**',
+  '**/.turbo/**',
+  '**/.parcel-cache/**',
+  '**/.venv/**',
+  '**/venv/**',
+  '**/__pycache__/**',
+  '**/.pytest_cache/**',
+  '**/.mypy_cache/**',
+  '**/.ruff_cache/**',
+  '**/bin/**',
+  '**/obj/**',
+  '**/.terraform/**',
+  '**/.gradle/**',
+  '**/target/**',
   '**/.vitepress/cache/**',
   '**/.vitepress/dist/**',
   '**/*.lock',
@@ -66,7 +135,7 @@ const tokenBudgetNameSchema = z.enum(['small', 'medium', 'large'] satisfies read
   ...TokenBudgetName[]
 ])
 
-const contextPointSchema = z.object({
+const ctxPointSchema = z.object({
   name: z.string().min(1),
   path: z.string().min(1),
   type: z
@@ -91,18 +160,20 @@ const configSchema = z.object({
     })
     .optional(),
 
-  contextPoints: z.array(contextPointSchema).optional(),
+  ctxPoints: z.array(ctxPointSchema).optional(),
 
   targets: z.array(targetNameSchema).min(1).optional(),
   include: z.array(z.string()).optional(),
   exclude: z.array(z.string()).optional(),
-  contextBlocks: z
+  ctxBlocks: z
     .object({
       architecture: z.boolean().optional(),
       conventions: z.boolean().optional(),
       runtime: z.boolean().optional(),
       api: z.boolean().optional(),
       database: z.boolean().optional(),
+      operations: z.boolean().optional(),
+      data: z.boolean().optional(),
       frontend: z.boolean().optional(),
       testing: z.boolean().optional(),
       workflows: z.boolean().optional(),
@@ -146,9 +217,7 @@ const normalizeWorkspace = (w: UserAgentCtxConfig['workspace']): AgentCtxConfig[
   }
 }
 
-const normalizeContextPoints = (
-  points: UserAgentCtxConfig['contextPoints'],
-): AgentCtxConfig['contextPoints'] => {
+const normalizeCtxPoints = (points: UserAgentCtxConfig['ctxPoints']): AgentCtxConfig['ctxPoints'] => {
   const input = points ?? []
 
   return input.map((p) => ({
@@ -166,26 +235,30 @@ const normalizeContextPoints = (
 
 const applyDefaults = (rootDir: string, user: UserAgentCtxConfig): AgentCtxConfig => {
   const workspace = normalizeWorkspace(user.workspace)
+  const ctxPoints = normalizeCtxPoints(user.ctxPoints)
+  const ctxBlocks = {
+    architecture: user.ctxBlocks?.architecture ?? true,
+    conventions: user.ctxBlocks?.conventions ?? true,
+    runtime: user.ctxBlocks?.runtime ?? true,
+    api: user.ctxBlocks?.api ?? true,
+    database: user.ctxBlocks?.database ?? true,
+    operations: user.ctxBlocks?.operations ?? true,
+    data: user.ctxBlocks?.data ?? true,
+    frontend: user.ctxBlocks?.frontend ?? true,
+    testing: user.ctxBlocks?.testing ?? true,
+    workflows: user.ctxBlocks?.workflows ?? true,
+    glossary: user.ctxBlocks?.glossary ?? true,
+  }
 
   const base: Omit<AgentCtxConfig, 'workspace'> = {
     rootDir: user.rootDir ?? rootDir,
     scope: { kind: 'workspace' },
-    contextPoints: normalizeContextPoints(user.contextPoints),
+    ctxPoints,
 
     targets: user.targets ?? ['agents-md', 'claude', 'cursor', 'copilot', 'llms'],
     include: user.include ?? [...DEFAULT_INCLUDE],
     exclude: user.exclude ?? [...DEFAULT_EXCLUDE],
-    contextBlocks: {
-      architecture: user.contextBlocks?.architecture ?? true,
-      conventions: user.contextBlocks?.conventions ?? true,
-      runtime: user.contextBlocks?.runtime ?? true,
-      api: user.contextBlocks?.api ?? true,
-      database: user.contextBlocks?.database ?? true,
-      frontend: user.contextBlocks?.frontend ?? true,
-      testing: user.contextBlocks?.testing ?? true,
-      workflows: user.contextBlocks?.workflows ?? true,
-      glossary: user.contextBlocks?.glossary ?? true,
-    },
+    ctxBlocks,
     budgets: {
       default: user.budgets?.default ?? 'large',
       small: user.budgets?.small ?? 4_000,

@@ -26,14 +26,24 @@ describe('loadConfig', () => {
 
     expect(result.value.targets).toEqual(['claude'])
     expect(result.value.budgets.default).toBe('large')
-    expect(result.value.contextBlocks.architecture).toBe(true)
+    expect(result.value.ctxBlocks.architecture).toBe(true)
     expect(result.value.security.redactSecrets).toBe(true)
+    expect(result.value.include).toEqual(expect.arrayContaining([
+      'pyproject.toml',
+      '**/*.csproj',
+      'Dockerfile*',
+      '.github/workflows/**',
+      'dbt_project.yml',
+    ]))
     expect(result.value.exclude).toEqual(expect.arrayContaining([
       '.agentctx/**',
       '**/.agentctx/**',
       '**/.vitepress/cache/**',
       '**/.vitepress/dist/**',
       '**/dist/**',
+      '**/.venv/**',
+      '**/bin/**',
+      '**/.terraform/**',
     ]))
   })
 

@@ -2,7 +2,7 @@
 
 <div class="docs-hero">
   <span class="docs-kicker">Render layer</span>
-  <h1>Targets turn the shared context-block model into tool-specific instruction files.</h1>
+  <h1>Targets turn the shared CtxBlock model into tool-specific instruction files.</h1>
   <p class="docs-lead">Targets do not scan the repo. They only format the same compiler output into different agent/runtime shapes.</p>
 </div>
 

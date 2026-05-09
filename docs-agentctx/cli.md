@@ -32,13 +32,13 @@
 Creates `agentctx.config.ts` with sensible defaults.
 
 ## build
-Builds **workspace** outputs and (optionally) **context point** outputs.
+Builds **workspace** outputs and (optionally) **CtxPoint** outputs.
 
 Output layout:
 - Workspace:
   - `.agentctx/workspace/context/*.md`
   - `.agentctx/workspace/out/*`
-- Context points:
+- CtxPoints:
   - `.agentctx/points/<point>/context/*.md`
   - `.agentctx/points/<point>/out/*`
 
@@ -47,7 +47,7 @@ Useful flags:
 - `--changed` (skip work when nothing changed)
 - `--dry-run`
 - `--targets agents-md,claude,cursor,copilot,llms`
-- `--point <name>` (build one point)
+- `--point <name>` (build one CtxPoint)
 - `--points a,b,c` (build a subset)
 
 ## sync

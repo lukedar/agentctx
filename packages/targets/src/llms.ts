@@ -23,7 +23,7 @@ export const llmsTarget: TargetAdapter = {
         },
         {
           title: 'CLAUDE.md',
-          summary: 'Claude project context with the same underlying context blocks.',
+          summary: 'Claude project context with the same underlying CtxBlocks.',
           span: 6,
         },
         {

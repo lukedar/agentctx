@@ -1,12 +1,12 @@
 import type {
   AgentCtxConfig,
-  ContextBlockModel,
-  ContextBlockName,
-  ContextGraph,
-  Fact,
-  RenderedContextBlock,
+  CtxBlockModel,
+  CtxBlockName,
+  CtxGraph,
+  RenderedCtxBlock,
   TokenBudgetName,
 } from './types'
+import { createCtxFactIndex } from './ctxBlockFacts'
 
 export const estimateTokens = (text: string): number => Math.ceil(text.length / 4)
 
@@ -27,19 +27,8 @@ const limitList = (items: readonly string[], max = 5): string =>
 const uniqueStrings = (items: readonly string[]): readonly string[] => [...uniq(items)].sort((a, b) => a.localeCompare(b))
 const basename = (filePath: string): string => filePath.split('/').at(-1) ?? filePath
 
-const getFactStrings = (facts: readonly Fact[], kind: Fact['kind'], key: string): readonly string[] => {
-  const values: string[] = []
-  for (const f of facts) {
-    if (f.kind !== kind) continue
-    const v = f.data[key]
-    if (typeof v === 'string' && v.trim()) values.push(v.trim())
-  }
-
-  return [...uniq(values)].sort((a: string, b: string) => a.localeCompare(b))
-}
-
-const FRONTEND_FRAMEWORKS = ['react', 'next', 'angular', 'vite', 'sveltekit', 'nuxt', 'astro', 'remix'] as const
-const API_FRAMEWORKS = ['express', 'fastify', 'nestjs', 'hono', 'next', 'sveltekit', 'nuxt', 'astro', 'remix', 'aspnetcore', 'fastapi', 'django', 'flask'] as const
+const FRONTEND_FRAMEWORKS: readonly string[] = ['react', 'next', 'angular', 'vite', 'sveltekit', 'nuxt', 'astro', 'remix']
+const API_FRAMEWORKS: readonly string[] = ['express', 'fastify', 'nestjs', 'hono', 'next', 'sveltekit', 'nuxt', 'astro', 'remix', 'aspnetcore', 'fastapi', 'django', 'flask']
 
 const filterKnownFrameworks = (frameworks: readonly string[], known: readonly string[]): readonly string[] =>
   frameworks.filter((framework) => known.includes(framework))
@@ -49,7 +38,7 @@ const pickPathsByBasename = (paths: readonly string[], names: readonly string[])
   return paths.filter((filePath) => wanted.has(basename(filePath)))
 }
 
-const contextBlockToTitle = (name: ContextBlockName): string => {
+const ctxBlockToTitle = (name: CtxBlockName): string => {
   switch (name) {
     case 'architecture':
       return 'Architecture'
@@ -61,6 +50,10 @@ const contextBlockToTitle = (name: ContextBlockName): string => {
       return 'API'
     case 'database':
       return 'Database'
+    case 'operations':
+      return 'Operations'
+    case 'data':
+      return 'Data'
     case 'frontend':
       return 'Frontend'
     case 'testing':
@@ -74,7 +67,7 @@ const contextBlockToTitle = (name: ContextBlockName): string => {
   }
 }
 
-const model = (partial: Partial<ContextBlockModel>): ContextBlockModel => ({
+const model = (partial: Partial<CtxBlockModel>): CtxBlockModel => ({
   summary: partial.summary ?? [],
   rules: partial.rules ?? [],
   workflows: partial.workflows ?? [],
@@ -82,46 +75,41 @@ const model = (partial: Partial<ContextBlockModel>): ContextBlockModel => ({
   warnings: partial.warnings ?? [],
 })
 
-export const planContextBlocks = (graph: ContextGraph, config: AgentCtxConfig): readonly RenderedContextBlock[] => {
-  const enabled = (name: ContextBlockName) => Boolean(config.contextBlocks[name])
+export const planCtxBlocks = (graph: CtxGraph, config: AgentCtxConfig): readonly RenderedCtxBlock[] => {
+  const blockConfig = config.ctxBlocks
+  const enabled = (name: CtxBlockName) => Boolean(blockConfig[name])
   const scope = config.scope
   const scopeFrameworks = scope?.kind === 'point' ? [...(scope.frameworks ?? [])].sort((a, b) => a.localeCompare(b)) : []
+  const factIndex = createCtxFactIndex(graph.facts)
 
-  const packageManagers = getFactStrings(graph.facts, 'package-manager', 'name')
-  const frameworks = [...uniq([...getFactStrings(graph.facts, 'framework', 'name'), ...scopeFrameworks])]
+  const packageManagers = factIndex.strings('package-manager', 'name')
+  const frameworks = [...uniq([...factIndex.strings('framework', 'name'), ...scopeFrameworks])]
     .sort((a, b) => a.localeCompare(b))
-  const languages = getFactStrings(graph.facts, 'language', 'name')
-  const testRunners = getFactStrings(graph.facts, 'test-runner', 'name')
-  const envVars = getFactStrings(graph.facts, 'env-var', 'name')
-  const scripts = getFactStrings(graph.facts, 'script', 'name')
-  const conventionTools = getFactStrings(graph.facts, 'convention', 'tool')
-  const runtimes = getFactStrings(graph.facts, 'runtime', 'name')
-  const apiKinds = getFactStrings(graph.facts, 'api', 'name')
-  const dbKinds = getFactStrings(graph.facts, 'database', 'name')
-  const routeKinds = getFactStrings(graph.facts, 'route', 'kind')
+  const languages = factIndex.strings('language', 'name')
+  const testRunners = factIndex.strings('test-runner', 'name')
+  const envVars = factIndex.strings('env-var', 'name')
+  const scripts = factIndex.strings('script', 'name')
+  const conventionTools = factIndex.strings('convention', 'tool')
+  const runtimes = factIndex.strings('runtime', 'name')
+  const apiKinds = factIndex.strings('api', 'name')
+  const dbKinds = factIndex.strings('database', 'name')
+  const operationsKinds = factIndex.strings('operations', 'name')
+  const dataKinds = factIndex.strings('data', 'name')
+  const routeKinds = factIndex.strings('route', 'kind')
 
-  const getPathsFor = (kind: Fact['kind'], key: string, filter?: (f: Fact) => boolean): readonly string[] => {
-    const out: string[] = []
-    for (const f of graph.facts) {
-      if (f.kind !== kind) continue
-      if (filter && !filter(f)) continue
-      const v = f.data[key]
-      if (typeof v === 'string' && v.trim()) out.push(v.trim())
-    }
-    return [...uniq(out)].sort((a, b) => a.localeCompare(b))
-  }
-
-  const configFiles = getPathsFor('convention', 'path')
+  const configFiles = factIndex.paths('convention', 'path')
   const configFilesForTool = (tool: string): readonly string[] =>
-    getPathsFor('convention', 'path', (f) => f.data.tool === tool)
+    factIndex.paths('convention', 'path', (f) => f.data.tool === tool)
 
-  const apiFiles = getPathsFor('api', 'path')
-  const dbFiles = getPathsFor('database', 'path')
-  const routeFiles = getPathsFor('route', 'file')
-  const routePaths = getPathsFor('route', 'path')
+  const apiFiles = factIndex.paths('api', 'path')
+  const dbFiles = factIndex.paths('database', 'path')
+  const operationsFiles = factIndex.paths('operations', 'path')
+  const dataFiles = factIndex.paths('data', 'path')
+  const routeFiles = factIndex.paths('route', 'file')
+  const routePaths = factIndex.paths('route', 'path')
   const runtimeSources = uniqueStrings(
-    graph.facts
-      .filter((fact) => fact.kind === 'runtime' && fact.source.trim())
+    factIndex.byKind('runtime')
+      .filter((fact) => fact.source.trim())
       .map((fact) => fact.source.trim()),
   )
   const frontendConfigFiles = uniqueStrings([
@@ -145,7 +133,7 @@ export const planContextBlocks = (graph: ContextGraph, config: AgentCtxConfig): 
     ]),
   ])
 
-  const models: Partial<Record<ContextBlockName, ContextBlockModel>> = {}
+  const models: Partial<Record<CtxBlockName, CtxBlockModel>> = {}
 
   if (enabled('architecture')) {
     const wsName = config.workspace?.name
@@ -230,7 +218,7 @@ export const planContextBlocks = (graph: ContextGraph, config: AgentCtxConfig): 
     const files = configFiles
       .slice(0, 12)
       .map((p) => {
-        const tool = graph.facts.find((f) => f.kind === 'convention' && f.data.path === p)?.data.tool
+        const tool = factIndex.byKind('convention').find((f) => f.data.path === p)?.data.tool
         const t = typeof tool === 'string' && tool.trim() ? tool.trim() : 'tooling'
         return { path: p, reason: `Project convention/config (${t})` }
       })
@@ -400,6 +388,133 @@ export const planContextBlocks = (graph: ContextGraph, config: AgentCtxConfig): 
     }
   }
 
+  if (enabled('operations') && (operationsKinds.length || operationsFiles.length || scope?.kind === 'point' && scope.type === 'infra')) {
+    const operationsRules: string[] = []
+    const operationsShape: string[] = []
+
+    if (operationsKinds.includes('docker')) {
+      operationsShape.push('Container packaging or local container orchestration detected.')
+      operationsRules.push('Keep image build configuration and runtime assumptions aligned when changing operational behavior.')
+    }
+    if (operationsKinds.includes('terraform')) {
+      operationsShape.push('Infrastructure-as-code definitions detected.')
+      operationsRules.push('Keep infrastructure changes incremental, reviewable, and environment-safe.')
+    }
+    if (operationsKinds.includes('kubernetes') || operationsKinds.includes('helm')) {
+      operationsShape.push('Cluster deployment manifests detected.')
+      operationsRules.push('Keep workload configuration, manifests, and rollout assumptions aligned when changing deployment behavior.')
+    }
+    if (operationsKinds.includes('github-actions')) {
+      operationsShape.push('Automation workflow definitions detected.')
+      operationsRules.push('Keep CI and deployment workflow changes deterministic and scoped to the environments they affect.')
+    }
+    if (operationsKinds.includes('observability')) {
+      operationsShape.push('Observability configuration detected.')
+      operationsRules.push('Update dashboards, alerts, or telemetry definitions alongside operational behavior changes when they share the same scope.')
+    }
+    if (operationsKinds.includes('runbook')) {
+      operationsShape.push('Operational runbook material detected.')
+      operationsRules.push('Keep runbooks aligned with the actual deployment and recovery behavior of the system.')
+    }
+    if (!operationsRules.length) {
+      operationsRules.push('Keep deployment, automation, and operational configuration aligned when changing system behavior.')
+    }
+
+    models.operations = model({
+      summary: [
+        operationsKinds.length ? `Operational surfaces detected: ${operationsKinds.join(', ')}` : 'Operational surfaces detected: (none)',
+        ...(operationsShape.length ? [`Operations implementation shape: ${operationsShape.join(' ')}`] : []),
+        operationsFiles.length ? `Operational artifacts: ${limitList(operationsFiles, 6)}` : 'Operational artifacts: (none detected)',
+      ],
+      rules: uniqueStrings(operationsRules),
+      files: operationsFiles.slice(0, 10).map((filePath) => ({
+        path: filePath,
+        reason: 'Operational artifact',
+      })),
+    })
+  }
+
+  const apiFrameworkPresent = frameworks.some((framework) => API_FRAMEWORKS.includes(framework))
+  const dataPythonShape = runtimes.includes('python') && !apiFrameworkPresent && !filterKnownFrameworks(frameworks, FRONTEND_FRAMEWORKS).length
+
+  if (enabled('data') && (dataKinds.length || dataFiles.length || dataPythonShape)) {
+    const dataRules: string[] = []
+    const dataShape: string[] = []
+    const dataPathsFor = (name: string): readonly string[] =>
+      factIndex.paths('data', 'path', (f) => f.data.name === name)
+
+    const sourcePaths = dataPathsFor('source')
+    const jobPaths = dataPathsFor('job')
+    const qualityPaths = dataPathsFor('quality')
+
+    if (dataKinds.includes('source')) {
+      dataShape.push('Data source contracts detected.')
+      dataRules.push('Keep source definitions, schema contracts, and upstream assumptions aligned when changing ingestion behavior.')
+    }
+    if (dataKinds.includes('job')) {
+      dataShape.push('Scheduled or batch job definitions detected.')
+      dataRules.push('Keep job boundaries, dependencies, and runtime assumptions aligned when changing batch or orchestration behavior.')
+    }
+    if (dataKinds.includes('quality')) {
+      dataShape.push('Data quality checks or validation artifacts detected.')
+      dataRules.push('Keep validation rules and expected data contracts aligned with the actual pipeline shape.')
+    }
+    if (dataKinds.includes('notebook')) {
+      dataShape.push('Notebook or research workflow detected.')
+      dataRules.push('Keep exploratory artifacts and production-facing logic clearly separated when both exist in the same scope.')
+    }
+    if (dataKinds.includes('dbt')) {
+      dataShape.push('Transformation-model project structure detected.')
+      dataRules.push('Keep model logic, project configuration, and data assumptions aligned when changing transformation behavior.')
+    }
+    if (dataKinds.includes('airflow')) {
+      dataShape.push('Scheduled pipeline orchestration detected.')
+      dataRules.push('Keep DAG changes incremental and preserve task ordering and dependency clarity.')
+    }
+    if (dataPythonShape) {
+      dataShape.push('Python data or analysis-oriented runtime detected.')
+      dataRules.push('Preserve reproducibility by keeping dependencies, entrypoints, and data assumptions aligned when changing analysis or batch workflows.')
+    }
+    if (!dataRules.length) {
+      dataRules.push('Keep data pipelines, analysis artifacts, and reproducibility assumptions aligned when changing data-oriented behavior.')
+    }
+
+    models.data = model({
+      summary: [
+        ...(dataPythonShape ? ['Data-oriented Python runtime detected.'] : []),
+        dataKinds.length ? `Data surfaces detected: ${dataKinds.join(', ')}` : 'Data surfaces detected: (none)',
+        ...(dataShape.length ? [`Data implementation shape: ${dataShape.join(' ')}`] : []),
+        dataFiles.length ? `Data artifacts: ${limitList(dataFiles, 6)}` : 'Data artifacts: (none detected)',
+      ],
+      rules: uniqueStrings(dataRules),
+      files: [
+        ...sourcePaths.slice(0, 4).map((filePath) => ({
+          path: filePath,
+          reason: 'Data source or schema contract',
+        })),
+        ...jobPaths.slice(0, 4).map((filePath) => ({
+          path: filePath,
+          reason: 'Data job or pipeline definition',
+        })),
+        ...qualityPaths.slice(0, 4).map((filePath) => ({
+          path: filePath,
+          reason: 'Data quality or validation artifact',
+        })),
+        ...dataFiles.slice(0, 10).map((filePath) => ({
+          path: filePath,
+          reason: 'Data or analysis artifact',
+        })),
+        ...runtimeSources
+          .filter((filePath) => filePath.endsWith('.py'))
+          .slice(0, 4)
+          .map((filePath) => ({
+            path: filePath,
+            reason: 'Python runtime entrypoint',
+          })),
+      ],
+    })
+  }
+
   if (enabled('frontend')) {
     const frontend = filterKnownFrameworks(frameworks, FRONTEND_FRAMEWORKS)
     const frontendScopes = [...graph.apps, ...graph.packages]
@@ -468,20 +583,20 @@ export const planContextBlocks = (graph: ContextGraph, config: AgentCtxConfig): 
     })
   }
 
-  const contextBlocks = Object.entries(models)
-    .map(([name, model]) => ({ name: name as ContextBlockName, model: model as ContextBlockModel }))
+  const ctxBlocks = Object.entries(models)
+    .map(([name, model]) => ({ name: name as CtxBlockName, model: model as CtxBlockModel }))
     .sort((a, b) => a.name.localeCompare(b.name))
 
-  const rendered = contextBlocks.map(({ name, model }) => renderContextBlock(name, model))
+  const rendered = ctxBlocks.map(({ name, model }) => renderCtxBlock(name, model))
 
-  return fitContextBlocksToBudget(rendered, config.budgets.default, config)
+  return fitCtxBlocksToBudget(rendered, config.budgets.default, config)
 }
 
-export const renderContextBlock = (
-  name: ContextBlockName,
-  model: ContextBlockModel,
-): RenderedContextBlock => {
-  const title = contextBlockToTitle(name)
+export const renderCtxBlock = (
+  name: CtxBlockName,
+  model: CtxBlockModel,
+): RenderedCtxBlock => {
+  const title = ctxBlockToTitle(name)
 
   const lines: string[] = [`# ${title}`, '']
 
@@ -516,7 +631,6 @@ export const renderContextBlock = (
     tokenEstimate: estimateTokens(content),
   }
 }
-
 const budgetToMaxTokens = (budget: TokenBudgetName, config: AgentCtxConfig): number => {
   switch (budget) {
     case 'small':
@@ -554,15 +668,15 @@ const trimToTokenBudget = (text: string, maxTokens: number): string => {
   return estimateTokens(candidate) <= maxTokens ? candidate : base
 }
 
-export const fitContextBlocksToBudget = (
-  contextBlocks: readonly RenderedContextBlock[],
+export const fitCtxBlocksToBudget = (
+  ctxBlocks: readonly RenderedCtxBlock[],
   budget: TokenBudgetName,
   config: AgentCtxConfig,
-): readonly RenderedContextBlock[] => {
+): readonly RenderedCtxBlock[] => {
   const maxTokens = budgetToMaxTokens(budget, config)
 
   // Simple deterministic policy: prioritize architecture/conventions/testing/workflows.
-  const priority = (name: ContextBlockName): number => {
+  const priority = (name: CtxBlockName): number => {
     switch (name) {
       case 'architecture':
         return 100
@@ -574,17 +688,21 @@ export const fitContextBlocksToBudget = (
         return 80
       case 'workflows':
         return 70
+      case 'operations':
+        return 65
+      case 'data':
+        return 65
       default:
         return 50
     }
   }
 
-  const sorted = [...contextBlocks].sort((a, b) => {
+  const sorted = [...ctxBlocks].sort((a, b) => {
     const p = priority(b.name) - priority(a.name)
     return p !== 0 ? p : a.name.localeCompare(b.name)
   })
 
-  const selected: RenderedContextBlock[] = []
+  const selected: RenderedCtxBlock[] = []
   let used = 0
 
   for (const s of sorted) {
@@ -595,7 +713,7 @@ export const fitContextBlocksToBudget = (
       continue
     }
 
-    // Try trimming this context block to fit the remaining budget.
+    // Try trimming this CtxBlock to fit the remaining budget.
     const remaining = Math.max(0, maxTokens - used)
     const trimmed = trimToTokenBudget(s.content, remaining)
     if (estimateTokens(trimmed) > 0 && estimateTokens(trimmed) <= remaining) {

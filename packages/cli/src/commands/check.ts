@@ -26,8 +26,8 @@ export const registerCheckCommand = (cli: CAC): void => {
   cli
     .command('check', 'Validate drift and stale synced outputs')
     .option('--cwd <dir>', 'Working directory')
-    .option('--point <name>', 'Check a single context point')
-    .option('--points <list>', 'Comma-separated context point names')
+    .option('--point <name>', 'Check a single CtxPoint')
+    .option('--points <list>', 'Comma-separated CtxPoint names')
     .option('--json', 'Machine-readable output')
     .action(async (flags: any) => {
       const cwd = resolveCwd(flags.cwd)

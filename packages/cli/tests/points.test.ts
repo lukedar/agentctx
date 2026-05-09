@@ -15,7 +15,7 @@ const createWorkspaceConfig = (): AgentCtxConfig => ({
   rootDir: '/repo',
   scope: { kind: 'workspace' },
   workspace: { packageManager: 'pnpm' },
-  contextPoints: [
+  ctxPoints: [
     {
       name: 'UI Package',
       path: 'packages/ui',
@@ -32,12 +32,14 @@ const createWorkspaceConfig = (): AgentCtxConfig => ({
   targets: ['agents-md'],
   include: ['package.json'],
   exclude: ['dist/**'],
-  contextBlocks: {
+  ctxBlocks: {
     architecture: true,
     conventions: true,
     runtime: true,
     api: true,
     database: true,
+    operations: true,
+    data: true,
     frontend: true,
     testing: true,
     workflows: true,
@@ -85,7 +87,7 @@ describe('point helpers', () => {
       frameworks: ['react', 'vite'],
       dependsOn: ['core'],
     })
-    expect(config.contextPoints).toEqual([])
+    expect(config.ctxPoints).toEqual([])
     expect(config.include).toContain('packages/ui/**')
   })
 

@@ -25,6 +25,7 @@ const limitList = (items: readonly string[], max = 5): string =>
   items.length <= max ? items.join(', ') : `${items.slice(0, max).join(', ')}, …`
 
 const uniqueStrings = (items: readonly string[]): readonly string[] => [...uniq(items)].sort((a, b) => a.localeCompare(b))
+const basename = (filePath: string): string => filePath.split('/').at(-1) ?? filePath
 
 const getFactStrings = (facts: readonly Fact[], kind: Fact['kind'], key: string): readonly string[] => {
   const values: string[] = []
@@ -35,6 +36,17 @@ const getFactStrings = (facts: readonly Fact[], kind: Fact['kind'], key: string)
   }
 
   return [...uniq(values)].sort((a: string, b: string) => a.localeCompare(b))
+}
+
+const FRONTEND_FRAMEWORKS = ['react', 'next', 'angular', 'vite', 'sveltekit', 'nuxt', 'astro', 'remix'] as const
+const API_FRAMEWORKS = ['express', 'fastify', 'nestjs', 'hono', 'next', 'sveltekit', 'nuxt', 'astro', 'remix', 'aspnetcore', 'fastapi', 'django', 'flask'] as const
+
+const filterKnownFrameworks = (frameworks: readonly string[], known: readonly string[]): readonly string[] =>
+  frameworks.filter((framework) => known.includes(framework))
+
+const pickPathsByBasename = (paths: readonly string[], names: readonly string[]): readonly string[] => {
+  const wanted = new Set(names)
+  return paths.filter((filePath) => wanted.has(basename(filePath)))
 }
 
 const contextBlockToTitle = (name: ContextBlockName): string => {
@@ -112,6 +124,26 @@ export const planContextBlocks = (graph: ContextGraph, config: AgentCtxConfig): 
       .filter((fact) => fact.kind === 'runtime' && fact.source.trim())
       .map((fact) => fact.source.trim()),
   )
+  const frontendConfigFiles = uniqueStrings([
+    ...pickPathsByBasename(configFiles, [
+      'angular.json',
+      'vite.config.ts',
+      'vite.config.js',
+      'vite.config.mts',
+      'vite.config.mjs',
+      'next.config.js',
+      'next.config.mjs',
+      'next.config.ts',
+      'nuxt.config.ts',
+      'nuxt.config.js',
+      'astro.config.mjs',
+      'astro.config.ts',
+      'svelte.config.js',
+      'svelte.config.ts',
+      'remix.config.js',
+      'remix.config.ts',
+    ]),
+  ])
 
   const models: Partial<Record<ContextBlockName, ContextBlockModel>> = {}
 
@@ -295,26 +327,57 @@ export const planContextBlocks = (graph: ContextGraph, config: AgentCtxConfig): 
   }
 
   if (enabled('api')) {
-    const backendFrameworks = frameworks.filter((f) =>
-      ['express', 'fastify', 'nestjs', 'hono', 'next', 'sveltekit', 'nuxt', 'astro', 'remix', 'aspnetcore', 'fastapi', 'django', 'flask'].includes(f),
-    )
+    const backendFrameworks = filterKnownFrameworks(frameworks, API_FRAMEWORKS)
     if (backendFrameworks.length || apiKinds.length || routePaths.length || routeKinds.length || apiFiles.length || routeFiles.length) {
+      const apiShape: string[] = []
+      const apiRules: string[] = []
+
+      if (backendFrameworks.some((framework) => ['express', 'fastify', 'hono'].includes(framework))) {
+        apiShape.push('Middleware-style request pipeline detected.')
+        apiRules.push('Keep middleware, handler registration, and request validation aligned when changing endpoint behavior.')
+      }
+      if (backendFrameworks.includes('nestjs')) {
+        apiShape.push('Nest-style module and controller structure detected.')
+        apiRules.push('Keep module, controller, provider, and DTO changes aligned when modifying endpoint behavior.')
+      }
+      if (backendFrameworks.includes('aspnetcore')) {
+        apiShape.push('ASP.NET Core application host detected.')
+        apiRules.push('Keep Program.cs, service registration, and mapped routes aligned when changing endpoint behavior.')
+      }
+      if (backendFrameworks.some((framework) => ['fastapi', 'django', 'flask'].includes(framework))) {
+        apiShape.push('Python application or router entrypoint detected.')
+        apiRules.push('Keep application factories, routers, and request or schema models aligned when changing endpoint behavior.')
+      }
+      if (backendFrameworks.some((framework) => ['next', 'sveltekit', 'nuxt', 'astro', 'remix'].includes(framework))) {
+        apiShape.push('Framework-managed route modules detected.')
+        apiRules.push('Keep route modules, data loaders, and response contracts aligned when changing endpoint behavior.')
+      }
+      if (apiFiles.length) {
+        apiRules.push('Prefer updating API specs alongside endpoint changes when spec files exist.')
+      }
+      if (routeFiles.length) {
+        apiRules.push('Keep route contracts and handlers aligned when changing endpoint behavior.')
+      }
+      if (!apiRules.length) {
+        apiRules.push('Use the detected framework and routing markers to trace request flow before making endpoint changes.')
+      }
+
       models.api = model({
         summary: [
           backendFrameworks.length ? `API-related frameworks detected: ${backendFrameworks.join(', ')}` : 'API-related frameworks detected: (none)',
+          ...(apiShape.length ? [`API implementation shape: ${apiShape.join(' ')}`] : []),
           apiKinds.length ? `API artifacts detected: ${apiKinds.join(', ')}` : 'API artifacts detected: (none)',
           routePaths.length ? `Route paths detected: ${routePaths.slice(0, 6).join(', ')}${routePaths.length > 6 ? ', …' : ''}` : 'Route paths detected: (none)',
           routeKinds.length ? `Route conventions detected: ${routeKinds.join(', ')}` : 'Route conventions detected: (none)',
           apiFiles.length ? `Spec files: ${apiFiles.slice(0, 5).join(', ')}${apiFiles.length > 5 ? ', …' : ''}` : 'Spec files: (none)',
         ],
-        rules: apiFiles.length || routeFiles.length
-          ? [
-              'Prefer updating API specs alongside endpoint changes when spec files exist.',
-              'Keep route contracts and handlers aligned when changing endpoint behavior.',
-            ]
-          : ['Use the detected framework and routing markers to trace request flow before making endpoint changes.'],
+        rules: uniqueStrings(apiRules),
         files: [
           ...apiFiles.slice(0, 6).map((p) => ({ path: p, reason: 'API spec/artifact' })),
+          ...runtimeSources
+            .filter((path) => path.endsWith('Program.cs') || path.endsWith('server.ts') || path.endsWith('server.js') || path.endsWith('main.py'))
+            .slice(0, 4)
+            .map((p) => ({ path: p, reason: 'API runtime entrypoint' })),
           ...routeFiles.slice(0, 6).map((p) => ({ path: p, reason: 'Route handler/module' })),
         ],
       })
@@ -338,20 +401,46 @@ export const planContextBlocks = (graph: ContextGraph, config: AgentCtxConfig): 
   }
 
   if (enabled('frontend')) {
-    const frontend = frameworks.filter((f) => ['react', 'next', 'angular', 'vite', 'sveltekit', 'nuxt', 'astro', 'remix'].includes(f))
+    const frontend = filterKnownFrameworks(frameworks, FRONTEND_FRAMEWORKS)
     const frontendScopes = [...graph.apps, ...graph.packages]
       .map((node) => node.name ? `${node.name} (${node.path})` : node.path)
       .sort((a, b) => a.localeCompare(b))
     const configuredFrontend = scope?.kind === 'point'
-      ? (scope.frameworks ?? []).filter((framework) => ['react', 'next', 'angular', 'vite', 'sveltekit', 'nuxt', 'astro', 'remix'].includes(framework))
+      ? filterKnownFrameworks(scope.frameworks ?? [], FRONTEND_FRAMEWORKS)
       : []
 
     if (frontend.length || configuredFrontend.length || (scope?.kind === 'point' && scope.type === 'frontend')) {
+      const frontendShape: string[] = []
+      const frontendRules: string[] = []
+
+      if (frontend.includes('angular')) {
+        frontendShape.push('Angular workspace and component structure detected.')
+        frontendRules.push('Keep components, templates, styles, and DI wiring aligned when changing Angular features.')
+      }
+      if (frontend.includes('react')) {
+        frontendShape.push('Component-driven React UI detected.')
+        frontendRules.push('Keep components, state boundaries, and adjacent route or data-loading code aligned when changing UI behavior.')
+      }
+      if (frontend.includes('vite')) {
+        frontendShape.push('Bundler-led frontend entrypoint detected.')
+      }
+      if (frontend.some((framework) => ['next', 'nuxt', 'sveltekit', 'astro', 'remix'].includes(framework))) {
+        frontendShape.push('Framework-managed routing or app-shell structure detected.')
+        frontendRules.push('Keep route modules, page-level data loading, and UI entrypoints aligned when changing frontend behavior.')
+      }
+      if (frontendConfigFiles.length) {
+        frontendRules.push('Treat frontend config files as part of the application contract when changing build or routing behavior.')
+      }
+      if (!frontendRules.length) {
+        frontendRules.push('Keep frontend entrypoints, routing surfaces, and component boundaries aligned when changing UI behavior.')
+      }
+
       models.frontend = model({
         summary: [
           frontend.length
             ? `Frontend-related frameworks detected: ${frontend.join(', ')}`
             : 'Frontend-related frameworks detected: (none)',
+          ...(frontendShape.length ? [`Frontend implementation shape: ${frontendShape.join(' ')}`] : []),
           ...(routePaths.length ? [`Frontend/API route files detected: ${routePaths.slice(0, 5).join(', ')}${routePaths.length > 5 ? ', …' : ''}`] : []),
           ...(configuredFrontend.length
             ? [`Configured point frameworks: ${configuredFrontend.join(', ')}`]
@@ -359,6 +448,14 @@ export const planContextBlocks = (graph: ContextGraph, config: AgentCtxConfig): 
           frontendScopes.length
             ? `Frontend-relevant scope entries: ${limitList(frontendScopes)}`
             : 'Frontend-relevant scope entries: (none detected)',
+        ],
+        rules: uniqueStrings(frontendRules),
+        files: [
+          ...frontendConfigFiles.slice(0, 6).map((p) => ({ path: p, reason: 'Frontend framework or build config' })),
+          ...routeFiles
+            .filter((path) => path.includes('/app/') || path.includes('/pages/') || path.includes('/routes/'))
+            .slice(0, 6)
+            .map((p) => ({ path: p, reason: 'Frontend route or app module' })),
         ],
       })
     }

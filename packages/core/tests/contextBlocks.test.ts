@@ -82,7 +82,9 @@ describe('planContextBlocks', () => {
     expect(contextBlocks.find((contextBlock) => contextBlock.name === 'architecture')?.content).toContain('Apps in scope: @repo/web (apps/web)')
     expect(contextBlocks.find((contextBlock) => contextBlock.name === 'architecture')?.content).toContain('Internal dependencies: @repo/web -> @repo/shared')
     expect(contextBlocks.find((contextBlock) => contextBlock.name === 'api')?.content).toContain('API-related frameworks detected: express')
+    expect(contextBlocks.find((contextBlock) => contextBlock.name === 'api')?.content).toContain('API implementation shape: Middleware-style request pipeline detected.')
     expect(contextBlocks.find((contextBlock) => contextBlock.name === 'api')?.content).toContain('Route paths detected: /health')
+    expect(contextBlocks.find((contextBlock) => contextBlock.name === 'frontend')?.content).toContain('Frontend implementation shape: Component-driven React UI detected.')
     expect(contextBlocks.find((contextBlock) => contextBlock.name === 'glossary')?.content).toContain('API_KEY')
   })
 
@@ -116,6 +118,7 @@ describe('planContextBlocks', () => {
     expect(contextBlocks.find((contextBlock) => contextBlock.name === 'architecture')?.content).toContain('Point type: frontend')
     expect(contextBlocks.find((contextBlock) => contextBlock.name === 'architecture')?.content).toContain('Point depends on: core')
     expect(contextBlocks.find((contextBlock) => contextBlock.name === 'frontend')?.content).toContain('Configured point frameworks: react, vite')
+    expect(contextBlocks.find((contextBlock) => contextBlock.name === 'frontend')?.content).toContain('Frontend implementation shape: Component-driven React UI detected. Bundler-led frontend entrypoint detected.')
     expect(contextBlocks.find((contextBlock) => contextBlock.name === 'architecture')?.content).toContain('`packages/ui/package.json`: Package/app manifest in scope')
     expect(contextBlocks.find((contextBlock) => contextBlock.name === 'architecture')?.content).not.toContain('`package.json`: Package/app manifest in scope')
   })
@@ -138,7 +141,32 @@ describe('planContextBlocks', () => {
 
     expect(contextBlocks.find((contextBlock) => contextBlock.name === 'runtime')?.content).toContain('Runtimes detected: python')
     expect(contextBlocks.find((contextBlock) => contextBlock.name === 'api')?.content).toContain('API-related frameworks detected: fastapi')
+    expect(contextBlocks.find((contextBlock) => contextBlock.name === 'api')?.content).toContain('API implementation shape: Python application or router entrypoint detected.')
     expect(contextBlocks.find((contextBlock) => contextBlock.name === 'frontend')).toBeUndefined()
+  })
+
+  it('shapes frontend and api blocks for angular and aspnetcore style repos', () => {
+    const graph: ContextGraph = {
+      rootDir: '/repo',
+      facts: [
+        { kind: 'framework', source: 'package.json', confidence: 1, data: { name: 'angular' } },
+        { kind: 'convention', source: 'angular.json', confidence: 1, data: { tool: 'angular-cli', path: 'angular.json' } },
+        { kind: 'runtime', source: 'src/Api/Program.cs', confidence: 1, data: { name: 'dotnet' } },
+        { kind: 'framework', source: 'src/Api/App.csproj', confidence: 1, data: { name: 'aspnetcore' } },
+        { kind: 'route', source: 'src/Api/Program.cs', confidence: 0.9, data: { kind: 'api-module', path: '/health', file: 'src/Api/Program.cs' } },
+      ],
+      apps: [],
+      packages: [],
+      relationships: [],
+      contextBlocks: {},
+    }
+
+    const contextBlocks = planContextBlocks(graph, createConfig())
+
+    expect(contextBlocks.find((contextBlock) => contextBlock.name === 'frontend')?.content).toContain('Frontend implementation shape: Angular workspace and component structure detected.')
+    expect(contextBlocks.find((contextBlock) => contextBlock.name === 'frontend')?.content).toContain('`angular.json`: Frontend framework or build config')
+    expect(contextBlocks.find((contextBlock) => contextBlock.name === 'api')?.content).toContain('API implementation shape: ASP.NET Core application host detected.')
+    expect(contextBlocks.find((contextBlock) => contextBlock.name === 'api')?.content).toContain('`src/Api/Program.cs`: API runtime entrypoint')
   })
 
   it('fits context-block output to the configured budget', () => {

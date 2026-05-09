@@ -1,107 +1,112 @@
 # Dual Agent Runner
 
 <div class="docs-hero">
-  <span class="docs-kicker">Evaluator gate</span>
-  <h1>Use the dual-agent loop to keep changes deterministic and reviewable.</h1>
-  <p class="docs-lead">The Builder makes the change. The Evaluator checks it against the repo’s quality bar. The gate exists to keep iteration visible while work is still in progress.</p>
+  <span class="docs-kicker">Quality loop</span>
+  <h1>Use a two-pass workflow to keep delivery fast, visible, and trustworthy.</h1>
+  <p class="docs-lead">Dual Agent Runner is not just a command. It is a way of working: make the change, evaluate the change, and only then move forward.</p>
 </div>
 
 <div class="docs-grid">
   <div class="docs-card docs-span-6 docs-card--accent">
-    <h3>Builder / Evaluator</h3>
-    <p>One agent implements the task, the other scores the result and flags regressions before they land.</p>
+    <h3>Builder</h3>
+    <p>Implements the change in small, reviewable steps.</p>
   </div>
   <div class="docs-card docs-span-6">
-    <h3>Gate command</h3>
-    <p><code>pnpm da:eval</code> runs typecheck, tests, and build in a deterministic repo-wide pass.</p>
+    <h3>Evaluator</h3>
+    <p>Checks the result against the repo quality bar before progress is accepted.</p>
   </div>
 </div>
 
-## Internal pipeline
+## Why it exists
 
-<img src="/diagrams/dual-agent-pipeline.svg" alt="Dual Agent Runner internal pipeline diagram" />
+AgentCtx changes how a repo is interpreted by tools and agents. That raises the cost of sloppy changes:
+- bad context creates bad downstream decisions
+- hidden regressions waste iteration time
+- unstable outputs make reviews harder
+
+The runner exists to make quality explicit instead of assumed.
+
+## The mindset
 
 <div class="docs-grid">
   <div class="docs-card docs-span-4">
-    <h3>Plan</h3>
-    <p>A task plan defines the ordered steps the runner will execute and evaluate.</p>
+    <h3>Small steps</h3>
+    <p>Break work into narrow changes that can be evaluated quickly.</p>
   </div>
   <div class="docs-card docs-span-4">
-    <h3>Score</h3>
-    <p>The Evaluator scores each step and records the outcome in the step report.</p>
+    <h3>Visible quality</h3>
+    <p>Do not trust progress that has not been checked by the same gate every time.</p>
   </div>
   <div class="docs-card docs-span-4">
-    <h3>Advance</h3>
-    <p>Only a passed step can move forward to the next step in the plan.</p>
+    <h3>Fast feedback</h3>
+    <p>Find drift, breakage, and weak assumptions before they spread through the repo.</p>
   </div>
 </div>
 
-## What the gate enforces
+This is the core loop:
+1. Make a focused change.
+2. Evaluate it with the same deterministic gate.
+3. Fix issues before moving on.
+4. Repeat until the task is done.
 
-The gate is the repo’s default validation path.
+## Step-based work
 
-Run it locally with:
-
-```bash
-pnpm da:eval
-```
-
-That command runs:
-- `pnpm -r typecheck`
-- `pnpm -r test`
-- `pnpm -r build`
-
-The result is a deterministic report that records pass/fail status for the whole repo.
-
-## Step-based execution
-
-For multi-step work, the runner supports a plan file and ordered step execution.
+For larger changes, use the runner as a step gate instead of one final check.
 
 ```bash
 pnpm da:plan:template > my-task.plan.json
 pnpm da:step --plan-file my-task.plan.json
 ```
 
-This workflow:
-- stores state in `.dual-agent-runner/tasks/<taskId>/state.json`
-- writes Builder and Evaluator prompts for the active step
-- evaluates the current step before allowing the next step to run
-- records per-step reports under `.dual-agent-runner/tasks/<taskId>/steps/`
+That workflow keeps the work disciplined:
+- one step is active at a time
+- each step is evaluated before the next one starts
+- reports are written as the task progresses
 
-If a step fails, revise the implementation and rerun the same command. When the step passes, the next invocation advances automatically.
+This keeps long-running work from turning into one large, hard-to-review diff.
+
+## What teams get from it
 
 <div class="docs-grid">
   <div class="docs-card docs-span-4">
-    <h3>Plan</h3>
-    <p>Create a task plan for multi-step work so the runner can evaluate one step at a time.</p>
+    <h3>Better reviews</h3>
+    <p>Changes arrive with a clear quality trail instead of only a claim that they work.</p>
   </div>
   <div class="docs-card docs-span-4">
-    <h3>Implement</h3>
-    <p>The Builder edits the code, while the Evaluator scores each step and flags issues.</p>
+    <h3>Safer iteration</h3>
+    <p>Refactors stay controlled because each step must pass before the next one lands.</p>
   </div>
   <div class="docs-card docs-span-4">
-    <h3>Advance</h3>
-    <p>Only move to the next step after the active one passes.</p>
+    <h3>Higher throughput</h3>
+    <p>Fast feedback reduces rework and keeps failures local to the step that caused them.</p>
   </div>
 </div>
 
-## Runner output
+## Reports and artifacts
 
-The runner writes its repo-wide evaluation report to:
+Repo-wide evaluation reports are written to:
 
 ```text
 .dual-agent-runner/reports/dev-eval.md
-```
-
-It also keeps the JSON report that powers this docs page:
-
-```text
 .dual-agent-runner/reports/dev-eval.json
 ```
 
-## Latest evaluation
+Step-based tasks keep their state under:
 
-<DualAgentMetricsTable />
+```text
+.dual-agent-runner/tasks/<taskId>/
+```
+
+These artifacts make the evaluation path inspectable instead of hidden.
+
+## Recommended operating model
+
+Use this as the default working pattern:
+1. Start with the smallest useful change.
+2. Run `pnpm da:step --plan-file <plan.json>` for planned work, or `pnpm da:eval` for one-off work.
+3. Fix failures immediately.
+4. Advance only when the current step passes.
+5. Let CI rerun the same gate.
 
 ## Local docs endpoint
 
@@ -117,57 +122,4 @@ That enables:
 - `POST /__dar/status`
 - `POST /__dar/eval`
 
-The evaluation endpoint runs `pnpm da:eval` in the repo root and then syncs the latest report into `docs-agentctx/public/dual-agent-runner/dev-eval.json`.
-
-## Where the data comes from
-
-The docs page reads these artifacts:
-- `.dual-agent-runner/reports/dev-eval.json`
-- `.dual-agent-runner/tasks/<taskId>/state.json`
-- `.dual-agent-runner/tasks/<taskId>/steps/*.json`
-
-The docs sync script copies the latest report into:
-- `docs-agentctx/public/dual-agent-runner/dev-eval.json`
-
-This keeps the page deterministic in both `dev` and `build`.
-
-## CI behavior
-
-CI runs the same gate through `pnpm da:eval`.
-
-If the evaluation status is not `PASS`, the workflow fails.
-
-That makes the gate the same in local development and in automation.
-
-<div class="docs-callout" style="margin-top: 1rem;">
-  <h3>Why it matters</h3>
-  <p>AgentCtx changes how a repo is summarized for agents. A bad change can mean worse context and wasted iteration, so the gate stays visible throughout the workflow.</p>
-</div>
-
-## How a team should use it
-
-Recommended loop:
-1. Make a small change.
-2. If the work is part of a planned task, run `pnpm da:step --plan-file <plan.json>`.
-3. Fix any failing step and rerun until it passes.
-4. For one-off changes, run `pnpm da:eval` before pushing.
-5. Let CI rerun the same gate.
-
-## Troubleshooting
-
-If the gate fails, the report usually points to one of three areas:
-- typecheck errors
-- test failures
-- build failures
-
-After fixing the issue, rerun:
-
-```bash
-pnpm da:eval
-```
-
-## Why it matters
-
-AgentCtx changes how a repo is summarized for agents.
-
-That means the cost of a bad change is not just a broken build. It can also mean worse context, worse prompts, and wasted token capacity. The dual-agent runner exists to keep those failures visible while work is still in progress.
+The evaluation endpoint runs `pnpm da:eval` in the repo root and syncs the latest report into `docs-agentctx/public/dual-agent-runner/dev-eval.json`.

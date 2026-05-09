@@ -46,13 +46,11 @@
 </div>
 
 <div class="docs-callout" style="margin-top: 1rem;">
-  <h3>Related terms</h3>
-  <p><code>scope</code> is the current workspace or point view, <code>facts</code> are extracted signals, and the <code>graph</code> is the compiled structure that the context blocks explain.</p>
+  <h3>Pipeline reference</h3>
+  <p>Use <a href="/pipeline">Pipeline</a> for the canonical definitions of scope, facts, graph, targets, sync, and drift.</p>
 </div>
 
-## Build pipeline
-
-<img src="/diagrams/pipeline.svg" alt="AgentCtx pipeline diagram" />
+## Point workflow
 
 <div class="docs-flow">
   <div class="docs-flow__step">

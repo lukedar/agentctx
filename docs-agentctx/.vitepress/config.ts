@@ -94,6 +94,8 @@ export default defineConfig({
     nav: [
       { text: 'Overview', link: '/' },
       { text: 'Architecture', link: '/architecture' },
+      { text: 'Pipeline', link: '/pipeline' },
+      { text: 'Dual Agent Runner', link: '/quality-gate' },
       { text: 'Context Points', link: '/context-points' },
       { text: 'Targets', link: '/targets' },
       { text: 'Config', link: '/config' },
@@ -102,6 +104,8 @@ export default defineConfig({
     sidebar: [
       { text: 'Overview', link: '/' },
       { text: 'Architecture', link: '/architecture' },
+      { text: 'Pipeline', link: '/pipeline' },
+      { text: 'Dual Agent Runner', link: '/quality-gate' },
       { text: 'Context Points', link: '/context-points' },
       { text: 'Targets', link: '/targets' },
       { text: 'Config', link: '/config' },

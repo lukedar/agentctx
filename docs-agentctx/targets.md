@@ -27,3 +27,8 @@
   <h3>Rule of thumb</h3>
   <p>Do not add a target until it has a real renderer and a stable output contract.</p>
 </div>
+
+<div class="docs-callout" style="margin-top: 1rem;">
+  <h3>Pipeline reference</h3>
+  <p>Targets are the render stage of the compiler. Use <a href="/pipeline">Pipeline</a> for the full start-to-finish flow.</p>
+</div>

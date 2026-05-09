@@ -4,7 +4,7 @@
   <span class="docs-kicker">Command surface</span>
   <h1>Build, sync, and check the compiler outputs.</h1>
   <p class="docs-lead">
-    The CLI is the orchestration layer. It resolves scope, calls the compiler pipeline, writes outputs, and validates drift.
+    The CLI is the orchestration layer. It resolves scope, runs the compiler, writes outputs, and validates drift.
   </p>
 </div>
 
@@ -24,8 +24,8 @@
 </div>
 
 <div class="docs-callout" style="margin-top: 1rem;">
-  <h3>Quality gate</h3>
-  <p>This repo also ships a deterministic dual-agent workflow. See <a href="/quality-gate">Dual Agent Runner</a>.</p>
+  <h3>Pipeline reference</h3>
+  <p>Use <a href="/pipeline">Pipeline</a> for the execution order and framework language. This page covers commands only.</p>
 </div>
 
 ## init

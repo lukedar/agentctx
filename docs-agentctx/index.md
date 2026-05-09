@@ -18,46 +18,25 @@
 
 <div class="docs-grid">
   <div class="docs-card docs-span-6 docs-card--accent">
+    <h3>Pipeline</h3>
+    <p>Follow the compiler from config to drift checks, with the framework language defined in one place.</p>
+    <p><a href="/pipeline">Open Pipeline</a></p>
+  </div>
+  <div class="docs-card docs-span-6">
     <h3>Architecture schematic</h3>
-    <p>The code map explains the compiler stages, module boundaries, and why the framework is arranged this way.</p>
+    <p>The code map explains package boundaries, compiler contracts, and why the framework is arranged this way.</p>
     <p><a href="/architecture">Open Architecture</a></p>
   </div>
   <div class="docs-card docs-span-6">
     <h3>Context points</h3>
-    <p>Points let the same compiler run at the workspace level or inside an app/package boundary.</p>
+    <p>Points let the same compiler run at the workspace level or inside an app or package boundary.</p>
     <p><a href="/context-points">Open Context Points</a></p>
   </div>
   <div class="docs-card docs-span-6">
     <h3>Targets</h3>
-    <p>See how the shared context-block model becomes `AGENTS.md`, `CLAUDE.md`, `llms.txt`, and the other shipped outputs.</p>
+    <p>See how the shared context-block model becomes <code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>llms.txt</code>, and the other shipped outputs.</p>
     <p><a href="/targets">Open Targets</a></p>
   </div>
-  <div class="docs-card docs-span-6">
-    <h3>Quickstart</h3>
-    <p><code>pnpm context:build</code> compiles outputs, <code>pnpm context:sync</code> writes them, and <code>pnpm context:check</code> validates drift.</p>
-  </div>
-</div>
-
-## Points vs Blocks
-
-<div class="docs-grid">
-  <div class="docs-card docs-span-6 docs-card--accent">
-    <h3>Context point</h3>
-    <p>A directory boundary selected for scoped generation, such as <code>apps/api</code> or <code>packages/core</code>.</p>
-  </div>
-  <div class="docs-card docs-span-6">
-    <h3>Context block</h3>
-    <p>One thematic slice of generated context for that point, such as architecture, testing, or workflows.</p>
-  </div>
-  <div class="docs-card docs-span-12">
-    <h3>How they relate</h3>
-    <p>A point produces multiple context blocks. Each block references and summarizes the important files for one topic inside that point rather than embedding the whole directory.</p>
-  </div>
-</div>
-
-<div class="docs-callout" style="margin-top: 1rem;">
-  <h3>Other terms worth knowing</h3>
-  <p><code>scope</code> is the current workspace or point view, <code>facts</code> are normalized signals extracted from the repo, <code>graph</code> is the structural model built from those facts, <code>targets</code> are the rendered output formats, and <code>drift</code> is the difference between current repo state and generated context.</p>
 </div>
 
 ## What it does
@@ -101,6 +80,11 @@
     <h3>Check</h3>
     <p><code>pnpm context:check</code> validates drift and stale outputs before a change is considered done.</p>
   </div>
+</div>
+
+<div class="docs-callout" style="margin-top: 1rem;">
+  <h3>Language and pipeline</h3>
+  <p>Use the <a href="/pipeline">Pipeline</a> page for the canonical definitions of context points, context blocks, facts, graph, targets, sync, and drift.</p>
 </div>
 
 ## Principles

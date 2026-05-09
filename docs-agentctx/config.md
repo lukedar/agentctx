@@ -6,6 +6,11 @@
   <p class="docs-lead">`agentctx.config.ts` defines targets, scope behavior, and point boundaries. Everything else is derived from that normalized config.</p>
 </div>
 
+<div class="docs-callout" style="margin-top: 1rem;">
+  <h3>Pipeline reference</h3>
+  <p>Config is the first stage of the compiler. Use <a href="/pipeline">Pipeline</a> for the full execution order and terminology.</p>
+</div>
+
 ## Minimal example
 
 <div class="docs-panel">

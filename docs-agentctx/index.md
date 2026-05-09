@@ -38,12 +38,29 @@
   </div>
 </div>
 
-## What it does
+## Points vs Blocks
 
-<div class="docs-callout" style="margin-bottom: 1rem;">
-  <h3>Terminology</h3>
-  <p>A <code>context point</code> is a directory boundary selected for scoped generation. Each point produces a set of <code>context blocks</code>, and each block summarizes the important files for one topic inside that point.</p>
+<div class="docs-grid">
+  <div class="docs-card docs-span-6 docs-card--accent">
+    <h3>Context point</h3>
+    <p>A directory boundary selected for scoped generation, such as <code>apps/api</code> or <code>packages/core</code>.</p>
+  </div>
+  <div class="docs-card docs-span-6">
+    <h3>Context block</h3>
+    <p>One thematic slice of generated context for that point, such as architecture, testing, or workflows.</p>
+  </div>
+  <div class="docs-card docs-span-12">
+    <h3>How they relate</h3>
+    <p>A point produces multiple context blocks. Each block references and summarizes the important files for one topic inside that point rather than embedding the whole directory.</p>
+  </div>
 </div>
+
+<div class="docs-callout" style="margin-top: 1rem;">
+  <h3>Other terms worth knowing</h3>
+  <p><code>scope</code> is the current workspace or point view, <code>facts</code> are normalized signals extracted from the repo, <code>graph</code> is the structural model built from those facts, <code>targets</code> are the rendered output formats, and <code>drift</code> is the difference between current repo state and generated context.</p>
+</div>
+
+## What it does
 
 <div class="docs-flow">
   <div class="docs-flow__step">

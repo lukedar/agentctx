@@ -45,6 +45,11 @@
   <p>A <code>context point</code> is the directory scope. A point produces multiple <code>context blocks</code>, such as architecture, testing, and workflows. Each block is one thematic slice of context for that point and references the files that matter for that topic.</p>
 </div>
 
+<div class="docs-callout" style="margin-top: 1rem;">
+  <h3>Related terms</h3>
+  <p><code>scope</code> is the current workspace or point view, <code>facts</code> are extracted signals, and the <code>graph</code> is the compiled structure that the context blocks explain.</p>
+</div>
+
 ## Build pipeline
 
 <img src="/diagrams/pipeline.svg" alt="AgentCtx pipeline diagram" />
@@ -120,9 +125,4 @@
     <h3>Dependencies</h3>
     <p><code>dependsOn</code> models explicit point relationships for future affected workflows.</p>
   </div>
-</div>
-
-<div class="docs-callout" style="margin-top: 1rem;">
-  <h3>Dogfooding</h3>
-  <p>This repo uses context points for <code>core</code>, <code>cli</code>, <code>adapters</code>, <code>targets</code>, <code>dual-agent-runner</code>, <code>dual-agent-runner-ui</code>, and <code>docs-agentctx</code>.</p>
 </div>

@@ -5,6 +5,7 @@ import { formatBuildJson } from '../lib/jsonOutput'
 import { log } from '../lib/logger'
 import { resolveCwd } from '../lib/paths'
 import { parsePointFlagList } from '../lib/points'
+import { parseTargetNames } from '../lib/targets'
 
 export const registerBuildCommand = (cli: CAC): void => {
   cli
@@ -18,13 +19,7 @@ export const registerBuildCommand = (cli: CAC): void => {
     .option('--points <list>', 'Comma-separated context point names (plus workspace)')
     .action(async (flags: any) => {
       const cwd = resolveCwd(flags.cwd)
-      const targets =
-        typeof flags.targets === 'string'
-          ? flags.targets
-              .split(',')
-              .map((s: string) => s.trim())
-              .filter(Boolean)
-          : undefined
+      const targets = parseTargetNames(flags.targets)
 
       const pointsRaw = parsePointFlagList(flags)
       const points = pointsRaw.length > 0 ? pointsRaw : undefined
@@ -45,6 +40,6 @@ export const registerBuildCommand = (cli: CAC): void => {
 
       log('success', `Built context (wrote ${result.filesWritten} files) in ${result.durationMs}ms`)
       log('info', `Compiled token estimate: ~${result.tokenEstimate.compiled}`)
-      if (result.points.length > 0) log('info', `Built ${result.points.length} context point(s)`) 
+      if (result.points.length > 0) log('info', `Built ${result.points.length} context point(s)`)
     })
 }

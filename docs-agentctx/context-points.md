@@ -40,6 +40,11 @@
   </div>
 </div>
 
+<div class="docs-callout" style="margin-top: 1rem;">
+  <h3>Point vs block</h3>
+  <p>A <code>context point</code> is the directory scope. A point produces multiple <code>context blocks</code>, such as architecture, testing, and workflows. Each block is one thematic slice of context for that point and references the files that matter for that topic.</p>
+</div>
+
 ## Build pipeline
 
 <img src="/diagrams/pipeline.svg" alt="AgentCtx pipeline diagram" />

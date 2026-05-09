@@ -9,6 +9,7 @@ import { createRepoFileIndex, createScanContext, type AgentCtxConfig, type ScanC
 import { apiDatabaseFilesPlugin } from '../src/plugins/apiDatabaseFiles'
 import { configFilesPlugin } from '../src/plugins/configFiles'
 import { envExamplePlugin } from '../src/plugins/envExample'
+import { frameworkAdapterRegistry, frameworkAdaptersPlugin } from '../src/frameworkAdapters'
 import { frameworksFromPackageJsonPlugin } from '../src/plugins/frameworksFromPackageJson'
 import { packageDependenciesPlugin } from '../src/plugins/packageDependencies'
 import { packageMetadataPlugin } from '../src/plugins/packageMetadata'
@@ -25,7 +26,7 @@ const createConfig = (rootDir: string): AgentCtxConfig => ({
   targets: ['agents-md'],
   include: ['**/*'],
   exclude: [],
-  context: {
+  contextBlocks: {
     architecture: true,
     conventions: true,
     api: true,
@@ -77,6 +78,17 @@ describe('adapter plugins', () => {
     await Promise.all(tempDirs.splice(0).map((dir) => rm(dir, { recursive: true, force: true })))
   })
 
+  it('exposes the framework adapter registry through the compatibility plugin export', () => {
+    expect(frameworksFromPackageJsonPlugin).toBe(frameworkAdaptersPlugin)
+    expect(frameworkAdapterRegistry.map((adapter) => adapter.id)).toEqual(expect.arrayContaining([
+      'runtime-node',
+      'runtime-dotnet',
+      'runtime-python',
+      'framework-react',
+      'framework-angular',
+    ]))
+  })
+
   it('extracts package-manager, framework, test-runner, and script facts from package metadata', async () => {
     const ctx = await buildContext({
       'pnpm-lock.yaml': 'lockfileVersion: 9.0\n',
@@ -109,9 +121,10 @@ describe('adapter plugins', () => {
 
     const frameworks = await frameworksFromPackageJsonPlugin.extract(ctx)
     expect(frameworks).toEqual(expect.arrayContaining([
-      expect.objectContaining({ kind: 'framework', data: { name: 'express' } }),
-      expect.objectContaining({ kind: 'framework', data: { name: 'react' } }),
-      expect.objectContaining({ kind: 'framework', data: { name: 'vite' } }),
+      expect.objectContaining({ kind: 'runtime', data: expect.objectContaining({ name: 'node' }) }),
+      expect.objectContaining({ kind: 'framework', data: expect.objectContaining({ name: 'express' }) }),
+      expect.objectContaining({ kind: 'framework', data: expect.objectContaining({ name: 'react' }) }),
+      expect.objectContaining({ kind: 'framework', data: expect.objectContaining({ name: 'vite' }) }),
     ]))
 
     const runners = await testRunnersFromPackageJsonPlugin.extract(ctx)
@@ -178,5 +191,71 @@ describe('adapter plugins', () => {
     expect(await envExamplePlugin.extract(ctx)).toEqual([])
     expect(await apiDatabaseFilesPlugin.extract(ctx)).toEqual([])
     expect(await routesFromFilesPlugin.extract(ctx)).toEqual([])
+  })
+
+  it('detects angular repos using explicit project markers instead of only dependency lookups', async () => {
+    const ctx = await buildContext({
+      'angular.json': '{ "version": 1 }',
+      'package.json': JSON.stringify({
+        name: 'ng-fixture',
+        dependencies: {
+          '@angular/core': '^18.0.0',
+        },
+        scripts: {
+          start: 'ng serve',
+        },
+      }, null, 2),
+      'src/app/app.component.ts': 'export class AppComponent {}\n',
+    })
+
+    expect(await frameworksFromPackageJsonPlugin.extract(ctx)).toEqual(expect.arrayContaining([
+      expect.objectContaining({ kind: 'runtime', data: expect.objectContaining({ name: 'node' }) }),
+      expect.objectContaining({ kind: 'framework', data: expect.objectContaining({ name: 'angular' }) }),
+    ]))
+  })
+
+  it('detects plain node services as runtime support even without a named web framework', async () => {
+    const ctx = await buildContext({
+      'package.json': JSON.stringify({
+        name: 'node-service',
+        scripts: {
+          start: 'node server.js',
+        },
+      }, null, 2),
+      'server.js': 'console.log("hello")\n',
+    })
+
+    const detections = await frameworksFromPackageJsonPlugin.extract(ctx)
+
+    expect(detections).toContainEqual(
+      expect.objectContaining({ kind: 'runtime', data: expect.objectContaining({ name: 'node' }) }),
+    )
+    expect(detections.find((fact) => fact.kind === 'framework')).toBeUndefined()
+  })
+
+  it('detects dotnet runtime and aspnetcore frameworks from project files', async () => {
+    const ctx = await buildContext({
+      'Fixture.sln': '\n',
+      'src/Fixture.Api/Fixture.Api.csproj': `<Project Sdk="Microsoft.NET.Sdk.Web"></Project>\n`,
+      'src/Fixture.Api/Program.cs': 'var builder = WebApplication.CreateBuilder(args);\n',
+    })
+
+    expect(await frameworksFromPackageJsonPlugin.extract(ctx)).toEqual(expect.arrayContaining([
+      expect.objectContaining({ kind: 'runtime', data: expect.objectContaining({ name: 'dotnet' }) }),
+      expect.objectContaining({ kind: 'framework', data: expect.objectContaining({ name: 'aspnetcore' }) }),
+    ]))
+  })
+
+  it('detects python runtime and framework facts from pyproject-based apps', async () => {
+    const ctx = await buildContext({
+      'pyproject.toml': '[project]\nname = "fixture"\ndependencies = ["fastapi>=0.111.0"]\n',
+      'src/fixture/__init__.py': '__all__ = []\n',
+      'app/main.py': 'from fastapi import FastAPI\napp = FastAPI()\n',
+    })
+
+    expect(await frameworksFromPackageJsonPlugin.extract(ctx)).toEqual(expect.arrayContaining([
+      expect.objectContaining({ kind: 'runtime', data: expect.objectContaining({ name: 'python' }) }),
+      expect.objectContaining({ kind: 'framework', data: expect.objectContaining({ name: 'fastapi' }) }),
+    ]))
   })
 })

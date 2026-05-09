@@ -26,7 +26,7 @@ describe('loadConfig', () => {
 
     expect(result.value.targets).toEqual(['claude'])
     expect(result.value.budgets.default).toBe('large')
-    expect(result.value.context.architecture).toBe(true)
+    expect(result.value.contextBlocks.architecture).toBe(true)
     expect(result.value.security.redactSecrets).toBe(true)
     expect(result.value.exclude).toEqual(expect.arrayContaining([
       '.agentctx/**',

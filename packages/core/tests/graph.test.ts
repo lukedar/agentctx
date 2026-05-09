@@ -10,7 +10,7 @@ const config: AgentCtxConfig = {
   targets: ['agents-md'],
   include: [],
   exclude: [],
-  context: {
+  contextBlocks: {
     architecture: true,
     conventions: true,
     api: true,

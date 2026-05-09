@@ -96,7 +96,7 @@ const configSchema = z.object({
   targets: z.array(targetNameSchema).min(1).optional(),
   include: z.array(z.string()).optional(),
   exclude: z.array(z.string()).optional(),
-  context: z
+  contextBlocks: z
     .object({
       architecture: z.boolean().optional(),
       conventions: z.boolean().optional(),
@@ -174,15 +174,15 @@ const applyDefaults = (rootDir: string, user: UserAgentCtxConfig): AgentCtxConfi
     targets: user.targets ?? ['agents-md', 'claude', 'cursor', 'copilot', 'llms'],
     include: user.include ?? [...DEFAULT_INCLUDE],
     exclude: user.exclude ?? [...DEFAULT_EXCLUDE],
-    context: {
-      architecture: user.context?.architecture ?? true,
-      conventions: user.context?.conventions ?? true,
-      api: user.context?.api ?? true,
-      database: user.context?.database ?? true,
-      frontend: user.context?.frontend ?? true,
-      testing: user.context?.testing ?? true,
-      workflows: user.context?.workflows ?? true,
-      glossary: user.context?.glossary ?? true,
+    contextBlocks: {
+      architecture: user.contextBlocks?.architecture ?? true,
+      conventions: user.contextBlocks?.conventions ?? true,
+      api: user.contextBlocks?.api ?? true,
+      database: user.contextBlocks?.database ?? true,
+      frontend: user.contextBlocks?.frontend ?? true,
+      testing: user.contextBlocks?.testing ?? true,
+      workflows: user.contextBlocks?.workflows ?? true,
+      glossary: user.contextBlocks?.glossary ?? true,
     },
     budgets: {
       default: user.budgets?.default ?? 'large',

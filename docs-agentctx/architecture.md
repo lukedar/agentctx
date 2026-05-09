@@ -68,7 +68,7 @@ That staging is what lets the repo support workspace output and point output wit
 
 The package boundary is intentional:
 - `core` owns the compiler primitives and deterministic transformation logic
-- `adapters` owns repo detectors and metadata extraction
+- `adapters` owns repo detectors, framework adapters, and metadata extraction
 - `targets` owns presentation and output formatting
 - `cli` owns orchestration, file writes, sync, and commands
 - `dual-agent-runner` owns evaluation and iteration control
@@ -87,16 +87,17 @@ Important contracts:
 - `RepoFileIndex` is the filtered, hashed file view
 - `Fact` is a normalized signal from a detector
 - `ContextGraph` is the compiled structural model
-- `RenderedSection` is the rendered context-block output
+- `RenderedContextBlock` is the rendered context-block output
 - `ContextFile` is the final render artifact
 
 Each contract narrows the allowed shape of the data.
 That is how the framework avoids passing opaque objects across layers.
 
-Compatibility note:
-- the user-facing architecture term is now "context block"
-- legacy code names such as `RenderedSection`, `planSections`, `graph.sections`, and `config.context` remain during the transition
-- file paths like `.agentctx/context/*.md` also stay unchanged until a deliberate major-version migration
+Terminology:
+- a context point is a directory boundary selected for scoped context generation
+- a point produces a set of context blocks
+- each context block is one thematic slice of context for that point
+- a block references and summarizes the important files for that topic rather than embedding the whole point
 
 ### Deterministic input, deterministic output
 
@@ -179,6 +180,7 @@ Adapters translate file signals into normalized facts.
 Facts are intentionally small and typed:
 - package metadata
 - framework hints
+- runtime markers
 - route patterns
 - scripts
 - test runners
@@ -189,6 +191,19 @@ Why it matters:
 - a small fact is easier to test than a source parser
 - a small fact is easier to sort deterministically
 - a small fact is easier to redact and persist safely
+
+### Framework adapters inside the fact stage
+
+Framework detection now runs through a dedicated adapter registry rather than one package-json-only plugin.
+
+That layer separates two concerns:
+- generic scanners gather repo signals such as package manifests, project files, scripts, and source markers
+- framework adapters turn those signals into deterministic `framework` and `runtime` facts
+
+The registry model exists to make extension safer:
+- React and Angular stay simple package-based adapters
+- Node, .NET, and Python can use project-file and manifest markers without being forced through `package.json`
+- contributors add one adapter definition instead of editing hidden ordering logic across multiple plugins
 
 ### 5. Graph
 
@@ -207,7 +222,7 @@ Why it matters:
 
 ### 6. Context blocks
 
-Context blocks turn structure into readable developer guidance.
+Context blocks turn point structure into readable developer guidance.
 
 The important rule is that context blocks are not prose essays. They are structured explanations with:
 - summary
@@ -415,7 +430,7 @@ If you want to understand the codebase quickly, read in this order:
 3. `packages/core/src/repoFileIndex.ts`
 4. `packages/adapters/src/index.ts`
 5. `packages/core/src/graph.ts`
-6. `packages/core/src/sections.ts`
+6. `packages/core/src/contextBlocks.ts`
 7. `packages/targets/src/index.ts`
 8. `packages/cli/src/lib/build/build.ts`
 9. `packages/cli/src/lib/sync/sync.ts`
@@ -424,5 +439,5 @@ If you want to understand the codebase quickly, read in this order:
 That order matches the actual runtime flow.
 
 Deferred cleanup:
-- a later major version may rename `sections.ts`, serialized `graph.sections`, and section-based aliases
+- point directories and generated context blocks are the canonical terminology throughout the framework
 - this rollout deliberately stops short of that schema/config break

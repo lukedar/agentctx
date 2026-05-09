@@ -16,7 +16,7 @@ const createConfig = (rootDir: string): AgentCtxConfig => ({
   targets: ['agents-md'],
   include: ['README.md', 'src/**', 'packages/**', 'docs-agentctx/**'],
   exclude: ['src/ignore.ts', '**/.agentctx/**', '**/.vitepress/cache/**', '**/dist/**'],
-  context: {
+  contextBlocks: {
     architecture: true,
     conventions: true,
     api: true,

@@ -7,6 +7,7 @@ import { log } from '../lib/logger'
 import { resolveCwd } from '../lib/paths'
 import { parsePointFlagList, resolveSyncScopes } from '../lib/points'
 import { runSync } from '../lib/sync/sync'
+import { parseTargetNames } from '../lib/targets'
 
 export const registerSyncCommand = (cli: CAC): void => {
   cli
@@ -20,13 +21,7 @@ export const registerSyncCommand = (cli: CAC): void => {
     .option('--json', 'Machine-readable output')
     .action(async (flags: any) => {
       const cwd = resolveCwd(flags.cwd)
-      const targets =
-        typeof flags.targets === 'string'
-          ? flags.targets
-              .split(',')
-              .map((s: string) => s.trim())
-              .filter(Boolean)
-          : undefined
+      const targets = parseTargetNames(flags.targets)
 
       const cfgRes = await loadConfig(cwd)
       if (!cfgRes.ok) throw new Error(cfgRes.error.message)
@@ -70,7 +65,7 @@ export const registerSyncCommand = (cli: CAC): void => {
             process.exitCode = 1
           }
         } else {
-          log('success', `Synced (${aggregate.filesChanged} files updated)`) 
+          log('success', `Synced (${aggregate.filesChanged} files updated)`)
         }
       }
 

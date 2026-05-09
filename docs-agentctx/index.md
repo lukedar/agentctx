@@ -28,9 +28,9 @@
     <p><a href="/context-points">Open Context Points</a></p>
   </div>
   <div class="docs-card docs-span-6">
-    <h3>Quality gate</h3>
-    <p>The dual-agent evaluator keeps changes deterministic, reviewable, and continuously checked.</p>
-    <p><a href="/quality-gate">Open Dual Agent Runner</a></p>
+    <h3>Targets</h3>
+    <p>See how the shared context-block model becomes `AGENTS.md`, `CLAUDE.md`, `llms.txt`, and the other shipped outputs.</p>
+    <p><a href="/targets">Open Targets</a></p>
   </div>
   <div class="docs-card docs-span-6">
     <h3>Quickstart</h3>
@@ -39,6 +39,11 @@
 </div>
 
 ## What it does
+
+<div class="docs-callout" style="margin-bottom: 1rem;">
+  <h3>Terminology</h3>
+  <p>A <code>context point</code> is a directory boundary selected for scoped generation. Each point produces a set of <code>context blocks</code>, and each block summarizes the important files for one topic inside that point.</p>
+</div>
 
 <div class="docs-flow">
   <div class="docs-flow__step">
@@ -100,4 +105,26 @@
     <h3>Metadata-first</h3>
     <p>Prefer manifests and config over full source dumps. The point is to explain the repo, not reproduce it.</p>
   </div>
+</div>
+
+## Security defaults
+
+<div class="docs-grid">
+  <div class="docs-card docs-span-4">
+    <h3>Ignore secret files</h3>
+    <p><code>.env*</code>, keys, and other common secret-bearing files stay out of the scan by default.</p>
+  </div>
+  <div class="docs-card docs-span-4">
+    <h3>Redact suspicious values</h3>
+    <p>Generated outputs redact suspicious token and key patterns before files are written back into the repo.</p>
+  </div>
+  <div class="docs-card docs-span-4">
+    <h3>Keep env names only</h3>
+    <p>Environment variable names can be surfaced as context, but their values are excluded unless you deliberately change the defaults.</p>
+  </div>
+</div>
+
+<div class="docs-callout" style="margin-top: 1rem;">
+  <h3>Drift loop</h3>
+  <p>If <code>agentctx check</code> reports stale outputs, rerun <code>agentctx build && agentctx sync</code>.</p>
 </div>

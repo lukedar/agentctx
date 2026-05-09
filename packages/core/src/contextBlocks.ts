@@ -3,11 +3,8 @@ import type {
   ContextBlockModel,
   ContextBlockName,
   ContextGraph,
-  ContextSection,
-  ContextSectionModel,
   Fact,
   RenderedContextBlock,
-  RenderedSection,
   TokenBudgetName,
 } from './types'
 
@@ -72,7 +69,7 @@ const model = (partial: Partial<ContextBlockModel>): ContextBlockModel => ({
 })
 
 export const planContextBlocks = (graph: ContextGraph, config: AgentCtxConfig): readonly RenderedContextBlock[] => {
-  const enabled = (name: ContextBlockName) => Boolean(config.context[name])
+  const enabled = (name: ContextBlockName) => Boolean(config.contextBlocks[name])
   const scope = config.scope
   const scopeFrameworks = scope?.kind === 'point' ? [...(scope.frameworks ?? [])].sort((a, b) => a.localeCompare(b)) : []
 
@@ -333,9 +330,6 @@ export const planContextBlocks = (graph: ContextGraph, config: AgentCtxConfig): 
   return fitContextBlocksToBudget(rendered, config.budgets.default, config)
 }
 
-export const planSections = (graph: ContextGraph, config: AgentCtxConfig): readonly RenderedSection[] =>
-  planContextBlocks(graph, config)
-
 export const renderContextBlock = (
   name: ContextBlockName,
   model: ContextBlockModel,
@@ -375,9 +369,6 @@ export const renderContextBlock = (
     tokenEstimate: estimateTokens(content),
   }
 }
-
-export const renderSection = (name: ContextSection, model: ContextSectionModel): RenderedSection =>
-  renderContextBlock(name, model)
 
 const budgetToMaxTokens = (budget: TokenBudgetName, config: AgentCtxConfig): number => {
   switch (budget) {
@@ -467,9 +458,3 @@ export const fitContextBlocksToBudget = (
   // Return to stable order by context-block name for rendering.
   return selected.sort((a, b) => a.name.localeCompare(b.name))
 }
-
-export const fitSectionsToBudget = (
-  sections: readonly RenderedSection[],
-  budget: TokenBudgetName,
-  config: AgentCtxConfig,
-): readonly RenderedSection[] => fitContextBlocksToBudget(sections, budget, config)

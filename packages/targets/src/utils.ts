@@ -76,8 +76,7 @@ export const renderSectionHeading = (title: string, note?: string): string =>
     ? `<div class="docs-section-heading"><h2>${escapeHtml(title)}</h2><span class="docs-note">${escapeHtml(note)}</span></div>`
     : `<h2>${escapeHtml(title)}</h2>`
 
-export const getContextBlocks = (input: TargetRenderInput): readonly RenderedContextBlock[] =>
-  input.contextBlocks ?? input.sections ?? []
+export const getContextBlocks = (input: TargetRenderInput): readonly RenderedContextBlock[] => input.contextBlocks
 
 export const findContextBlock = (
   contextBlocks: readonly RenderedContextBlock[],
@@ -93,9 +92,3 @@ export const joinContextBlocks = (
   contextBlocks: readonly RenderedContextBlock[],
   names: readonly ContextBlockName[],
 ): string => names.map((name) => renderContextBlockContent(contextBlocks, name)).join('\n\n')
-
-export const findSection = findContextBlock
-
-export const renderSectionContent = renderContextBlockContent
-
-export const joinSections = joinContextBlocks

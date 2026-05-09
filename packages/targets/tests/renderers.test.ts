@@ -15,7 +15,7 @@ const config: AgentCtxConfig = {
   targets: ['agents-md', 'claude', 'cursor', 'copilot', 'llms'],
   include: [],
   exclude: [],
-  context: {
+  contextBlocks: {
     architecture: true,
     conventions: true,
     api: true,
@@ -48,7 +48,6 @@ const graph: ContextGraph = {
   apps: [],
   packages: [],
   relationships: [],
-  sections: {},
   contextBlocks: {},
 }
 
@@ -60,7 +59,7 @@ const contextBlocks: readonly RenderedContextBlock[] = [
   { name: 'glossary', title: 'Glossary', content: '# Glossary\n\n- TERM\n', tokenEstimate: 5 },
 ]
 
-const input: TargetRenderInput = { config, graph, contextBlocks, sections: contextBlocks }
+const input: TargetRenderInput = { config, graph, contextBlocks }
 
 describe('target renderers', () => {
   it('renders AGENTS.md with context links and generated block markers', async () => {

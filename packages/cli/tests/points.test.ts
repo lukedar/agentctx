@@ -32,7 +32,7 @@ const createWorkspaceConfig = (): AgentCtxConfig => ({
   targets: ['agents-md'],
   include: ['package.json'],
   exclude: ['dist/**'],
-  context: {
+  contextBlocks: {
     architecture: true,
     conventions: true,
     api: true,

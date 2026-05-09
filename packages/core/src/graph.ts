@@ -118,7 +118,6 @@ export const buildGraph = (facts: readonly Fact[], config: AgentCtxConfig): Cont
     apps,
     packages,
     relationships,
-    sections: {},
     contextBlocks: {},
   }
 }

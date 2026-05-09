@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { planContextBlocks, planSections } from '../src/sections'
+import { planContextBlocks } from '../src/contextBlocks'
 import type { AgentCtxConfig, ContextGraph } from '../src/types'
 
 const createConfig = (budget: AgentCtxConfig['budgets']['default'] = 'large'): AgentCtxConfig => ({
@@ -9,7 +9,7 @@ const createConfig = (budget: AgentCtxConfig['budgets']['default'] = 'large'): A
   targets: ['agents-md'],
   include: [],
   exclude: [],
-  context: {
+  contextBlocks: {
     architecture: true,
     conventions: true,
     api: true,
@@ -62,7 +62,6 @@ describe('planContextBlocks', () => {
       relationships: [
         { from: '@repo/web', to: '@repo/shared', type: 'depends-on' },
       ],
-      sections: {},
       contextBlocks: {},
     }
 
@@ -98,7 +97,6 @@ describe('planContextBlocks', () => {
       apps: [],
       packages: [{ id: '@repo/ui', path: 'packages/ui', name: '@repo/ui', kind: 'package' }],
       relationships: [],
-      sections: {},
       contextBlocks: {},
     }
 
@@ -134,7 +132,6 @@ describe('planContextBlocks', () => {
       apps: [],
       packages: [],
       relationships: [],
-      sections: {},
       contextBlocks: {},
     }
 
@@ -142,19 +139,5 @@ describe('planContextBlocks', () => {
     const totalTokens = contextBlocks.reduce((sum, contextBlock) => sum + contextBlock.tokenEstimate, 0)
 
     expect(totalTokens).toBeLessThanOrEqual(20)
-  })
-
-  it('keeps the legacy planSections alias working during the transition', () => {
-    const graph: ContextGraph = {
-      rootDir: '/repo',
-      facts: [],
-      apps: [],
-      packages: [],
-      relationships: [],
-      sections: {},
-      contextBlocks: {},
-    }
-
-    expect(planSections(graph, createConfig())).toEqual(planContextBlocks(graph, createConfig()))
   })
 })

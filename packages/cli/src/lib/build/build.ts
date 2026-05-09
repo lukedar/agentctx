@@ -9,6 +9,7 @@ import {
   type AgentCtxConfig,
   type ContextFile,
   type Fact,
+  type TargetName,
 } from '@agentctx/core'
 import { mvpPlugins } from '@agentctx/adapters'
 import { mvpTargets } from '@agentctx/targets'
@@ -38,7 +39,7 @@ export type BuildOptions = Readonly<{
   cwd: string
   dryRun?: boolean
   changed?: boolean
-  targets?: readonly string[]
+  targets?: readonly TargetName[]
   points?: readonly string[]
 }>
 
@@ -62,7 +63,7 @@ export type BuildResult = Readonly<{
 
 const nowMs = () => Date.now()
 
-const pickTargets = (config: AgentCtxConfig, flags?: readonly string[]): readonly string[] =>
+const pickTargets = (config: AgentCtxConfig, flags?: readonly TargetName[]): readonly TargetName[] =>
   flags && flags.length ? [...flags] : [...config.targets]
 
 const buildScope = async (input: {
@@ -73,7 +74,7 @@ const buildScope = async (input: {
   outDirAbs: string
   dryRun?: boolean
   changed?: boolean
-  targetsOverride?: readonly string[]
+  targetsOverride?: readonly TargetName[]
 }): Promise<BuildScopeResult> => {
   const configHash = hashConfig(input.config)
 
@@ -121,15 +122,13 @@ const buildScope = async (input: {
 
   const renderedFiles: ContextFile[] = []
   for (const name of selectedTargets) {
-    const adapter = (mvpTargets as Record<string, any>)[name]
-    if (!adapter?.render) continue
+    const adapter = mvpTargets[name]
 
-    const files = (await adapter.render({
+    const files = await adapter.render({
       graph,
       contextBlocks,
-      sections: contextBlocks,
       config: input.config,
-    })) as readonly ContextFile[]
+    })
     for (const f of files) renderedFiles.push(f)
   }
 

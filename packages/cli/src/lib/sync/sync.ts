@@ -1,6 +1,8 @@
 import path from 'node:path'
 import { promises as fs } from 'node:fs'
 
+import type { TargetName } from '@agentctx/core'
+
 import { readTextIfExists, writeTextIfChanged } from '../fs'
 import { pointContextDir, pointOutDir, workspaceContextDir, workspaceOutDir } from '../paths'
 import { mergeGeneratedContent } from './generatedBlock'
@@ -13,7 +15,7 @@ export type SyncOptions = Readonly<{
   cwd: string
   dryRun?: boolean
   check?: boolean
-  targets?: readonly string[]
+  targets?: readonly TargetName[]
   scope?: SyncScope
 }>
 
@@ -24,19 +26,19 @@ export type SyncResult = Readonly<{
   messages: readonly string[]
 }>
 
-const shouldIncludePath = (relPath: string, targets?: readonly string[]): boolean => {
+const TARGET_OUTPUT_PATHS: Readonly<Record<TargetName, readonly string[]>> = {
+  'agents-md': ['AGENTS.md'],
+  claude: ['CLAUDE.md'],
+  cursor: ['.cursor/rules/project.mdc'],
+  copilot: ['.github/copilot-instructions.md'],
+  llms: ['llms.txt'],
+}
+
+const shouldIncludePath = (relPath: string, targets?: readonly TargetName[]): boolean => {
   if (!targets || targets.length === 0) return true
 
-  const map: Record<string, readonly string[]> = {
-    'agents-md': ['AGENTS.md'],
-    claude: ['CLAUDE.md'],
-    cursor: ['.cursor/rules/project.mdc'],
-    copilot: ['.github/copilot-instructions.md'],
-    llms: ['llms.txt'],
-  }
-
-  const wanted = targets.flatMap((t) => map[t] ?? [])
-  return wanted.includes(relPath)
+  const wanted = new Set(targets.flatMap((target) => TARGET_OUTPUT_PATHS[target]))
+  return wanted.has(relPath)
 }
 
 const listOutFiles = async (baseOutDir: string): Promise<readonly string[]> => {

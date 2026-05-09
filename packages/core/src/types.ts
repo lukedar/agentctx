@@ -16,7 +16,7 @@ export type TargetName =
   | 'copilot'
   | 'llms'
 
-export type ContextSection =
+export type ContextBlockName =
   | 'architecture'
   | 'conventions'
   | 'api'
@@ -25,8 +25,6 @@ export type ContextSection =
   | 'testing'
   | 'workflows'
   | 'glossary'
-
-export type ContextBlockName = ContextSection
 
 export type TokenBudgetName = 'small' | 'medium' | 'large'
 
@@ -94,7 +92,7 @@ export type AgentCtxConfig = Readonly<{
   targets: readonly TargetName[]
   include: readonly string[]
   exclude: readonly string[]
-  context: Readonly<Record<ContextSection, boolean>>
+  contextBlocks: Readonly<Record<ContextBlockName, boolean>>
   budgets: TokenBudgets
   drift: DriftConfig
   security: SecurityConfig
@@ -155,7 +153,7 @@ export type ImportantFile = Readonly<{
   reason: string
 }>
 
-export type ContextSectionModel = Readonly<{
+export type ContextBlockModel = Readonly<{
   summary: readonly string[]
   rules: readonly string[]
   workflows: readonly string[]
@@ -163,16 +161,13 @@ export type ContextSectionModel = Readonly<{
   warnings: readonly string[]
 }>
 
-export type ContextBlockModel = ContextSectionModel
-
 export type ContextGraph = Readonly<{
   rootDir: string
   facts: readonly Fact[]
   apps: readonly AppNode[]
   packages: readonly PackageNode[]
   relationships: readonly Relationship[]
-  sections: Partial<Record<ContextSection, ContextSectionModel>>
-  contextBlocks?: Partial<Record<ContextBlockName, ContextBlockModel>>
+  contextBlocks: Partial<Record<ContextBlockName, ContextBlockModel>>
 }>
 
 export type RepoFile = Readonly<{
@@ -194,6 +189,40 @@ export type DetectionResult = Readonly<{
   reason?: string
 }>
 
+export type DetectionSignalKind =
+  | 'dependency'
+  | 'script'
+  | 'file'
+  | 'manifest'
+  | 'project-file'
+  | 'source-pattern'
+
+export type DetectionSignal = Readonly<{
+  kind: DetectionSignalKind
+  value: string
+  source: string
+  detail?: string
+}>
+
+export type FrameworkEvidence = Readonly<{
+  signal: DetectionSignal
+  confidence: number
+}>
+
+export type FrameworkDetectionKind = Extract<FactKind, 'framework' | 'runtime'>
+
+export type FrameworkDetection = Readonly<{
+  adapterId: string
+  kind: FrameworkDetectionKind
+  name: string
+  source: string
+  confidence: number
+  evidence: readonly FrameworkEvidence[]
+  data?: Readonly<Record<string, unknown>>
+}>
+
+export type FrameworkAdapterPhase = 'manifest' | 'project'
+
 export type ScanContext = Readonly<{
   rootDir: string
   files: RepoFileIndex
@@ -207,19 +236,24 @@ export type AgentCtxPlugin = Readonly<{
   extract: (ctx: ScanContext) => Promise<readonly Fact[]>
 }>
 
-export type RenderedSection = Readonly<{
-  name: ContextSection
+export type FrameworkAdapter = Readonly<{
+  id: string
+  kind: FrameworkDetectionKind
+  phase: FrameworkAdapterPhase
+  priority: number
+  detect: (ctx: ScanContext) => Promise<readonly FrameworkDetection[]>
+}>
+
+export type RenderedContextBlock = Readonly<{
+  name: ContextBlockName
   title: string
   content: string
   tokenEstimate: number
 }>
 
-export type RenderedContextBlock = RenderedSection
-
 export type TargetRenderInput = Readonly<{
   graph: ContextGraph
-  sections?: readonly RenderedSection[]
-  contextBlocks?: readonly RenderedContextBlock[]
+  contextBlocks: readonly RenderedContextBlock[]
   config: AgentCtxConfig
 }>
 

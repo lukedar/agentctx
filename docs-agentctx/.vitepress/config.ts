@@ -92,26 +92,20 @@ export default defineConfig({
 
   themeConfig: {
     nav: [
-      { text: 'Guide', link: '/' },
+      { text: 'Overview', link: '/' },
       { text: 'Architecture', link: '/architecture' },
       { text: 'Context Points', link: '/context-points' },
-      { text: 'Dual Agent Runner', link: '/quality-gate' },
-      { text: 'CLI', link: '/cli' },
-      { text: 'Config', link: '/config' },
       { text: 'Targets', link: '/targets' },
-      { text: 'Security', link: '/security' },
-      { text: 'Dev Plan', link: '/dev-plan' },
+      { text: 'Config', link: '/config' },
+      { text: 'CLI', link: '/cli' },
     ],
     sidebar: [
       { text: 'Overview', link: '/' },
       { text: 'Architecture', link: '/architecture' },
       { text: 'Context Points', link: '/context-points' },
-      { text: 'Dual Agent Runner', link: '/quality-gate' },
-      { text: 'CLI', link: '/cli' },
-      { text: 'Config', link: '/config' },
       { text: 'Targets', link: '/targets' },
-      { text: 'Security', link: '/security' },
-      { text: 'Dev Plan', link: '/dev-plan' },
+      { text: 'Config', link: '/config' },
+      { text: 'CLI', link: '/cli' },
     ],
   },
 })

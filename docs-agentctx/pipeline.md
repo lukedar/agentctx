@@ -32,7 +32,7 @@ The graph models apps, packages, dependency direction, and context-point relatio
 
 ## 6. Context Planning
 
-The planner selects context files from the registry:
+The planner selects Context Blocks and renders the relevant context files from the registry:
 
 - universal files are always present
 - root files appear at workspace scope

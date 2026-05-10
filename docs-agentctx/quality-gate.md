@@ -17,6 +17,58 @@
   </div>
 </div>
 
+## What the Builder sets
+
+Before a meaningful change, the Builder records the decision it is about to make and the expected effect of that decision.
+
+<div class="docs-grid">
+  <div class="docs-card docs-span-4">
+    <h3>Decision context</h3>
+    <p>Decision, reason, files affected, alternatives considered, and risks.</p>
+  </div>
+  <div class="docs-card docs-span-4">
+    <h3>Expected effects</h3>
+    <p>Performance, token usage, usability, readability, and security.</p>
+  </div>
+  <div class="docs-card docs-span-4">
+    <h3>Task frame</h3>
+    <p>Goal, constraints, success criteria, likely files, and risk level.</p>
+  </div>
+</div>
+
+This gives the Evaluator something concrete to check. The Builder is not only changing files; it is stating what tradeoff it expects the change to make.
+
+## What the Evaluator checks
+
+The Evaluator reviews the Builder decision and implementation against deterministic checks, safety conditions, and score thresholds.
+
+<div class="docs-grid">
+  <div class="docs-card docs-span-4">
+    <h3>Deterministic checks</h3>
+    <p>Typecheck, test, and build must pass before the step is treated as complete.</p>
+  </div>
+  <div class="docs-card docs-span-4">
+    <h3>Blocking conditions</h3>
+    <p>Unsafe changes, secret exposure, needless complexity, non-deterministic output, and excessive dependencies block progress.</p>
+  </div>
+  <div class="docs-card docs-span-4">
+    <h3>Score thresholds</h3>
+    <p>Any score below 3 fails. Average below 4 requires revision. Security or token usage below 4 requires revision.</p>
+  </div>
+</div>
+
+Evaluator score dimensions:
+
+- correctness
+- testability
+- security
+- performance
+- token usage
+- usability
+- readability
+- simplicity
+- maintainability
+
 ## Why it exists
 
 AgentCtx changes how a repo is interpreted by tools and agents. That raises the cost of sloppy changes:
@@ -64,23 +116,6 @@ That workflow keeps the work disciplined:
 - reports are written as the task progresses
 
 This keeps long-running work from turning into one large, hard-to-review diff.
-
-## What teams get from it
-
-<div class="docs-grid">
-  <div class="docs-card docs-span-4">
-    <h3>Better reviews</h3>
-    <p>Changes arrive with a clear quality trail instead of only a claim that they work.</p>
-  </div>
-  <div class="docs-card docs-span-4">
-    <h3>Safer iteration</h3>
-    <p>Refactors stay controlled because each step must pass before the next one lands.</p>
-  </div>
-  <div class="docs-card docs-span-4">
-    <h3>Higher throughput</h3>
-    <p>Fast feedback reduces rework and keeps failures local to the step that caused them.</p>
-  </div>
-</div>
 
 ## Reports and artifacts
 

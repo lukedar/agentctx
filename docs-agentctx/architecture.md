@@ -38,7 +38,7 @@
   </div>
   <div class="docs-card docs-span-4">
     <h3>Context Block</h3>
-    <p>An evidence-backed, task-aware, token-aware operational context unit.</p>
+    <p>An <a href="/context-block">evidence-backed, task-aware, token-aware operational context unit</a>.</p>
   </div>
   <div class="docs-card docs-span-4">
     <h3>Context Surface</h3>
@@ -78,7 +78,7 @@ The mesh helps agents reason about impact. If a shared schema changes, the relev
 
 ### Context Block
 
-A Context Block is the intermediate semantic unit: evidence-backed, task-aware, token-aware, and visibility-aware operational context.
+A <a href="/context-block">Context Block</a> is the intermediate semantic unit: evidence-backed, task-aware, token-aware, and visibility-aware operational context.
 
 Blocks are not raw summaries. They express what matters for a kind of work: security rules, command safety, route shape, dependency boundaries, public APIs, migration rules, or testing expectations.
 
@@ -157,7 +157,8 @@ AgentCtx is designed for deterministic rendering, changed-file checks, token bud
 
 1. [Why AgentCtx](/why-agentctx)
 2. [Pipeline](/pipeline)
-3. [Context Files](/context-files)
-4. [Context Points](/context-points)
-5. [Public-safe Context](/public-safe-context)
-6. [CLI](/cli)
+3. [Context Block](/context-block)
+4. [Context Files](/context-files)
+5. [Context Points](/context-points)
+6. [Public-safe Context](/public-safe-context)
+7. [CLI](/cli)

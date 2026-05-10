@@ -18,8 +18,8 @@ export const registerBuildCommand = (cli: CAC): void => {
     .option('--targets <list>', 'Comma-separated target names')
     .option('--point <name>', 'Build a single CtxPoint (plus workspace)')
     .option('--points <list>', 'Comma-separated CtxPoint names (plus workspace)')
-    .option('--category <list>', 'Comma-separated v2 context file categories')
-    .option('--file <list>', 'Comma-separated v2 context file names')
+    .option('--category <list>', 'Comma-separated context file categories')
+    .option('--file <list>', 'Comma-separated context file names')
     .action(async (flags: any) => {
       const cwd = resolveCwd(flags.cwd)
       const targets = parseTargetNames(flags.targets)

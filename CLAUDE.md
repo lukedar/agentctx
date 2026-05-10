@@ -36,14 +36,13 @@
 - Frameworks: react, vite
 - Workspace: detected
 - Apps in scope: (none detected)
-- Packages in scope: @agentctx/adapters (packages/adapters), @agentctx/core (packages/core), @agentctx/targets (packages/targets), agentctx (packages/cli), agentctx-docs (docs-agentctx-v1), …
+- Packages in scope: @agentctx/adapters (packages/adapters), @agentctx/core (packages/core), @agentctx/targets (packages/targets), agentctx (packages/cli), agentctx-docs (docs-agentctx), …
 - Internal dependencies: @agentctx/adapters -> @agentctx/core, @agentctx/targets -> @agentctx/core, agentctx -> @agentctx/adapters, agentctx -> @agentctx/core, agentctx -> @agentctx/targets, …
 
 ## Important files
 
 - `agentctx.config.ts`: AgentCtx configuration
 - `package.json`: Project manifest and scripts
-- `docs-agentctx-v1/package.json`: Package/app manifest in scope
 - `docs-agentctx/package.json`: Package/app manifest in scope
 - `docs/package.json`: Package/app manifest in scope
 - `packages/adapters/package.json`: Package/app manifest in scope
@@ -51,13 +50,14 @@
 - `packages/core/package.json`: Package/app manifest in scope
 - `packages/dual-agent-runner-ui/package.json`: Package/app manifest in scope
 - `packages/dual-agent-runner/package.json`: Package/app manifest in scope
+- `packages/targets/package.json`: Package/app manifest in scope
 
 # Runtime
 
 ## Summary
 
 - Runtimes detected: node
-- Runtime markers: docs-agentctx-v1/package.json
+- Runtime markers: docs-agentctx/package.json
 
 ## Rules
 
@@ -65,7 +65,7 @@
 
 ## Important files
 
-- `docs-agentctx-v1/package.json`: Runtime manifest or entrypoint
+- `docs-agentctx/package.json`: Runtime manifest or entrypoint
 
 # Frontend
 
@@ -73,7 +73,7 @@
 
 - Frontend-related frameworks detected: react, vite
 - Frontend implementation shape: Component-driven React UI detected. Bundler-led frontend entrypoint detected.
-- Frontend-relevant scope entries: @agentctx/adapters (packages/adapters), @agentctx/core (packages/core), @agentctx/targets (packages/targets), agentctx (packages/cli), agentctx-docs (docs-agentctx-v1), …
+- Frontend-relevant scope entries: @agentctx/adapters (packages/adapters), @agentctx/core (packages/core), @agentctx/targets (packages/targets), agentctx (packages/cli), agentctx-docs (docs-agentctx), …
 
 ## Rules
 

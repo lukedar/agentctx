@@ -1,21 +1,19 @@
 # AgentCtx Docs
 
-Generated instruction output is not the docs source of truth for v2 positioning.
+Generated instruction output is not the docs source of truth for product positioning.
 
 Use the VitePress pages for product documentation:
 
 - `index.md`
 - `why-agentctx.md`
 - `architecture.md`
-- `pipeline.md`
+- `compiler.md`
 - `context-files.md`
 - `context-points.md`
 - `public-safe-context.md`
 - `bench/overview.md`
 - `frameworks/support-matrix.md`
 - `concepts/token-density.md`
-
-The v1 docs snapshot lives in `docs-agentctx-v1/` for comparison only.
 
 <!-- agentctx:start -->
 <div class="docs-hero">

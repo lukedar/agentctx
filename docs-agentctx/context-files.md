@@ -1,16 +1,16 @@
 # Context Files
 
 <div class="docs-hero">
-  <span class="docs-kicker">v2 taxonomy</span>
+  <span class="docs-kicker">Context taxonomy</span>
   <h1>Small focused files instead of one giant context dump.</h1>
   <p class="docs-lead">
-    AgentCtx v2 generates universal context for every scope and adds framework-specific files only when the repo has the signals to justify them.
+    AgentCtx generates universal context for every scope and adds framework-specific files only when the repo has the signals to justify them.
   </p>
 </div>
 
 <div class="docs-callout" style="margin-top: 1rem;">
   <h3>Compatibility</h3>
-  <p>The v2 taxonomy turns repository evidence into operational context files. The docs now lead with context infrastructure: scoped, secure, token-aware context surfaces for AI systems.</p>
+  <p>The context taxonomy turns repository evidence into operational context files. The docs lead with context infrastructure: scoped, secure, token-aware context surfaces for AI systems.</p>
 </div>
 
 ## Universal files

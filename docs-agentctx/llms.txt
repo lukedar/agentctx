@@ -7,15 +7,14 @@ Primary pages:
 - Overview: `/`
 - Why AgentCtx: `/why-agentctx`
 - Architecture: `/architecture`
-- Pipeline: `/pipeline`
+- Framework Overview: `/framework`
+- Compiler: `/compiler`
 - Context files: `/context-files`
 - Context points: `/context-points`
 - Public-safe context: `/public-safe-context`
 - Token density: `/concepts/token-density`
 - Framework support: `/frameworks/support-matrix`
 - Bench overview: `/bench/overview`
-
-Do not treat v1 docs language as the current positioning. The v1 snapshot is preserved separately under `docs-agentctx-v1/` for comparison.
 
 <!-- agentctx:start -->
 <div class="docs-hero">

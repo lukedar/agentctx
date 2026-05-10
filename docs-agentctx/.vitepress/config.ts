@@ -29,6 +29,7 @@ export default defineConfig({
   lang: 'en-US',
   title: 'AgentCtx',
   description: 'Agent context for any repo, any framework, and any agent.',
+  appearance: false,
 
   vite: {
     plugins: [
@@ -91,15 +92,6 @@ export default defineConfig({
   },
 
   themeConfig: {
-    nav: [
-      { text: 'Overview', link: '/' },
-      { text: 'Why AgentCtx', link: '/why-agentctx' },
-      { text: 'Architecture', link: '/architecture' },
-      { text: 'Frameworks', link: '/frameworks/support-matrix' },
-      { text: 'Bench', link: '/bench/overview' },
-      { text: 'Context Files', link: '/context-files' },
-      { text: 'CLI', link: '/cli' },
-    ],
     sidebar: [
       { text: 'Overview', link: '/' },
       { text: 'Why AgentCtx', link: '/why-agentctx' },
@@ -109,13 +101,14 @@ export default defineConfig({
       {
         text: 'Framework',
         items: [
+          { text: 'Framework Overview', link: '/framework' },
+          { text: 'Compiler', link: '/compiler' },
           { text: 'Context Points', link: '/context-points' },
           { text: 'Context Block', link: '/context-block' },
           { text: 'Context Files', link: '/context-files' },
           { text: 'Context Surfaces', link: '/targets' },
           { text: 'Public-Safe Context', link: '/public-safe-context' },
           { text: 'Token Density', link: '/concepts/token-density' },
-          { text: 'Pipeline', link: '/pipeline' },
           { text: 'Framework Support', link: '/frameworks/support-matrix' },
           { text: 'Bench Overview', link: '/bench/overview' },
           { text: 'Dual Agent Runner', link: '/quality-gate' },

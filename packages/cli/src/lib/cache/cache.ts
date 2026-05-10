@@ -6,13 +6,13 @@ import type { Fact, RepoFileIndex } from '@agentctx/core'
 
 import { cacheDir } from '../paths'
 
-export type AgentCtxCacheV1 = Readonly<{
+export type AgentCtxCacheFile = Readonly<{
   version: 1
   configHash: string
   fileHashes: Readonly<Record<string, string>>
 }>
 
-export type CachedFactsV1 = Readonly<{
+export type CachedFactsFile = Readonly<{
   version: 1
   configHash: string
   facts: readonly Fact[]
@@ -30,10 +30,10 @@ const factsPath = (rootDir: string, scopeKey: string) =>
 export const readCacheIndex = async (
   rootDir: string,
   scopeKey = 'workspace',
-): Promise<AgentCtxCacheV1 | undefined> => {
+): Promise<AgentCtxCacheFile | undefined> => {
   try {
     const raw = await fs.readFile(indexPath(rootDir, scopeKey), 'utf8')
-    return JSON.parse(raw) as AgentCtxCacheV1
+    return JSON.parse(raw) as AgentCtxCacheFile
   } catch {
     return undefined
   }
@@ -41,7 +41,7 @@ export const readCacheIndex = async (
 
 export const writeCacheIndex = async (
   rootDir: string,
-  cache: AgentCtxCacheV1,
+  cache: AgentCtxCacheFile,
   scopeKey = 'workspace',
 ): Promise<void> => {
   await fs.mkdir(path.join(cacheDir(rootDir), scopeKey), { recursive: true })
@@ -51,10 +51,10 @@ export const writeCacheIndex = async (
 export const readCachedFacts = async (
   rootDir: string,
   scopeKey = 'workspace',
-): Promise<CachedFactsV1 | undefined> => {
+): Promise<CachedFactsFile | undefined> => {
   try {
     const raw = await fs.readFile(factsPath(rootDir, scopeKey), 'utf8')
-    return JSON.parse(raw) as CachedFactsV1
+    return JSON.parse(raw) as CachedFactsFile
   } catch {
     return undefined
   }
@@ -62,7 +62,7 @@ export const readCachedFacts = async (
 
 export const writeCachedFacts = async (
   rootDir: string,
-  facts: CachedFactsV1,
+  facts: CachedFactsFile,
   scopeKey = 'workspace',
 ): Promise<void> => {
   await fs.mkdir(path.join(cacheDir(rootDir), scopeKey), { recursive: true })
@@ -75,7 +75,7 @@ export const computeFileHashes = (index: RepoFileIndex): Record<string, string> 
   return out
 }
 
-export const getChangedFiles = (prev: AgentCtxCacheV1, current: RepoFileIndex): readonly string[] => {
+export const getChangedFiles = (prev: AgentCtxCacheFile, current: RepoFileIndex): readonly string[] => {
   const changed: string[] = []
   for (const f of current.files) {
     const old = prev.fileHashes[f.path]

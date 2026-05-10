@@ -6,7 +6,7 @@ import { resolveCwd } from '../lib/paths'
 
 export const registerPlanCommand = (cli: CAC): void => {
   cli
-    .command('plan', 'Inspect the v2 context-file generation plan')
+    .command('plan', 'Inspect the context-file generation plan')
     .option('--cwd <dir>', 'Working directory')
     .option('--point <name>', 'Inspect a single CtxPoint')
     .option('--json', 'Machine-readable output')

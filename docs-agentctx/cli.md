@@ -50,11 +50,6 @@
   </div>
 </div>
 
-<div class="docs-callout" style="margin-top: 1rem;">
-  <h3>Pipeline reference</h3>
-  <p>Use <a href="/pipeline">Pipeline</a> for the execution order and framework language. This page covers commands only.</p>
-</div>
-
 ## init
 Creates `agentctx.config.ts` with the framework defaults.
 
@@ -140,7 +135,7 @@ These commands and flags are useful for framework authors, platform teams, and a
 - `--file routes,api`
 
 ### plan
-Inspects the v2 context-file generation plan without writing outputs.
+Inspects the context-file generation plan without writing outputs.
 
 Examples:
 - `agentctx plan`

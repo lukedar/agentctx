@@ -6,7 +6,7 @@ import { resolveCwd } from '../lib/paths'
 
 export const registerExplainCommand = (cli: CAC): void => {
   cli
-    .command('explain', 'Explain why a v2 context file is or is not generated')
+    .command('explain', 'Explain why a context file is or is not generated')
     .option('--cwd <dir>', 'Working directory')
     .option('--point <name>', 'Inspect a single CtxPoint')
     .option('--file <name>', 'Context file name, without .md')

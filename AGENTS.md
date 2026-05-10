@@ -72,14 +72,13 @@
 - Frameworks: react, vite
 - Workspace: detected
 - Apps in scope: (none detected)
-- Packages in scope: @agentctx/adapters (packages/adapters), @agentctx/core (packages/core), @agentctx/targets (packages/targets), agentctx (packages/cli), agentctx-docs (docs-agentctx-v1), …
+- Packages in scope: @agentctx/adapters (packages/adapters), @agentctx/core (packages/core), @agentctx/targets (packages/targets), agentctx (packages/cli), agentctx-docs (docs-agentctx), …
 - Internal dependencies: @agentctx/adapters -> @agentctx/core, @agentctx/targets -> @agentctx/core, agentctx -> @agentctx/adapters, agentctx -> @agentctx/core, agentctx -> @agentctx/targets, …
 
 ## Important files
 
 - `agentctx.config.ts`: AgentCtx configuration
 - `package.json`: Project manifest and scripts
-- `docs-agentctx-v1/package.json`: Package/app manifest in scope
 - `docs-agentctx/package.json`: Package/app manifest in scope
 - `docs/package.json`: Package/app manifest in scope
 - `packages/adapters/package.json`: Package/app manifest in scope
@@ -87,6 +86,7 @@
 - `packages/core/package.json`: Package/app manifest in scope
 - `packages/dual-agent-runner-ui/package.json`: Package/app manifest in scope
 - `packages/dual-agent-runner/package.json`: Package/app manifest in scope
+- `packages/targets/package.json`: Package/app manifest in scope
 
 # Conventions
 

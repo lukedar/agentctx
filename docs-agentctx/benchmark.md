@@ -165,6 +165,7 @@ The largest gains came from scope control. With no context, the agent spent more
 
 The coding benchmark tasks were:
 
+- `easy-frontend-allocation-footer`: frontend research page title change plus instruments footer weight totals.
 - `medium-angular-helper`: frontend-only Angular helper and focused test surface.
 - `medium-dotnet-validation-helper`: backend validation/helper and targeted .NET test surface.
 - `hard-sre-script-hardening`: safer operational script input/path validation.
@@ -186,9 +187,11 @@ Each CtxPoint also has an Easy, Medium, and Complex coding task so teams can com
 
 | Difficulty | Task | Speed | Score | Tokens |
 | --- | --- | ---: | ---: | ---: |
-| Easy | Add a small Angular display helper | 90s -> 38s, 58% faster | 4.0 -> 4.5 | -900 |
+| Easy | Update research allocation title and instruments footer totals | 90s -> 38s, 58% faster | 4.0 -> 4.5 | -900 |
 | Medium | Improve a scoped Angular component state path | 160s -> 70s, 56% faster | 3.6 -> 4.6 | -3,400 |
 | Complex | Implement a multi-file frontend flow refinement | 255s -> 120s, 53% faster | 3.0 -> 4.2 | -6,200 |
+
+The easy frontend case checks whether an agent can find the shared WebLib research page, change the allocation pie chart title, and add deterministic footer totals to the instruments grid without drifting into backend, data, or generated files.
 
 ### Backend
 

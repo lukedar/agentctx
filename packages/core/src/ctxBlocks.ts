@@ -38,6 +38,26 @@ const pickPathsByBasename = (paths: readonly string[], names: readonly string[])
   return paths.filter((filePath) => wanted.has(basename(filePath)))
 }
 
+const includesPathSegment = (filePath: string, segment: string): boolean =>
+  filePath === segment || filePath.startsWith(`${segment}/`) || filePath.includes(`/${segment}/`)
+
+const pickPaths = (paths: readonly string[], predicate: (filePath: string) => boolean): readonly string[] =>
+  uniqueStrings(paths.filter(predicate))
+
+const incomingImportHotspots = (graph: CtxGraph): readonly string[] => {
+  const counts = new Map<string, number>()
+  for (const rel of graph.relationships) {
+    if (rel.type !== 'imports') continue
+    counts.set(rel.to, (counts.get(rel.to) ?? 0) + 1)
+  }
+
+  return [...counts.entries()]
+    .filter(([, count]) => count > 1)
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, 5)
+    .map(([filePath, count]) => `${filePath} (${count} imports)`)
+}
+
 const ctxBlockToTitle = (name: CtxBlockName): string => {
   switch (name) {
     case 'architecture':
@@ -132,6 +152,58 @@ export const planCtxBlocks = (graph: CtxGraph, config: AgentCtxConfig): readonly
       'remix.config.ts',
     ]),
   ])
+  const sourcePaths = uniqueStrings([
+    ...graph.facts.map((fact) => fact.source).filter((source) => source.trim()),
+    ...configFiles,
+    ...apiFiles,
+    ...routeFiles,
+    ...routePaths,
+    ...runtimeSources,
+  ])
+  const frontendEntrypoints = uniqueStrings([
+    ...pickPathsByBasename(sourcePaths, ['App.tsx', 'App.jsx', 'App.ts', 'App.js', 'main.ts', 'main.tsx', 'index.ts', 'index.tsx']),
+    ...sourcePaths.filter((filePath) => filePath.endsWith('/bootstrap.ts') || filePath.endsWith('/bootstrap.tsx')),
+  ])
+  const frontendConfigSurfaceFiles = pickPaths(sourcePaths, (filePath) =>
+    includesPathSegment(filePath, 'config') ||
+    basename(filePath).startsWith('app.config') ||
+    basename(filePath).startsWith('environment.'),
+  )
+  const frontendThemeFiles = pickPaths(sourcePaths, (filePath) =>
+    includesPathSegment(filePath, 'themes') ||
+    filePath.includes('theme') ||
+    filePath.includes('whitelabel') ||
+    filePath.includes('tenant'),
+  )
+  const frontendFlagFiles = pickPaths(sourcePaths, (filePath) =>
+    basename(filePath).toLowerCase().includes('flag') ||
+    filePath.toLowerCase().includes('feature') ||
+    filePath.includes('useFeature'),
+  )
+  const frontendStateFiles = pickPaths(sourcePaths, (filePath) =>
+    includesPathSegment(filePath, 'store') ||
+    includesPathSegment(filePath, 'state') ||
+    filePath.endsWith('.state.ts') ||
+    filePath.endsWith('.actions.ts') ||
+    filePath.endsWith('.selectors.ts') ||
+    filePath.endsWith('.reducer.ts') ||
+    filePath.endsWith('.effects.ts'),
+  )
+  const frontendServiceFiles = pickPaths(sourcePaths, (filePath) =>
+    includesPathSegment(filePath, 'services') ||
+    filePath.endsWith('.service.ts') ||
+    filePath.endsWith('.api.ts') ||
+    filePath.endsWith('.client.ts'),
+  )
+  const frontendTestFiles = pickPaths(sourcePaths, (filePath) =>
+    filePath.endsWith('.spec.ts') ||
+    filePath.endsWith('.test.ts') ||
+    filePath.endsWith('.spec.tsx') ||
+    filePath.endsWith('.test.tsx') ||
+    includesPathSegment(filePath, 'e2e') ||
+    includesPathSegment(filePath, 'tests'),
+  )
+  const importHotspots = incomingImportHotspots(graph)
 
   const models: Partial<Record<CtxBlockName, CtxBlockModel>> = {}
 
@@ -527,10 +599,11 @@ export const planCtxBlocks = (graph: CtxGraph, config: AgentCtxConfig): readonly
     if (frontend.length || configuredFrontend.length || (scope?.kind === 'point' && scope.type === 'frontend')) {
       const frontendShape: string[] = []
       const frontendRules: string[] = []
+      const frontendSignals: string[] = []
 
       if (frontend.includes('angular')) {
         frontendShape.push('Angular workspace and component structure detected.')
-        frontendRules.push('Keep components, templates, styles, and DI wiring aligned when changing Angular features.')
+        frontendRules.push('Keep Angular components, templates, styles, modules/routes, services, DI wiring, and adjacent specs aligned when changing behavior.')
       }
       if (frontend.includes('react')) {
         frontendShape.push('Component-driven React UI detected.')
@@ -542,6 +615,27 @@ export const planCtxBlocks = (graph: CtxGraph, config: AgentCtxConfig): readonly
       if (frontend.some((framework) => ['next', 'nuxt', 'sveltekit', 'astro', 'remix'].includes(framework))) {
         frontendShape.push('Framework-managed routing or app-shell structure detected.')
         frontendRules.push('Keep route modules, page-level data loading, and UI entrypoints aligned when changing frontend behavior.')
+      }
+      if (frontendEntrypoints.length) frontendSignals.push(`entrypoints: ${limitList(frontendEntrypoints, 4)}`)
+      if (routeFiles.length || routePaths.length) frontendSignals.push(`routes: ${limitList([...routeFiles, ...routePaths], 4)}`)
+      if (frontendStateFiles.length) frontendSignals.push(`state/store: ${limitList(frontendStateFiles, 4)}`)
+      if (frontendServiceFiles.length) frontendSignals.push(`services/API clients: ${limitList(frontendServiceFiles, 4)}`)
+      if (frontendConfigSurfaceFiles.length) {
+        frontendSignals.push(`config-driven UI: ${limitList(frontendConfigSurfaceFiles, 4)}`)
+        frontendRules.push('Inspect config-driven UI surfaces before changing downstream components; dashboards, charts, forms, tables, and app config can be the source of visible behavior.')
+      }
+      if (frontendThemeFiles.length) {
+        frontendSignals.push(`themes/tenant wiring: ${limitList(frontendThemeFiles, 4)}`)
+        frontendRules.push('Check theme, tenant, or whitelabel seams before changing styling or client-specific behavior.')
+      }
+      if (frontendFlagFiles.length) {
+        frontendSignals.push(`feature flags: ${limitList(frontendFlagFiles, 4)}`)
+        frontendRules.push('Check feature flags and route gates before assuming a component is mounted for every user.')
+      }
+      if (frontendTestFiles.length) frontendSignals.push(`tests: ${limitList(frontendTestFiles, 4)}`)
+      if (importHotspots.length) {
+        frontendSignals.push(`import hotspots: ${limitList(importHotspots, 4)}`)
+        frontendRules.push('Treat highly imported helpers, selectors, services, and utilities as high-blast-radius files; sample callers before editing them.')
       }
       if (frontendConfigFiles.length) {
         frontendRules.push('Treat frontend config files as part of the application contract when changing build or routing behavior.')
@@ -556,6 +650,7 @@ export const planCtxBlocks = (graph: CtxGraph, config: AgentCtxConfig): readonly
             ? `Frontend-related frameworks detected: ${frontend.join(', ')}`
             : 'Frontend-related frameworks detected: (none)',
           ...(frontendShape.length ? [`Frontend implementation shape: ${frontendShape.join(' ')}`] : []),
+          ...(frontendSignals.length ? [`Frontend change-analysis signals: ${frontendSignals.join('; ')}`] : []),
           ...(routePaths.length ? [`Frontend/API route files detected: ${routePaths.slice(0, 5).join(', ')}${routePaths.length > 5 ? ', …' : ''}`] : []),
           ...(configuredFrontend.length
             ? [`Configured point frameworks: ${configuredFrontend.join(', ')}`]
@@ -566,7 +661,14 @@ export const planCtxBlocks = (graph: CtxGraph, config: AgentCtxConfig): readonly
         ],
         rules: uniqueStrings(frontendRules),
         files: [
+          ...frontendEntrypoints.slice(0, 4).map((p) => ({ path: p, reason: 'Frontend app entrypoint or shell' })),
           ...frontendConfigFiles.slice(0, 6).map((p) => ({ path: p, reason: 'Frontend framework or build config' })),
+          ...frontendConfigSurfaceFiles.slice(0, 6).map((p) => ({ path: p, reason: 'Config-driven UI surface' })),
+          ...frontendThemeFiles.slice(0, 4).map((p) => ({ path: p, reason: 'Theme, tenant, or whitelabel seam' })),
+          ...frontendFlagFiles.slice(0, 4).map((p) => ({ path: p, reason: 'Feature flag or route gate seam' })),
+          ...frontendStateFiles.slice(0, 6).map((p) => ({ path: p, reason: 'Frontend state/store surface' })),
+          ...frontendServiceFiles.slice(0, 6).map((p) => ({ path: p, reason: 'Frontend service or API client surface' })),
+          ...frontendTestFiles.slice(0, 6).map((p) => ({ path: p, reason: 'Frontend test surface' })),
           ...routeFiles
             .filter((path) => path.includes('/app/') || path.includes('/pages/') || path.includes('/routes/'))
             .slice(0, 6)

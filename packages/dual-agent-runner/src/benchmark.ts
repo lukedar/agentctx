@@ -167,17 +167,26 @@ export const createBenchmarkSuiteForRepo = async (repoDir: string): Promise<Benc
     conditions: CONDITION_NAMES,
     tasks: [
       {
-        id: 'easy-docs-workflow',
-        title: 'Find the documentation entrypoint and explain the docs workflow',
+        id: 'easy-frontend-allocation-footer',
+        title: 'Update a research page allocation title and instruments footer',
         difficulty: 'easy',
-        goal: 'Identify the documentation app entrypoint, build tooling, and safe command sequence for editing docs without changing application source code.',
-        expectedFiles: ['Documentation/**', 'Source/Documentation/**', '**/package.json', '**/*.csproj'],
-        forbiddenFiles: ['Source/Database/**', 'Source/Clients/**', 'Data/**'],
-        validationCommands: [],
+        goal: 'On the frontend research page, change the allocation pie chart title to "This is a test" and add an instruments table footer that totals weights by displayed asset class or sector plus the overall weight.',
+        expectedFiles: [
+          'Source/Apps/WebApp/weblib/pages/research/research-base.page.html',
+          'Source/Apps/WebApp/weblib/positions/components/classic-constituents-grid/classic-constituents-grid.component.ts',
+          'Source/Apps/WebApp/weblib/positions/components/classic-constituents-grid/classic-constituents-grid.component.html',
+          'Source/Apps/WebApp/weblib/positions/components/classic-constituents-grid/classic-constituents-grid.spec.ts',
+        ],
+        forbiddenFiles: ['Source/Services/**', 'Source/Database/**', 'Data/**', 'Documentation/images/**'],
+        validationCommands: [
+          'pnpm exec ng test weblib --watch=false --browsers=ChromeHeadless --include=../weblib/pages/research/research-base.page.spec.ts --include=../weblib/positions/components/classic-constituents-grid/classic-constituents-grid.spec.ts',
+        ],
         successRubric: [
-          'Finds the correct documentation directories',
-          'Identifies the relevant build/config files',
-          'Avoids editing application, database, or data scripts',
+          'Finds the shared WebLib research page rather than unrelated app shells',
+          'Updates the allocation chart title in the research allocation section',
+          'Adds deterministic grouped and total weight footer values to the instruments table',
+          'Covers the footer calculation with a focused unit test',
+          'Avoids backend, database, data, and binary/image assets',
         ],
       },
       {

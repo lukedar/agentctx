@@ -28,7 +28,7 @@
   </div>
   <div class="docs-card docs-span-4">
     <h3>Frontend</h3>
-    <p>The UI surface: React, Angular, and app-shell structures when a frontend really exists.</p>
+    <p>The UI surface: React, Angular, app-shell structures, and change-analysis seams when a frontend really exists.</p>
   </div>
   <div class="docs-card docs-span-4">
     <h3>API</h3>
@@ -79,7 +79,7 @@
       <span class="docs-chip">testing</span>
       <span class="docs-chip">workflows</span>
     </div>
-    <p>For UI teams that need the app shape, frontend conventions, and the small set of supporting blocks that matter to shipping interface work.</p>
+    <p>For UI teams that need the app shape, frontend conventions, and the small set of supporting blocks that matter to shipping interface work. The frontend block highlights entrypoints, route gates, state/store files, API clients, config-driven UI, theme or tenant seams, feature flags, tests, and high-blast-radius imports so agents open fewer files before making a code change.</p>
   </div>
   <div class="docs-card docs-span-4 docs-card--accent">
     <h3>Backend</h3>

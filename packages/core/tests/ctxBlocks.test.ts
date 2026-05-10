@@ -197,19 +197,35 @@ describe('planCtxBlocks', () => {
       facts: [
         { kind: 'framework', source: 'package.json', confidence: 1, data: { name: 'angular' } },
         { kind: 'convention', source: 'angular.json', confidence: 1, data: { tool: 'angular-cli', path: 'angular.json' } },
+        { kind: 'convention', source: 'src/App.tsx', confidence: 1, data: { tool: 'app-root', path: 'src/App.tsx' } },
+        { kind: 'convention', source: 'src/config/tables/research.ts', confidence: 1, data: { tool: 'table-config', path: 'src/config/tables/research.ts' } },
+        { kind: 'convention', source: 'src/config/themesConfig.ts', confidence: 1, data: { tool: 'theme-config', path: 'src/config/themesConfig.ts' } },
+        { kind: 'convention', source: 'src/flags.ts', confidence: 1, data: { tool: 'feature-flags', path: 'src/flags.ts' } },
+        { kind: 'convention', source: 'src/store/actions/research.actions.ts', confidence: 1, data: { tool: 'state', path: 'src/store/actions/research.actions.ts' } },
+        { kind: 'api', source: 'src/services/research.service.ts', confidence: 1, data: { name: 'http-client', path: 'src/services/research.service.ts' } },
+        { kind: 'test-runner', source: 'src/pages/research/research.component.spec.ts', confidence: 1, data: { name: 'karma' } },
         { kind: 'runtime', source: 'src/Api/Program.cs', confidence: 1, data: { name: 'dotnet' } },
         { kind: 'framework', source: 'src/Api/App.csproj', confidence: 1, data: { name: 'aspnetcore' } },
         { kind: 'route', source: 'src/Api/Program.cs', confidence: 0.9, data: { kind: 'api-module', path: '/health', file: 'src/Api/Program.cs' } },
       ],
       apps: [],
       packages: [],
-      relationships: [],
+      relationships: [
+        { from: 'src/pages/research/research.component.ts', to: 'src/helpers/format.helper.ts', type: 'imports' },
+        { from: 'src/pages/dashboard/dashboard.component.ts', to: 'src/helpers/format.helper.ts', type: 'imports' },
+      ],
       ctxBlocks: {},
     }
 
     const ctxBlocks = planCtxBlocks(graph, createConfig())
 
     expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'frontend')?.content).toContain('Frontend implementation shape: Angular workspace and component structure detected.')
+    expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'frontend')?.content).toContain('Frontend change-analysis signals:')
+    expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'frontend')?.content).toContain('config-driven UI: src/config/tables/research.ts, src/config/themesConfig.ts')
+    expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'frontend')?.content).toContain('feature flags: src/flags.ts')
+    expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'frontend')?.content).toContain('import hotspots: src/helpers/format.helper.ts (2 imports)')
+    expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'frontend')?.content).toContain('Inspect config-driven UI surfaces before changing downstream components')
+    expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'frontend')?.content).toContain('`src/config/tables/research.ts`: Config-driven UI surface')
     expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'frontend')?.content).toContain('`angular.json`: Frontend framework or build config')
     expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'api')?.content).toContain('API implementation shape: ASP.NET Core application host detected.')
     expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'api')?.content).toContain('`src/Api/Program.cs`: API runtime entrypoint')

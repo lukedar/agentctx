@@ -96,7 +96,7 @@ export default defineConfig({
       { text: 'Why AgentCtx', link: '/why-agentctx' },
       { text: 'Architecture', link: '/architecture' },
       { text: 'Frameworks', link: '/frameworks/support-matrix' },
-      { text: 'Industry Examples', link: '/industry-examples/polyglot-monorepo' },
+      { text: 'Industry Examples', link: '/industry-examples/enterprise-monorepo' },
       { text: 'Bench', link: '/bench/overview' },
       { text: 'Context Files', link: '/context-files' },
       { text: 'CLI', link: '/cli' },
@@ -124,12 +124,12 @@ export default defineConfig({
       {
         text: 'Industry Examples',
         items: [
+          { text: 'Enterprise Monorepo', link: '/industry-examples/enterprise-monorepo' },
           { text: 'Polyglot Monorepo', link: '/industry-examples/polyglot-monorepo' },
           { text: 'CMS Platform', link: '/industry-examples/cms-platform' },
           { text: 'Ecommerce Platform', link: '/industry-examples/ecommerce-platform' },
           { text: 'Internal Developer Platform', link: '/industry-examples/internal-developer-platform' },
           { text: 'API Platform', link: '/industry-examples/api-platform' },
-          { text: 'Enterprise Monorepo', link: '/industry-examples/enterprise-monorepo' },
         ],
       },
     ],

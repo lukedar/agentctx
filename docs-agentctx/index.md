@@ -79,7 +79,7 @@ AgentCtx is not a raw-file dumper, embedding chunker, or generic summarizer. It 
   <div class="docs-card docs-span-4">
     <h3>Industry examples</h3>
     <p>Practical examples for polyglot, CMS, ecommerce, platform, API, startup, and enterprise systems.</p>
-    <p><a href="/industry-examples/polyglot-monorepo">Explore examples</a></p>
+    <p><a href="/industry-examples/enterprise-monorepo">Explore examples</a></p>
   </div>
   <div class="docs-card docs-span-4">
     <h3>CLI</h3>

@@ -12,15 +12,15 @@ An API platform usually includes API services, OpenAPI contracts, SDKs, examples
 
 ## Typical Repository Structure
 
-<div class="docs-panel">
-<pre><code>services/api
+```text
+services/api
 openapi
 sdks/typescript
 sdks/dotnet
 docs
 examples
-packages/contracts</code></pre>
-</div>
+packages/contracts
+```
 
 ## Common AI Context Problems
 
@@ -40,12 +40,12 @@ packages/contracts</code></pre>
 
 ## Example Context Mesh
 
-<div class="docs-panel">
-<pre><code>contracts -> api
+```text
+contracts -> api
 contracts -> sdks
 api -> docs
-sdks -> examples</code></pre>
-</div>
+sdks -> examples
+```
 
 ## Recommended Context Surfaces
 

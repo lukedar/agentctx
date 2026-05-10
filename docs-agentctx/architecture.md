@@ -4,7 +4,7 @@
   <span class="docs-kicker">Compiler architecture</span>
   <h1>A semantic context compiler for software systems.</h1>
   <p class="docs-lead">
-    AgentCtx scans repositories, extracts evidence-backed operational facts, builds a context graph, applies context recipes and visibility policies, then renders context surfaces for AI systems.
+    AgentCtx scans repositories, extracts evidence-backed operational facts, builds a context graph, plans Context Blocks, then renders context files and surfaces for AI systems.
   </p>
 </div>
 
@@ -13,17 +13,20 @@
   <p>AgentCtx is designed for any repo, any framework, and any agent. The compiler stays framework-agnostic while adapters provide framework-specific evidence.</p>
 </div>
 
-## Compiler Pipeline
+## Compiler Model
 
-<div class="docs-panel">
-<pre><code>Source Code + Config + Docs
+```text
+Source Code + Config + Docs
+  -> File Index
   -> Evidence-backed Facts
   -> Context Graph
-  -> Context Recipes
   -> Context Blocks
+  -> Context Files
   -> Context Surfaces
-  -> AI Systems</code></pre>
-</div>
+  -> AI Systems
+```
+
+For the reusable compiler stages, see [Compiler](/compiler).
 
 ## Concepts Overview
 
@@ -68,11 +71,11 @@ The Context Mesh is the relationship model between Context Points. It captures d
 
 Example:
 
-<div class="docs-panel">
-<pre><code>frontend -> api -> database
+```text
+frontend -> api -> database
 worker -> queue -> api
-shared-contracts -> frontend, api, worker</code></pre>
-</div>
+shared-contracts -> frontend, api, worker
+```
 
 The mesh helps agents reason about impact. If a shared schema changes, the relevant question is not only “where is this file used?” It is also “which operational domains consume this contract, and what validation path should change with it?”
 
@@ -101,7 +104,7 @@ Public-safe surfaces exclude sensitive material:
 - future public manifests
 - external docs-crawler outputs
 
-This distinction is central to the v2 architecture. A coding agent inside the repo and an external consumer should not receive the same context.
+This distinction is central to the architecture. A coding agent inside the repo and an external consumer should not receive the same context.
 
 ### Context File
 
@@ -156,9 +159,10 @@ AgentCtx is designed for deterministic rendering, changed-file checks, token bud
 ## Reading Order
 
 1. [Why AgentCtx](/why-agentctx)
-2. [Pipeline](/pipeline)
-3. [Context Block](/context-block)
-4. [Context Files](/context-files)
-5. [Context Points](/context-points)
-6. [Public-safe Context](/public-safe-context)
-7. [CLI](/cli)
+2. [Framework Overview](/framework)
+3. [Compiler](/compiler)
+4. [Context Block](/context-block)
+5. [Context Files](/context-files)
+6. [Context Points](/context-points)
+7. [Public-safe Context](/public-safe-context)
+8. [CLI](/cli)

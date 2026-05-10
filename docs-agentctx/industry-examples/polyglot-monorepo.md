@@ -12,13 +12,13 @@ A typical repo contains an Angular app, .NET API, Node background workers, share
 
 ## Typical Repository Structure
 
-<div class="docs-panel">
-<pre><code>apps/web-angular
+```text
+apps/web-angular
 services/api-dotnet
 workers/jobs-node
 packages/shared-contracts
-infra</code></pre>
-</div>
+infra
+```
 
 ## Common AI Context Problems
 
@@ -38,11 +38,11 @@ infra</code></pre>
 
 ## Example Context Mesh
 
-<div class="docs-panel">
-<pre><code>frontend -> api -> database
+```text
+frontend -> api -> database
 shared-contracts -> frontend, api, worker
-worker -> queue -> api</code></pre>
-</div>
+worker -> queue -> api
+```
 
 ## Recommended Context Surfaces
 

@@ -12,15 +12,15 @@ A CMS often combines an authoring frontend, editor tooling, plugin runtime, APIs
 
 ## Typical Repository Structure
 
-<div class="docs-panel">
-<pre><code>apps/admin
+```text
+apps/admin
 packages/editor
 packages/plugins
 services/content-api
 workers/publishing
 schemas
-docs</code></pre>
-</div>
+docs
+```
 
 ## Common AI Context Problems
 
@@ -42,12 +42,12 @@ docs</code></pre>
 
 ## Example Context Mesh
 
-<div class="docs-panel">
-<pre><code>editor -> plugins
+```text
+editor -> plugins
 frontend -> api -> schemas
 workers -> schemas
-permissions -> api, editor</code></pre>
-</div>
+permissions -> api, editor
+```
 
 ## Recommended Context Surfaces
 

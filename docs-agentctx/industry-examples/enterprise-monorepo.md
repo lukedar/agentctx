@@ -12,15 +12,15 @@ Enterprise repos combine applications, services, shared packages, contracts, inf
 
 ## Typical Repository Structure
 
-<div class="docs-panel">
-<pre><code>apps
+```text
+apps
 services
 packages
 workers
 infra
 data
-docs</code></pre>
-</div>
+docs
+```
 
 ## Common AI Context Problems
 
@@ -41,12 +41,12 @@ docs</code></pre>
 
 ## Example Context Mesh
 
-<div class="docs-panel">
-<pre><code>shared-contracts -> apps, services, workers
+```text
+shared-contracts -> apps, services, workers
 platform -> apps, services
 infra -> deployments
-data -> services, analytics</code></pre>
-</div>
+data -> services, analytics
+```
 
 ## Recommended Context Surfaces
 

@@ -10,9 +10,9 @@
 
 ## The Current Flow
 
-<div class="docs-panel">
-<pre><code>repository -> giant prompt / raw context dump -> agent -> code change</code></pre>
-</div>
+```text
+repository -> giant prompt / raw context dump -> agent -> code change
+```
 
 This forces AI systems to repeatedly rediscover:
 
@@ -28,13 +28,13 @@ The result is token waste, inconsistent understanding, hallucinated architecture
 
 ## The AgentCtx Flow
 
-<div class="docs-panel">
-<pre><code>repository
+```text
+repository
   -> semantic context compiler
   -> operational context infrastructure
   -> task-aware context surfaces
-  -> autonomous engineering systems</code></pre>
-</div>
+  -> autonomous engineering systems
+```
 
 AgentCtx turns repository understanding into compiled infrastructure. Agents consume structured context instead of reconstructing it from scratch.
 

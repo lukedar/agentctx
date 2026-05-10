@@ -12,14 +12,14 @@ An ecommerce repo typically contains storefront UI, checkout flows, payment inte
 
 ## Typical Repository Structure
 
-<div class="docs-panel">
-<pre><code>apps/storefront
+```text
+apps/storefront
 services/checkout
 services/payments
 services/inventory
 workers/orders
-packages/auth</code></pre>
-</div>
+packages/auth
+```
 
 ## Common AI Context Problems
 
@@ -40,12 +40,12 @@ packages/auth</code></pre>
 
 ## Example Context Mesh
 
-<div class="docs-panel">
-<pre><code>frontend -> checkout -> payments
+```text
+frontend -> checkout -> payments
 checkout -> inventory
 orders -> inventory
-auth -> frontend, checkout, payments</code></pre>
-</div>
+auth -> frontend, checkout, payments
+```
 
 ## Recommended Context Surfaces
 

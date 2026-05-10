@@ -12,14 +12,14 @@ An internal developer platform may include CI templates, deployment workflows, e
 
 ## Typical Repository Structure
 
-<div class="docs-panel">
-<pre><code>ci
+```text
+ci
 deployments
 observability
 services/internal-api
 infra
-docs</code></pre>
-</div>
+docs
+```
 
 ## Common AI Context Problems
 
@@ -39,12 +39,12 @@ docs</code></pre>
 
 ## Example Context Mesh
 
-<div class="docs-panel">
-<pre><code>ci -> deployments
+```text
+ci -> deployments
 deployments -> infra
 internal-api -> observability
-infra -> observability</code></pre>
-</div>
+infra -> observability
+```
 
 ## Recommended Context Surfaces
 

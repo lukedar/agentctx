@@ -41,17 +41,18 @@
 
 ## Compiler Model
 
-<div class="docs-panel">
-<pre><code>source code + config + docs
+```text
+source code + config + docs
+  -> file index
   -> evidence-backed facts
   -> context graph
-  -> context recipes
   -> context blocks
+  -> context files
   -> context surfaces
-  -> AI systems</code></pre>
-</div>
+  -> AI systems
+```
 
-AgentCtx is not a raw-file dumper, embedding chunker, or generic summarizer. It is a semantic compiler for operational context.
+AgentCtx is not a raw-file dumper, embedding chunker, or generic summarizer. It is a semantic compiler for operational context. See [Compiler](/compiler) for the reusable stages.
 
 ## Start Here
 
@@ -62,8 +63,13 @@ AgentCtx is not a raw-file dumper, embedding chunker, or generic summarizer. It 
     <p><a href="/why-agentctx">Read the argument</a></p>
   </div>
   <div class="docs-card docs-span-4">
+    <h3>Framework overview</h3>
+    <p>The reusable parts of AgentCtx: compiler, Context Points, Context Blocks, surfaces, safety, and evaluation.</p>
+    <p><a href="/framework">Read the overview</a></p>
+  </div>
+  <div class="docs-card docs-span-4">
     <h3>Context files</h3>
-    <p>The v2 taxonomy for universal, framework-specific, safety, and public-safe context.</p>
+    <p>The taxonomy for universal, framework-specific, safety, and public-safe context.</p>
     <p><a href="/context-files">Explore the taxonomy</a></p>
   </div>
   <div class="docs-card docs-span-4">

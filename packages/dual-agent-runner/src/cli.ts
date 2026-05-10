@@ -6,6 +6,7 @@ import { renderRunReportMarkdown } from './report'
 import { createDefaultDecisionRecord, createDefaultTask, createGateEvaluation, runDeterministicChecks } from './qualityGate'
 import { createTaskPlanTemplate, runTaskPlanStep } from './taskRunner'
 import type { RunnerTask } from './types'
+import { prepareBenchmarkRun, rebuildBenchmarkReport } from './benchmark'
 
 const parseArgs = (argv: readonly string[]): {
   cmd: string
@@ -18,6 +19,13 @@ const parseArgs = (argv: readonly string[]): {
   out: string | undefined
   outJson: string | undefined
   outDir: string | undefined
+  repo: string | undefined
+  ctxPoint: string | undefined
+  ctxBlock: string | undefined
+  ctxFile: string | undefined
+  taskName: string | undefined
+  taskPrompt: string | undefined
+  runDir: string | undefined
   check: boolean
 } => {
   const [cmd = 'help', maybeSubcmd, ...rest] = argv
@@ -34,6 +42,13 @@ const parseArgs = (argv: readonly string[]): {
     else if (a === '--out') out.out = rest[++i] ?? ''
     else if (a === '--out-json') out['out-json'] = rest[++i] ?? ''
     else if (a === '--out-dir') out['out-dir'] = rest[++i] ?? ''
+    else if (a === '--repo') out.repo = rest[++i] ?? ''
+    else if (a === '--ctx-point') out['ctx-point'] = rest[++i] ?? ''
+    else if (a === '--ctx-block') out['ctx-block'] = rest[++i] ?? ''
+    else if (a === '--ctx-file') out['ctx-file'] = rest[++i] ?? ''
+    else if (a === '--task-name') out['task-name'] = rest[++i] ?? ''
+    else if (a === '--task-prompt') out['task-prompt'] = rest[++i] ?? ''
+    else if (a === '--run-dir') out['run-dir'] = rest[++i] ?? ''
   }
 
   const norm = (v: unknown): string | undefined => (typeof v === 'string' && v.trim() ? v.trim() : undefined)
@@ -49,13 +64,20 @@ const parseArgs = (argv: readonly string[]): {
     out: norm(out.out),
     outJson: norm(out['out-json']),
     outDir: norm(out['out-dir']),
+    repo: norm(out.repo),
+    ctxPoint: norm(out['ctx-point']),
+    ctxBlock: norm(out['ctx-block']),
+    ctxFile: norm(out['ctx-file']),
+    taskName: norm(out['task-name']),
+    taskPrompt: norm(out['task-prompt']),
+    runDir: norm(out['run-dir']),
     check: Boolean(out.check),
   }
 }
 
 const help = (): void => {
   // eslint-disable-next-line no-console
-  console.log(`dual-agent-runner\n\nUsage:\n  dar eval [--cwd <dir>] [--task-id <id>] [--task-file <json>] [--out <file.md>] [--out-json <file.json>] [--check]\n  dar task template\n  dar plan template\n  dar plan eval --plan-file <json> [--step <id>] [--cwd <dir>] [--out-dir <dir>] [--check]\n  dar prompt\n\nCommands:\n  eval                 Run deterministic evaluation gate (typecheck/test/build) + write markdown & JSON reports\n  task template        Print a RunnerTask JSON template to stdout\n  plan template        Print a RunnerTaskPlan JSON template to stdout\n  plan eval            Evaluate the next or named task-plan step and persist step reports/state\n  prompt               Print the reusable dual-agent execution prompt template\n`)
+  console.log(`dual-agent-runner\n\nUsage:\n  dar eval [--cwd <dir>] [--task-id <id>] [--task-file <json>] [--out <file.md>] [--out-json <file.json>] [--check]\n  dar task template\n  dar plan template\n  dar plan eval --plan-file <json> [--step <id>] [--cwd <dir>] [--out-dir <dir>] [--check]\n  dar benchmark ctxblock --repo <dir> --ctx-block <name> --task-name <name> --task-prompt <text> [--ctx-point <name>] [--ctx-file <file>] [--out-dir <dir>]\n  dar benchmark report --run-dir <dir>\n  dar prompt\n\nCommands:\n  eval                 Run deterministic evaluation gate (typecheck/test/build) + write markdown & JSON reports\n  task template        Print a RunnerTask JSON template to stdout\n  plan template        Print a RunnerTaskPlan JSON template to stdout\n  plan eval            Evaluate the next or named task-plan step and persist step reports/state\n  benchmark ctxblock   Prepare no-context vs AgentCtx CtxBlock run packs\n  benchmark report     Rebuild a benchmark report from filled result files\n  prompt               Print the reusable dual-agent execution prompt template\n`)
 }
 
 const ensureDir = async (dir: string): Promise<void> => {
@@ -114,6 +136,44 @@ const main = async (): Promise<void> => {
       `Step ${result.step.id} status: ${result.evaluation.status.toUpperCase()} (avg ${result.evaluation.average.toFixed(2)}/5)`,
     )
     if (args.check && !result.ok) process.exitCode = 1
+    return
+  }
+
+  if (args.cmd === 'benchmark' && args.subcmd === 'ctxblock') {
+    if (!args.repo) throw new Error('Missing required --repo <dir>')
+    if (!args.ctxBlock) throw new Error('Missing required --ctx-block <name>')
+    if (!args.taskName) throw new Error('Missing required --task-name <name>')
+    if (!args.taskPrompt) throw new Error('Missing required --task-prompt <text>')
+
+    const prepared = await prepareBenchmarkRun({
+      repoDir: path.resolve(process.cwd(), args.repo),
+      ...(args.ctxPoint ? { ctxPoint: args.ctxPoint } : {}),
+      ctxBlock: args.ctxBlock,
+      ...(args.ctxFile ? { ctxFile: path.resolve(process.cwd(), args.ctxFile) } : {}),
+      taskName: args.taskName,
+      taskPrompt: args.taskPrompt,
+      ...(args.outDir ? { outDir: path.resolve(process.cwd(), args.outDir) } : {}),
+      publishResults: true,
+    })
+
+    // eslint-disable-next-line no-console
+    console.log(`Benchmark run pack prepared: ${prepared.runDir}`)
+    // eslint-disable-next-line no-console
+    console.log(`Task: ${prepared.benchmark.taskId}`)
+    // eslint-disable-next-line no-console
+    console.log(`CtxBlock: ${prepared.benchmark.ctxBlock}`)
+    return
+  }
+
+  if (args.cmd === 'benchmark' && args.subcmd === 'report') {
+    if (!args.runDir) throw new Error('Missing required --run-dir <dir>')
+
+    const report = await rebuildBenchmarkReport(path.resolve(process.cwd(), args.runDir), { publishResults: true })
+
+    // eslint-disable-next-line no-console
+    console.log(`Benchmark report rebuilt: ${path.resolve(process.cwd(), args.runDir)}`)
+    // eslint-disable-next-line no-console
+    console.log(`Outcome: ${report.comparison.outcome}`)
     return
   }
 

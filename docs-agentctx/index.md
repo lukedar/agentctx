@@ -63,6 +63,16 @@
     <p>See how the shared CtxBlock model becomes <code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>llms.txt</code>, and the other shipped outputs.</p>
     <p><a href="/targets">Open Targets</a></p>
   </div>
+  <div class="docs-card docs-span-6">
+    <h3>Benchmark</h3>
+    <p>Compare the same task with no generated context and with a selected AgentCtx CtxBlock.</p>
+    <p><a href="/benchmark">Open Benchmark</a></p>
+  </div>
+  <div class="docs-card docs-span-6">
+    <h3>Tests</h3>
+    <p>Review generated Benchmark results by repo, CtxPoint, CtxBlock, performance, token usage, and agent compute.</p>
+    <p><a href="/tests">Open Tests</a></p>
+  </div>
 </div>
 
 <div class="docs-callout" style="margin-top: 1rem;">

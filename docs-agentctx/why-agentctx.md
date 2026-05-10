@@ -40,11 +40,9 @@ AgentCtx turns repository understanding into compiled infrastructure. Agents con
 
 ## Research-Backed Framing
 
-Long-context research shows that bigger prompts are not automatically reliable. Liu et al., “Lost in the Middle: How Language Models Use Long Contexts,” found that model performance can degrade when relevant information is buried in the middle of long inputs, even for long-context models. See the TACL paper: https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00638/119630/Lost-in-the-Middle-How-Language-Models-Use-Long
-
-Repository-level coding work has the same shape: the hard part is not only generating code. It is selecting and preserving the operational facts that make a change safe.
-
 Retrieval-augmented system design points in the same direction: relevance, selection, and evidence quality matter more than dumping more text into the model.
+
+Source: [MIT Press Direct](https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00638/119630/Lost-in-the-Middle-How-Language-Models-Use-Long), “Lost in the Middle: How Language Models Use Long Contexts”
 
 ## What AgentCtx Adds
 

@@ -2,8 +2,8 @@
 
 <div class="docs-hero">
   <span class="docs-kicker">Quality loop</span>
-  <h1>Use a two-pass workflow to keep delivery fast, visible, and trustworthy.</h1>
-  <p class="docs-lead">Dual Agent Runner is not just a command. It is a way of working: make the change, evaluate the change, and only then move forward.</p>
+  <h1>AgentCtx uses a two-pass workflow to keep delivery fast, visible, and trustworthy.</h1>
+  <p class="docs-lead">Make the change, evaluate the change, and only then move forward.</p>
 </div>
 
 <div class="docs-grid">
@@ -98,28 +98,3 @@ Step-based tasks keep their state under:
 ```
 
 These artifacts make the evaluation path inspectable instead of hidden.
-
-## Recommended operating model
-
-Use this as the default working pattern:
-1. Start with the smallest useful change.
-2. Run `pnpm da:step --plan-file <plan.json>` for planned work, or `pnpm da:eval` for one-off work.
-3. Fix failures immediately.
-4. Advance only when the current step passes.
-5. Let CI rerun the same gate.
-
-## Local docs endpoint
-
-For local development, the docs site can expose a button-backed evaluation endpoint.
-
-Enable it with:
-
-```bash
-DAR_DOCS_EXEC=1 pnpm -C docs-agentctx dev --host 127.0.0.1 --port 5174
-```
-
-That enables:
-- `POST /__dar/status`
-- `POST /__dar/eval`
-
-The evaluation endpoint runs `pnpm da:eval` in the repo root and syncs the latest report into `docs-agentctx/public/dual-agent-runner/dev-eval.json`.

@@ -1,162 +1,63 @@
-# Pipeline
+# Compiler Pipeline
 
 <div class="docs-hero">
   <span class="docs-kicker">Execution model</span>
-  <h1>Follow the universal compiler from repo input to agent output.</h1>
-  <p class="docs-lead">The pipeline keeps repo shape, framework detection, CtxBlock planning, and agent rendering as separate stages.</p>
-</div>
-
-<div class="docs-callout" style="margin-top: 1rem;">
-  <h3>Why this order matters</h3>
-  <p>Each stage narrows and stabilizes the repo state before handing it to the next one. That is what lets one compiler support different repo shapes, framework stacks, teams, and agent targets.</p>
+  <h1>Compile repo state into task-aware operational context.</h1>
+  <p class="docs-lead">
+    The pipeline separates configuration, indexing, fact extraction, graph compilation, context planning, visibility policy, rendering, sync, and validation.
+  </p>
 </div>
 
 ## 1. Config
 
-<div class="docs-grid">
-  <div class="docs-card docs-span-8">
-    <h3>What happens</h3>
-    <p><code>agentctx.config.ts</code> defines targets, include/exclude rules, budgets, security defaults, and CtxPoints.</p>
-  </div>
-  <div class="docs-card docs-span-4">
-    <h3>Output</h3>
-    <p>A normalized runtime config used by every later stage.</p>
-  </div>
-</div>
+`agentctx.config.ts` defines targets, include/exclude rules, security defaults, CtxPoints, and context-file overrides.
 
-The compiler starts from config because the repo must describe its own boundaries before anything can be indexed or rendered.
+## 2. Scope Resolution
 
-## 2. Scope resolution
+The CLI decides whether the run is workspace-wide or focused on one or more CtxPoints. This is what prevents agents from treating a monorepo as one undifferentiated prompt.
 
-<div class="docs-grid">
-  <div class="docs-card docs-span-8">
-    <h3>What happens</h3>
-    <p>The CLI decides whether the run is workspace-wide or focused on one or more CtxPoints.</p>
-  </div>
-  <div class="docs-card docs-span-4">
-    <h3>Output</h3>
-    <p>A scoped config view for the workspace or each selected point.</p>
-  </div>
-</div>
+## 3. File Indexing
 
-This is what makes the framework boundary-aware instead of repo-wide only.
+The indexer walks the selected scope, ignores generated/cache/secret paths, hashes files, and creates deterministic input state.
 
-## 3. File indexing
+## 4. Fact Extraction
 
-<div class="docs-grid">
-  <div class="docs-card docs-span-8">
-    <h3>What happens</h3>
-    <p>The indexer walks the selected scope, applies include/exclude rules, ignores generated paths, and hashes the remaining files.</p>
-  </div>
-  <div class="docs-card docs-span-4">
-    <h3>Output</h3>
-    <p>A deterministic file index.</p>
-  </div>
-</div>
+Adapters read high-signal metadata and emit normalized facts: packages, frameworks, runtimes, scripts, routes, conventions, data surfaces, operations, auth, and dependencies.
 
-This stage is where noise, recursion, and unstable ordering are removed from the pipeline.
+Adapters do not generate Markdown. They emit evidence for the compiler.
 
-## 4. Fact extraction
+## 5. Context Graph
 
-<div class="docs-grid">
-  <div class="docs-card docs-span-8">
-    <h3>What happens</h3>
-    <p>Adapters scan the indexed files and emit normalized facts such as packages, frameworks, runtimes, scripts, routes, conventions, operational surfaces, and data surfaces.</p>
-  </div>
-  <div class="docs-card docs-span-4">
-    <h3>Output</h3>
-    <p>A sorted fact set.</p>
-  </div>
-</div>
+The graph models apps, packages, dependency direction, and context-point relationships. This gives agents repository structure instead of unrelated file snippets.
 
-Facts are intentionally small so they are testable, stable, and safe to persist. Framework-specific detection should end here; later stages should consume normalized facts rather than re-reading the repo.
+## 6. Context Planning
 
-## 5. Graph compilation
+The planner selects context files from the registry:
 
-<div class="docs-grid">
-  <div class="docs-card docs-span-8">
-    <h3>What happens</h3>
-    <p>The compiler turns facts into packages, apps, relationships, and scope-aware structure.</p>
-  </div>
-  <div class="docs-card docs-span-4">
-    <h3>Output</h3>
-    <p>A context graph.</p>
-  </div>
-</div>
+- universal files are always present
+- root files appear at workspace scope
+- framework and capability files appear only when evidence supports them
+- safety files cannot be excluded by accident
+- public-safe outputs receive only public-safe context
 
-The graph is the framework’s structural model. It answers how the repo is connected, not just what was detected.
+## 7. Context Surfaces
 
-## 6. Context block planning
+Targets render selected context into the surfaces each consumer needs:
 
-<div class="docs-grid">
-  <div class="docs-card docs-span-8">
-    <h3>What happens</h3>
-    <p>The planner turns the graph into readable CtxBlocks such as architecture, runtime, frontend, API, operations, data, testing, and workflows.</p>
-  </div>
-  <div class="docs-card docs-span-4">
-    <h3>Output</h3>
-    <p>A bounded set of rendered CtxBlocks for the current scope.</p>
-  </div>
-</div>
+- internal agent context: `AGENTS.md`, `CLAUDE.md`, Cursor rules, Copilot instructions
+- public-safe context: `llms.txt`
+- local context files: `.agentctx/context/*.md`
 
-Example:
-- CtxPoint: <code>packages/core</code>
-- CtxBlocks: <code>architecture</code>, <code>runtime</code>, <code>testing</code>, <code>workflows</code>
+## 8. Sync and Drift
 
-Only relevant blocks are emitted for a given scope. A frontend point should not generate operations or data context unless those signals are present inside that point.
+Sync writes generated outputs while preserving manual edits outside generated regions. Drift checks compare generated context with current repo state so context does not silently decay.
 
-The `data` block covers source contracts, jobs, quality checks, notebooks, and data-oriented Python workflows in one generic block.
+## 9. Validation
 
-## 7. Target rendering
+The repo quality gate runs typecheck, tests, build, and dual-agent review when configured. AgentCtx treats generated context as infrastructure, so it must be validated like infrastructure.
 
-<div class="docs-grid">
-  <div class="docs-card docs-span-8">
-    <h3>What happens</h3>
-    <p>Targets format the same CtxBlocks into instruction files for different agents and tools.</p>
-  </div>
-  <div class="docs-card docs-span-4">
-    <h3>Output</h3>
-    <p>Generated files in the build output directories.</p>
-  </div>
-</div>
+## Handoff
 
-Targets are renderers only. They do not rescan the repo or reinterpret the graph independently. This is what allows the same CtxBlocks to serve different agents without duplicating framework logic.
-
-## 8. Sync
-
-<div class="docs-grid">
-  <div class="docs-card docs-span-8">
-    <h3>What happens</h3>
-    <p>Built outputs are written into the repo root or point paths, with generated blocks updated in place.</p>
-  </div>
-  <div class="docs-card docs-span-4">
-    <h3>Output</h3>
-    <p>Repo-visible instruction files and point-local context files.</p>
-  </div>
-</div>
-
-Sync is the mutation layer. It must be safe, deterministic, and respectful of manual edits outside generated regions.
-
-## 9. Drift and validation
-
-<div class="docs-grid">
-  <div class="docs-card docs-span-8">
-    <h3>What happens</h3>
-    <p>The repo is checked for stale outputs and fact drift, then validated through the broader quality gate.</p>
-  </div>
-  <div class="docs-card docs-span-4">
-    <h3>Output</h3>
-    <p>Pass/fail status plus drift and sync reports.</p>
-  </div>
-</div>
-
-This stage keeps the generated context aligned with the current repo state and prevents silent context decay.
-
-## Compiler Handoff
-
-- Config -> file index
-- File index -> facts
-- Facts -> graph
-- Graph -> CtxBlocks
-- CtxBlocks -> targets
-- Built outputs -> sync and check
+```text
+config -> file index -> facts -> graph -> context plan -> context surfaces -> sync/check
+```

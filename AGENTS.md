@@ -26,34 +26,41 @@
 </div>
 
 <h2>Context map</h2>
+- Overview: `.agentctx/context/overview.md`
+- Security: `.agentctx/context/security.md`
 - Architecture: `.agentctx/context/architecture.md`
+- Boundaries: `.agentctx/context/boundaries.md`
 - Conventions: `.agentctx/context/conventions.md`
-- Runtime: `.agentctx/context/runtime.md`
-- Frontend: `.agentctx/context/frontend.md`
-- Operations: `.agentctx/context/operations.md`
-- Data: `.agentctx/context/data.md`
+- Commands: `.agentctx/context/commands.md`
+- Dependencies: `.agentctx/context/dependencies.md`
 - Testing: `.agentctx/context/testing.md`
-- Workflows: `.agentctx/context/workflows.md`
+- Secrets: `.agentctx/context/secrets.md`
+- Workspace: `.agentctx/context/workspace.md`
+- Mesh: `.agentctx/context/mesh.md`
+- Global Commands: `.agentctx/context/global-commands.md`
+- Ownership: `.agentctx/context/ownership.md`
+- Public Api: `.agentctx/context/public-api.md`
+- Release: `.agentctx/context/release.md`
+- Exports: `.agentctx/context/exports.md`
+- Schemas: `.agentctx/context/schemas.md`
+- Compatibility: `.agentctx/context/compatibility.md`
+- Ci Cd: `.agentctx/context/ci-cd.md`
+- Deployments: `.agentctx/context/deployments.md`
+- Permissions: `.agentctx/context/permissions.md`
+- Environments: `.agentctx/context/environments.md`
+- Usage: `.agentctx/context/usage.md`
+- Styling: `.agentctx/context/styling.md`
+- Accessibility: `.agentctx/context/accessibility.md`
+- Forms: `.agentctx/context/forms.md`
+- Versioning: `.agentctx/context/versioning.md`
 
-<h2>Reading order</h2>
-<div class="docs-grid">
-<div class="docs-card docs-span-6">
-<h3>1. Architecture</h3>
-<p>Understand the compiler pipeline and package boundaries first.</p>
-</div>
-<div class="docs-card docs-span-6">
-<h3>2. Conventions</h3>
-<p>Check the rules that govern generated outputs and diffs.</p>
-</div>
-<div class="docs-card docs-span-6">
-<h3>3. Testing</h3>
-<p>Use the smallest relevant test suite before finalizing changes.</p>
-</div>
-<div class="docs-card docs-span-6">
-<h3>4. Workflows</h3>
-<p>Run build, sync, and check through the documented commands.</p>
-</div>
-</div>
+<h2>Recommended Load Order</h2>
+1. `.agentctx/context/overview.md`
+2. `.agentctx/context/security.md`
+3. `.agentctx/context/architecture.md`
+4. `.agentctx/context/boundaries.md`
+5. `.agentctx/context/commands.md`
+6. `.agentctx/context/testing.md`
 
 # Architecture
 
@@ -65,13 +72,14 @@
 - Frameworks: react, vite
 - Workspace: detected
 - Apps in scope: (none detected)
-- Packages in scope: @agentctx/adapters (packages/adapters), @agentctx/core (packages/core), @agentctx/targets (packages/targets), agentctx (packages/cli), agentctx-docs (docs-agentctx), …
+- Packages in scope: @agentctx/adapters (packages/adapters), @agentctx/core (packages/core), @agentctx/targets (packages/targets), agentctx (packages/cli), agentctx-docs (docs-agentctx-v1), …
 - Internal dependencies: @agentctx/adapters -> @agentctx/core, @agentctx/targets -> @agentctx/core, agentctx -> @agentctx/adapters, agentctx -> @agentctx/core, agentctx -> @agentctx/targets, …
 
 ## Important files
 
 - `agentctx.config.ts`: AgentCtx configuration
 - `package.json`: Project manifest and scripts
+- `docs-agentctx-v1/package.json`: Package/app manifest in scope
 - `docs-agentctx/package.json`: Package/app manifest in scope
 - `docs/package.json`: Package/app manifest in scope
 - `packages/adapters/package.json`: Package/app manifest in scope
@@ -79,7 +87,6 @@
 - `packages/core/package.json`: Package/app manifest in scope
 - `packages/dual-agent-runner-ui/package.json`: Package/app manifest in scope
 - `packages/dual-agent-runner/package.json`: Package/app manifest in scope
-- `packages/targets/package.json`: Package/app manifest in scope
 
 # Conventions
 

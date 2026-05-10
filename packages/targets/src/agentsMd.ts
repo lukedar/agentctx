@@ -1,22 +1,32 @@
 import type { ContextFile, TargetAdapter } from '@agentctx/core'
 
-import { getCtxBlocks, joinCtxBlocks, renderCardGrid, renderGeneratedBlock, renderHero, renderSectionHeading } from './utils'
+import { getCtxBlocks, getContextFiles, joinCtxBlocks, renderCardGrid, renderGeneratedBlock, renderHero, renderSectionHeading } from './utils'
 
 export const agentsMdTarget: TargetAdapter = {
   name: 'agents-md',
 
   async render(input): Promise<readonly ContextFile[]> {
     const ctxBlocks = getCtxBlocks(input)
+    const contextFiles = getContextFiles(input)
     const ordered = ['architecture', 'conventions', 'runtime', 'frontend', 'api', 'database', 'operations', 'data', 'testing', 'workflows', 'glossary'] as const
 
-    const ctxBlockNames = ordered.filter((name) => ctxBlocks.some((block) => block.name === name))
+    const contextLinks = contextFiles.length
+      ? contextFiles
+        .map((file) => `- ${file.title}: \`.agentctx/context/${file.name}.md\``)
+        .join('\n')
+      : ordered
+        .filter((name) => ctxBlocks.some((block) => block.name === name))
+        .map((name) => {
+          const block = ctxBlocks.find((candidate) => candidate.name === name)
+          const title = block?.title ?? name
+          return `- ${title}: \`.agentctx/context/${name}.md\``
+        })
+        .join('\n')
 
-    const links = ctxBlockNames
-      .map((name) => {
-        const block = ctxBlocks.find((candidate) => candidate.name === name)
-        const title = block?.title ?? name
-        return `- ${title}: \`.agentctx/context/${name}.md\``
-      })
+    const loadOrder = contextFiles
+      .filter((file) => ['overview', 'boundaries', 'security', 'architecture', 'commands', 'testing'].includes(file.name))
+      .slice(0, 6)
+      .map((file, index) => `${index + 1}. \`.agentctx/context/${file.name}.md\``)
       .join('\n')
 
     const body = [
@@ -48,31 +58,10 @@ export const agentsMdTarget: TargetAdapter = {
       ]),
       '',
       renderSectionHeading('Context map'),
-      links || '_(none generated)_',
+      contextLinks || '_(none generated)_',
       '',
-      renderSectionHeading('Reading order'),
-      renderCardGrid([
-        {
-          title: '1. Architecture',
-          summary: 'Understand the compiler pipeline and package boundaries first.',
-          span: 6,
-        },
-        {
-          title: '2. Conventions',
-          summary: 'Check the rules that govern generated outputs and diffs.',
-          span: 6,
-        },
-        {
-          title: '3. Testing',
-          summary: 'Use the smallest relevant test suite before finalizing changes.',
-          span: 6,
-        },
-        {
-          title: '4. Workflows',
-          summary: 'Run build, sync, and check through the documented commands.',
-          span: 6,
-        },
-      ]),
+      renderSectionHeading('Recommended Load Order'),
+      loadOrder || '1. `.agentctx/context/architecture.md`\n2. `.agentctx/context/conventions.md`\n3. `.agentctx/context/testing.md`',
       '',
       joinCtxBlocks(ctxBlocks, ['architecture', 'conventions', 'testing', 'workflows']),
     ].join('\n')

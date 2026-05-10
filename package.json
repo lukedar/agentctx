@@ -5,6 +5,8 @@
   "packageManager": "pnpm@10.12.1",
   "scripts": {
     "build": "pnpm -r build",
+    "docs": "pnpm -C docs-agentctx dev",
+    "docsv2": "pnpm -C docs-agentctx dev",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
     "context:build": "pnpm -C packages/cli build && node packages/cli/dist/cli.js build",

@@ -1,5 +1,5 @@
 import React from 'react'
-import type { RunnerUiModel } from 'dual-agent-runner'
+import type { RunnerUiModel } from 'dual-agent-runner/events'
 
 export const RunnerDashboard: React.FC<{ model: RunnerUiModel }> = ({ model }) => {
   return (

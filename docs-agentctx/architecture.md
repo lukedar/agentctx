@@ -1,236 +1,163 @@
 # Architecture
 
-This page is the code schematic for AgentCtx.
-
-Read it as the map of how the framework works:
-- where the data enters
-- how it is normalized
-- how the compiler stages are separated
-- why each package owns its own concern
-- how the runtime stays deterministic
+<div class="docs-hero">
+  <span class="docs-kicker">Compiler architecture</span>
+  <h1>A semantic context compiler for software systems.</h1>
+  <p class="docs-lead">
+    AgentCtx scans repositories, extracts evidence-backed operational facts, builds a context graph, applies context recipes and visibility policies, then renders context surfaces for AI systems.
+  </p>
+</div>
 
 <div class="docs-callout" style="margin-top: 1rem;">
   <h3>Core principle</h3>
-  <p>AgentCtx is designed for any repo, any framework, and any agent. The architecture keeps repo detection, CtxBlock planning, and target rendering separate so each layer can evolve without forcing changes into the others.</p>
+  <p>AgentCtx is designed for any repo, any framework, and any agent. The compiler stays framework-agnostic while adapters provide framework-specific evidence.</p>
 </div>
 
-## Contents
+## Compiler Pipeline
 
-- [Language of the framework](#language-of-the-framework)
-- [Universal compiler contract](#universal-compiler-contract)
-- [Compiler model](#compiler-model)
-- [Application flow](#application-flow)
-- [Data contracts](#data-contracts)
-- [Package boundaries](#package-boundaries)
-- [Coding patterns](#coding-patterns)
-- [Sync and validation](#sync-and-validation)
-- [Developer reading order](#developer-reading-order)
+<div class="docs-panel">
+<pre><code>Source Code + Config + Docs
+  -> Evidence-backed Facts
+  -> Context Graph
+  -> Context Recipes
+  -> Context Blocks
+  -> Context Surfaces
+  -> AI Systems</code></pre>
+</div>
 
-## Language of the framework
+## Concepts Overview
 
 <div class="docs-grid">
-  <div class="docs-card docs-span-6">
-    <h3>CtxPoint</h3>
-    <p>A directory boundary selected for scoped generation, such as <code>apps/api</code> or <code>packages/core</code>.</p>
+  <div class="docs-card docs-span-4">
+    <h3>Context Point</h3>
+    <p>A bounded operational domain inside a repo: frontend, API, worker, shared contracts, database, or infra.</p>
   </div>
-  <div class="docs-card docs-span-6">
-    <h3>CtxBlock</h3>
-    <p>One thematic slice of generated context for that point, such as architecture, testing, or workflows.</p>
+  <div class="docs-card docs-span-4">
+    <h3>Context Mesh</h3>
+    <p>The dependency and communication graph between context points.</p>
   </div>
-  <div class="docs-card docs-span-6">
-    <h3>Fact</h3>
-    <p>A normalized signal extracted from repo metadata, such as a framework, route, script, or package relationship.</p>
+  <div class="docs-card docs-span-4">
+    <h3>Context Block</h3>
+    <p>An evidence-backed, task-aware, token-aware operational context unit.</p>
   </div>
-  <div class="docs-card docs-span-6">
-    <h3>Graph</h3>
-    <p>The compiled structural model built from facts. It captures packages, apps, dependencies, and scope-aware boundaries.</p>
+  <div class="docs-card docs-span-4">
+    <h3>Context Surface</h3>
+    <p>A rendered visibility-aware output for internal agents, public consumers, CI, or review systems.</p>
   </div>
-  <div class="docs-card docs-span-6">
+  <div class="docs-card docs-span-4">
+    <h3>Context File</h3>
+    <p>A focused Markdown file such as <code>security.md</code>, <code>routes.md</code>, or <code>commands.md</code>.</p>
+  </div>
+  <div class="docs-card docs-span-4">
     <h3>Target</h3>
-    <p>A rendered output format such as <code>AGENTS.md</code>, <code>CLAUDE.md</code>, or <code>llms.txt</code>.</p>
-  </div>
-  <div class="docs-card docs-span-6">
-    <h3>Drift</h3>
-    <p>The difference between current repo state and the generated context that should exist for that state.</p>
+    <p>A delivery format such as <code>AGENTS.md</code>, <code>CLAUDE.md</code>, Cursor rules, Copilot instructions, or <code>llms.txt</code>.</p>
   </div>
 </div>
 
-<div class="docs-callout" style="margin-top: 1rem;">
-  <h3>How they relate</h3>
-  <p>A CtxPoint produces multiple CtxBlocks. Each block references and summarizes the important files for one topic inside that point rather than embedding the whole directory.</p>
+## Concepts In Detail
+
+### Context Point
+
+A Context Point is a bounded operational domain inside a repository. It is the unit that lets AgentCtx avoid treating a monorepo as one large prompt.
+
+Context Points matter because most engineering tasks are scoped. A frontend routing task should not require an agent to load database migrations, deployment rules, and worker retry policies unless the context mesh says those systems are involved.
+
+### Context Mesh
+
+The Context Mesh is the relationship model between Context Points. It captures dependency direction, shared contracts, runtime communication, and cross-system change rules.
+
+Example:
+
+<div class="docs-panel">
+<pre><code>frontend -> api -> database
+worker -> queue -> api
+shared-contracts -> frontend, api, worker</code></pre>
 </div>
 
-## Universal compiler contract
+The mesh helps agents reason about impact. If a shared schema changes, the relevant question is not only “where is this file used?” It is also “which operational domains consume this contract, and what validation path should change with it?”
 
-<div class="docs-grid">
-  <div class="docs-card docs-span-4 docs-card--accent">
-    <h3>Repo signals</h3>
-    <p>The scanner reads manifests, config files, package metadata, routes, workflow files, and other high-signal artifacts.</p>
-  </div>
-  <div class="docs-card docs-span-4 docs-card--accent">
-    <h3>Normalized facts</h3>
-    <p>Adapters translate framework-specific evidence into compact facts such as <code>framework</code>, <code>runtime</code>, <code>api</code>, <code>operations</code>, and <code>data</code>.</p>
-  </div>
-  <div class="docs-card docs-span-4 docs-card--accent">
-    <h3>Agent outputs</h3>
-    <p>Targets render the same CtxBlocks for different agents. They format context; they do not reinterpret the repo.</p>
-  </div>
-</div>
+### Context Block
 
-This contract is what makes the framework portable. A new frontend, API stack, data tool, or agent target should fit into one layer instead of forcing a rewrite across the pipeline.
+A Context Block is the intermediate semantic unit: evidence-backed, task-aware, token-aware, and visibility-aware operational context.
 
-## Compiler model
+Blocks are not raw summaries. They express what matters for a kind of work: security rules, command safety, route shape, dependency boundaries, public APIs, migration rules, or testing expectations.
 
-<img src="/diagrams/application-flow.svg" alt="AgentCtx application flow diagram" />
+AgentCtx uses this model so context can be planned and governed before it is rendered into a specific surface.
 
-AgentCtx is a compiler, not a crawler.
+### Context Surface
 
-The repo is treated as an input graph and compiled into output artifacts.
+A Context Surface is the final rendered output that a consumer actually sees.
 
-The runtime is built as a deterministic compiler pipeline. For the execution order and term definitions, use the dedicated <a href="/pipeline">Pipeline</a> page.
+Internal surfaces can include local operational detail:
 
-## Application flow
+- `AGENTS.md`
+- `CLAUDE.md`
+- Cursor rules
+- Copilot instructions
 
-### Application diagram
+Public-safe surfaces exclude sensitive material:
 
-<img src="/diagrams/application-flow.svg" alt="AgentCtx application flow diagram" />
+- `llms.txt`
+- future public manifests
+- external docs-crawler outputs
 
-The package boundary is intentional:
-- `core` owns the compiler primitives and deterministic transformation logic
-- `adapters` owns repo detectors, framework adapters, and metadata extraction
-- `targets` owns presentation and output formatting
-- `cli` owns orchestration, file writes, sync, and commands
-- `dual-agent-runner` owns evaluation and iteration control
+This distinction is central to the v2 architecture. A coding agent inside the repo and an external consumer should not receive the same context.
 
-That split exists for three reasons:
-- it prevents presentation code from leaking into the compiler
-- it keeps repo scanning logic out of the CLI layer
-- it makes each package independently testable
+### Context File
 
-## Data contracts
+A Context File is a focused Markdown file under `.agentctx/context/`.
 
-The codebase works because the handoff between layers is explicit.
+Universal files such as `overview.md`, `security.md`, `boundaries.md`, and `commands.md` orient every agent. Capability files such as `routes.md`, `api.md`, `database.md`, `queues.md`, or `permissions.md` appear only when the repo has evidence for them.
 
-Important contracts:
-- `AgentCtxConfig` is the normalized runtime config
-- `RepoFileIndex` is the filtered, hashed file view
-- `Fact` is a normalized signal from a detector
-- `CtxGraph` is the compiled structural model
-- `RenderedCtxBlock` is the rendered CtxBlock output
-- `ContextFile` is the final render artifact
+The goal is task-aware loading. `AGENTS.md` should stay compact and tell the agent which deeper files to load for the work at hand.
 
-Each contract narrows the allowed shape of the data. That is how the framework avoids passing opaque objects across layers.
+### Target
 
-## Package boundaries
+A Target is a renderer for one delivery format. Targets format selected context; they do not rescan the repo or reinterpret framework evidence.
 
-### `core`
+That boundary keeps the compiler stable. Adding a new target should be mostly presentation work. Adding support for a new framework should happen in adapters. Changing context policy should happen in core selection and visibility rules.
 
-`core` owns the deterministic compiler model.
+## Package Boundaries
 
-Responsibilities:
-- config normalization
-- repo file indexing
-- fact execution context
-- graph compilation
-- CtxBlock planning
+- `core` owns config normalization, file indexing, fact models, graph compilation, context-file registry, and selection.
+- `adapters` own framework and metadata extraction. They emit facts, evidence, confidence, and visibility signals, not Markdown.
+- `targets` own presentation and context-surface rendering.
+- `cli` owns orchestration, writes, sync, drift checks, `plan`, and `explain`.
+- `dual-agent-runner` owns evaluation and step-gated implementation workflows.
 
-### `adapters`
+## Why This Shape Matters
 
-`adapters` owns metadata extraction and framework detection.
+The architecture keeps repo understanding separate from presentation. A new framework adapter should not require a target rewrite. A new agent target should not rescan the repo. A new context surface should apply visibility policy instead of copying sensitive internal context into public outputs.
 
-Responsibilities:
-- repo detectors
-- framework adapters
-- metadata-first fact extraction
+## Dual Agent Runner Principle
 
-### `targets`
+AgentCtx is developed with the Dual Agent Runner because context infrastructure changes how every downstream agent understands a repo. That kind of change needs a stricter workflow than “make the patch and hope the tests catch it.”
 
-`targets` owns presentation.
+The runner turns development into a two-pass loop:
 
-Responsibilities:
-- render `AGENTS.md`
-- render `CLAUDE.md`
-- render editor and runtime target files
-- format the shared CtxBlock model
+1. A builder makes a focused change.
+2. An evaluator checks correctness, safety, readability, usability, token usage, and distribution readiness.
+3. The work advances only after the current step passes the gate.
 
-### `cli`
+For senior engineering teams, the benefit is not ceremony. It is operational control:
 
-`cli` owns orchestration and mutation.
+- large changes are split into reviewable batches
+- every batch leaves an auditable report
+- context quality is evaluated before it becomes trusted by agents
+- regressions stay local to the step that introduced them
+- architectural decisions are checked against deterministic build, test, and typecheck gates
 
-Responsibilities:
-- resolve scope
-- call the compiler pipeline
-- write outputs
-- sync generated files
-- run drift checks
+This mirrors the core AgentCtx philosophy: autonomous systems need compiled context, but teams also need visible evidence that the context compiler itself is changing safely.
 
-### `dual-agent-runner`
+## Performance Design
 
-`dual-agent-runner` owns evaluation.
+AgentCtx is designed for deterministic rendering, changed-file checks, token budgets, and future recipe-level caching. The long-term target is sub-second small-repo builds, fast medium-repo builds, and incremental-only workflows for large monorepos.
 
-Responsibilities:
-- run the repo quality gate
-- score task progress
-- write evaluation reports
+## Reading Order
 
-## Coding patterns
-
-### Deterministic first
-
-The framework always prefers stable output over cleverness.
-
-That means:
-- sort inputs before rendering
-- avoid timestamps
-- avoid hidden side effects
-- keep generated output explainable from repo state
-
-### Metadata first
-
-The framework prefers manifests and high-signal config over full source parsing.
-
-That keeps the scan:
-- cheaper
-- easier to test
-- easier to redact
-- more stable across repos
-
-### Shared model, many outputs
-
-The same graph and CtxBlock model feed every target.
-
-That means:
-- targets should not rescan the repo
-- output differences should come from formatting only
-- drift is easier to reason about because there is one compiler path
-- adding an agent target should not require new framework detection logic
-
-## Sync and validation
-
-### Sync
-
-Sync applies built outputs back into the repo.
-
-Rules:
-- preserve manual edits outside generated regions
-- only write what changed
-- keep workspace and point sync behavior aligned
-
-### Validation
-
-Validation checks:
-- type safety
-- tests
-- build health
-- generated output drift
-
-The execution details live on the <a href="/pipeline">Pipeline</a> page and the repo gate details live on <a href="/quality-gate">Dual Agent Runner</a>.
-
-## Developer reading order
-
-1. `Pipeline`
-2. `Architecture`
-3. `CtxPoints`
-4. `Config`
-5. `CLI`
-6. `Targets`
+1. [Why AgentCtx](/why-agentctx)
+2. [Pipeline](/pipeline)
+3. [Context Files](/context-files)
+4. [Context Points](/context-points)
+5. [Public-safe Context](/public-safe-context)
+6. [CLI](/cli)

@@ -135,7 +135,7 @@
   </g>
   <g>
     <rect class="chip" x="484" y="484" width="300" height="28" rx="999" />
-    <text class="text" x="498" y="503">Rendered CtxBlock / ContextFile → generated outputs</text>
+    <text class="text" x="498" y="503">Context surfaces → generated outputs</text>
   </g>
 
   <rect class="panel" x="872" y="276" width="424" height="230" rx="20" />

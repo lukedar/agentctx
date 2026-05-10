@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { createInitialRunnerUiModel, reduceRunnerUiModel } from 'dual-agent-runner'
+import { createInitialRunnerUiModel, reduceRunnerUiModel } from 'dual-agent-runner/events'
 
 import { RunnerDashboard } from './app/RunnerDashboard'
 

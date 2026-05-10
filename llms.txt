@@ -29,5 +29,26 @@
 <h2>Notes</h2>
 
 - Generated automatically.
-- Use the linked context files for the full repo schematic.
+- Use public-safe linked context files for the full repo schematic.
+
+<h2>Public Context Files</h2>
+- Overview: `.agentctx/context/overview.md`
+- Architecture: `.agentctx/context/architecture.md`
+- Conventions: `.agentctx/context/conventions.md`
+- Commands: `.agentctx/context/commands.md`
+- Dependencies: `.agentctx/context/dependencies.md`
+- Testing: `.agentctx/context/testing.md`
+- Workspace: `.agentctx/context/workspace.md`
+- Mesh: `.agentctx/context/mesh.md`
+- Global Commands: `.agentctx/context/global-commands.md`
+- Public Api: `.agentctx/context/public-api.md`
+- Exports: `.agentctx/context/exports.md`
+- Schemas: `.agentctx/context/schemas.md`
+- Compatibility: `.agentctx/context/compatibility.md`
+- Ci Cd: `.agentctx/context/ci-cd.md`
+- Usage: `.agentctx/context/usage.md`
+- Styling: `.agentctx/context/styling.md`
+- Accessibility: `.agentctx/context/accessibility.md`
+- Forms: `.agentctx/context/forms.md`
+- Versioning: `.agentctx/context/versioning.md`
 <!-- agentctx:end -->

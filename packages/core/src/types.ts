@@ -31,6 +31,47 @@ export type CtxBlockName =
 
 export type TokenBudgetName = 'small' | 'medium' | 'large'
 
+export type ContextFileCapability =
+  | 'frontend'
+  | 'routing'
+  | 'components'
+  | 'state'
+  | 'api'
+  | 'auth'
+  | 'database'
+  | 'worker'
+  | 'queue'
+  | 'shared-package'
+  | 'schemas'
+  | 'infrastructure'
+  | 'deployment'
+  | 'ci'
+
+export type ContextFileCategory =
+  | 'core'
+  | 'root'
+  | 'frontend'
+  | 'backend'
+  | 'worker'
+  | 'package'
+  | 'data'
+  | 'infra'
+
+export type ContextFileDefinition = Readonly<{
+  name: string
+  category: ContextFileCategory
+  requiredCapabilities: readonly ContextFileCapability[]
+  maxTokens: number
+  priority: number
+  publicSafe: boolean
+}>
+
+export type ContextFilesConfig = Readonly<{
+  include?: readonly string[]
+  exclude?: readonly string[]
+  required?: readonly string[]
+}>
+
 export type TokenBudgets = Readonly<{
   default: TokenBudgetName
   small: number
@@ -74,6 +115,7 @@ export type CtxPointConfig = Readonly<{
   budget?: TokenBudgetName
   include?: readonly string[]
   exclude?: readonly string[]
+  contextFiles?: ContextFilesConfig
 }>
 
 export type AgentCtxConfig = Readonly<{
@@ -99,6 +141,8 @@ export type AgentCtxConfig = Readonly<{
   budgets: TokenBudgets
   drift: DriftConfig
   security: SecurityConfig
+  contextFiles?: ContextFilesConfig
+  allowUnsafeContextConfig?: boolean
 }>
 
 export type ContextFile = Readonly<{
@@ -256,9 +300,22 @@ export type RenderedCtxBlock = Readonly<{
   tokenEstimate: number
 }>
 
+export type RenderedContextFile = Readonly<{
+  name: string
+  title: string
+  category: ContextFileCategory
+  path: string
+  content: string
+  tokenEstimate: number
+  publicSafe: boolean
+  definition: ContextFileDefinition
+  reason: string
+}>
+
 export type TargetRenderInput = Readonly<{
   graph: CtxGraph
   ctxBlocks: readonly RenderedCtxBlock[]
+  contextFiles: readonly RenderedContextFile[]
   config: AgentCtxConfig
 }>
 

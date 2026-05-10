@@ -1,11 +1,14 @@
 import type { ContextFile, TargetAdapter } from '@agentctx/core'
 
-import { renderCardGrid, renderGeneratedBlock, renderHero, renderSectionHeading } from './utils'
+import { getContextFiles, renderCardGrid, renderGeneratedBlock, renderHero, renderSectionHeading } from './utils'
 
 export const llmsTarget: TargetAdapter = {
   name: 'llms',
 
   async render(input): Promise<readonly ContextFile[]> {
+    const publicContextFiles = getContextFiles(input).filter((file) => file.publicSafe)
+    const publicLinks = publicContextFiles.map((file) => `- ${file.title}: \`.agentctx/context/${file.name}.md\``).join('\n')
+
     const body = [
       renderHero({
         kicker: 'llms.txt',
@@ -41,7 +44,10 @@ export const llmsTarget: TargetAdapter = {
       renderSectionHeading('Notes'),
       '',
       '- Generated automatically.',
-      '- Use the linked context files for the full repo schematic.',
+      '- Use public-safe linked context files for the full repo schematic.',
+      '',
+      renderSectionHeading('Public Context Files'),
+      publicLinks || '_(none generated)_',
     ].join('\n')
 
     return [

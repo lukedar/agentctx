@@ -1,100 +1,38 @@
-# CtxPoints
+# Context Points
 
 <div class="docs-hero">
-  <span class="docs-kicker">Boundary-aware context</span>
-  <h1>CtxPoints make the compiler work per domain, not just per repo.</h1>
+  <span class="docs-kicker">Operational domains</span>
+  <h1>Bound context to the part of the system the task actually touches.</h1>
   <p class="docs-lead">
-    A CtxPoint is a deliberate boundary inside your repo that gets its own curated agent context.
-    Use it for apps, packages, services, and docs surfaces that need focused outputs.
+    A Context Point is a bounded operational domain inside a software system: frontend, API, worker, shared contracts, database, or infra.
   </p>
 </div>
 
-<div class="docs-grid">
-  <div class="docs-card docs-span-6 docs-card--accent">
-    <h3>Why teams use points</h3>
-    <div class="docs-chip-row">
-      <span class="docs-chip">token efficiency</span>
-      <span class="docs-chip">performance</span>
-      <span class="docs-chip">security</span>
-      <span class="docs-chip">ownership</span>
-    </div>
-  </div>
-  <div class="docs-card docs-span-6">
-    <h3>Typical boundaries</h3>
-    <p><code>apps/api</code>, <code>apps/web</code>, <code>packages/shared</code>, <code>services/payments</code></p>
-  </div>
-</div>
+## Why They Matter
 
-## Mental model
+Without Context Points, agents load entire repositories. That creates large prompts, irrelevant context, hallucinated ownership, and unsafe changes.
 
-<img src="/diagrams/context-points.svg" alt="Workspace vs CtxPoints diagram" />
+With Context Points, agents load the operational domain relevant to the task. That improves token efficiency, task focus, monorepo scalability, and safety.
+
+## Examples
 
 <div class="docs-grid">
-  <div class="docs-card docs-span-6">
-    <h3>Workspace scope</h3>
-    <p>Repo-wide output that applies across the whole monorepo.</p>
-  </div>
-  <div class="docs-card docs-span-6">
-    <h3>Point scope</h3>
-    <p>The local rules, files, and output for one boundary. The compiler uses the same pipeline, but with a narrower view.</p>
-  </div>
+  <div class="docs-card docs-span-4"><h3>frontend</h3><p>Routes, components, state, styling, forms, accessibility, and API clients.</p></div>
+  <div class="docs-card docs-span-4"><h3>api</h3><p>Handlers, auth, validation, middleware, errors, and database access.</p></div>
+  <div class="docs-card docs-span-4"><h3>worker</h3><p>Jobs, queues, scheduling, retries, idempotency, and observability.</p></div>
+  <div class="docs-card docs-span-4"><h3>shared-contracts</h3><p>Exports, schemas, public APIs, compatibility, usage, and versioning.</p></div>
+  <div class="docs-card docs-span-4"><h3>database</h3><p>Schema, migrations, queries, seed data, and data-access rules.</p></div>
+  <div class="docs-card docs-span-4"><h3>infra</h3><p>Deployments, environments, secrets, CI/CD, and permissions.</p></div>
 </div>
 
-<div class="docs-callout" style="margin-top: 1rem;">
-  <h3>CtxBlocks</h3>
-  <p>Points define the boundary. For the block catalog and team-specific guidance, go to <a href="/context-blocks">CtxBlocks</a>.</p>
-</div>
+## Context Mesh
 
-## Point workflow
+Context Points become more useful when AgentCtx can model relationships between them:
 
-<div class="docs-flow">
-  <div class="docs-flow__step">
-    <div class="docs-flow__index">1</div>
-    <div>
-      <h3 class="docs-flow__title">Build the workspace first</h3>
-      <p class="docs-flow__body"><code>agentctx build</code> compiles the repo-wide view and writes the workspace artifacts.</p>
-    </div>
-  </div>
-  <div class="docs-flow__step">
-    <div class="docs-flow__index">2</div>
-    <div>
-      <h3 class="docs-flow__title">Add one or more points</h3>
-      <p class="docs-flow__body"><code>agentctx build --point api</code> compiles a focused boundary alongside the workspace.</p>
-    </div>
-  </div>
-  <div class="docs-flow__step">
-    <div class="docs-flow__index">3</div>
-    <div>
-      <h3 class="docs-flow__title">Sync the generated outputs</h3>
-      <p class="docs-flow__body"><code>agentctx sync</code> writes the generated files into the repo root and each point path.</p>
-    </div>
-  </div>
-</div>
+```text
+frontend -> api -> database
+worker -> queue -> api
+shared-contracts -> frontend, api, worker
+```
 
-## Configuration
-
-<div class="docs-panel">
-  <h3>Define points in `agentctx.config.ts`</h3>
-<pre><code>export default {
-  targets: ["agents-md", "claude", "cursor", "copilot", "llms"],
-  ctxPoints: [
-    { name: "api", path: "apps/api" },
-    { name: "web", path: "apps/web" },
-  ],
-}</code></pre>
-</div>
-
-<div class="docs-grid">
-  <div class="docs-card docs-span-4">
-    <h3>Tight include sets</h3>
-    <p>Use manifests and key folders. High signal beats full source.</p>
-  </div>
-  <div class="docs-card docs-span-4">
-    <h3>Generated paths</h3>
-    <p><code>.agentctx</code>, <code>dist</code>, <code>build</code>, and cache folders stay excluded by default.</p>
-  </div>
-  <div class="docs-card docs-span-4">
-    <h3>Dependencies</h3>
-    <p><code>dependsOn</code> models explicit point relationships for future affected workflows.</p>
-  </div>
-</div>
+The mesh helps agents reason about repositories more like senior engineers do: by understanding dependency direction, runtime communication, shared contracts, and cross-system change rules.

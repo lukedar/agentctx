@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="340" viewBox="0 0 900 340">
+  <style>
+    .box { fill: #0b1220; stroke: #3b82f6; stroke-width: 2; rx: 12; }
+    .sub { fill: #0b1220; stroke: #22c55e; stroke-width: 2; rx: 12; }
+    .text { fill: #e5e7eb; font: 14px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    .title { fill: #ffffff; font: 600 16px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    .muted { fill: #9ca3af; font: 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    .arrow { stroke: #9ca3af; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+  </style>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#9ca3af" />
+    </marker>
+  </defs>
+
+  <!-- Workspace -->
+  <rect class="box" x="40" y="40" width="820" height="120" rx="14" />
+  <text class="title" x="70" y="75">Workspace scope (repo-wide)</text>
+  <text class="text" x="70" y="105">Conventions • tooling • shared constraints • high-level architecture</text>
+  <text class="muted" x="70" y="132">Outputs: .agentctx/workspace/context/*  and  .agentctx/workspace/out/*</text>
+
+  <!-- Points -->
+  <rect class="sub" x="40" y="200" width="250" height="100" rx="14" />
+  <text class="title" x="65" y="235">Point: api</text>
+  <text class="text" x="65" y="260">apps/api</text>
+  <text class="muted" x="65" y="286">.agentctx/points/api/*</text>
+
+  <rect class="sub" x="325" y="200" width="250" height="100" rx="14" />
+  <text class="title" x="350" y="235">Point: web</text>
+  <text class="text" x="350" y="260">apps/web</text>
+  <text class="muted" x="350" y="286">.agentctx/points/web/*</text>
+
+  <rect class="sub" x="610" y="200" width="250" height="100" rx="14" />
+  <text class="title" x="635" y="235">Point: shared</text>
+  <text class="text" x="635" y="260">packages/shared</text>
+  <text class="muted" x="635" y="286">.agentctx/points/shared/*</text>
+
+  <!-- Relationship arrows -->
+  <path class="arrow" d="M 165 160 C 165 180 165 185 165 200" />
+  <path class="arrow" d="M 450 160 C 450 180 450 185 450 200" />
+  <path class="arrow" d="M 735 160 C 735 180 735 185 735 200" />
+
+  <text class="muted" x="40" y="326">Idea: build/sync per boundary to improve focus, speed, and safety.</text>
+</svg>

@@ -1,3 +1,22 @@
+# AgentCtx
+
+AgentCtx is context infrastructure for autonomous software engineering systems.
+
+Primary pages:
+
+- Overview: `/`
+- Why AgentCtx: `/why-agentctx`
+- Architecture: `/architecture`
+- Pipeline: `/pipeline`
+- Context files: `/context-files`
+- Context points: `/context-points`
+- Public-safe context: `/public-safe-context`
+- Token density: `/concepts/token-density`
+- Framework support: `/frameworks/support-matrix`
+- Bench overview: `/bench/overview`
+
+Do not treat v1 docs language as the current positioning. The v1 snapshot is preserved separately under `docs-agentctx-v1/` for comparison.
+
 <!-- agentctx:start -->
 <div class="docs-hero">
 <div class="docs-kicker">llms.txt</div>
@@ -29,5 +48,18 @@
 <h2>Notes</h2>
 
 - Generated automatically.
-- Use the linked context files for the full repo schematic.
+- Use public-safe linked context files for the full repo schematic.
+
+<h2>Public Context Files</h2>
+- Overview: `.agentctx/context/overview.md`
+- Architecture: `.agentctx/context/architecture.md`
+- Conventions: `.agentctx/context/conventions.md`
+- Commands: `.agentctx/context/commands.md`
+- Dependencies: `.agentctx/context/dependencies.md`
+- Testing: `.agentctx/context/testing.md`
+- Public Api: `.agentctx/context/public-api.md`
+- Exports: `.agentctx/context/exports.md`
+- Compatibility: `.agentctx/context/compatibility.md`
+- Usage: `.agentctx/context/usage.md`
+- Versioning: `.agentctx/context/versioning.md`
 <!-- agentctx:end -->

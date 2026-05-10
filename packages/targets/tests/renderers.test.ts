@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import type { AgentCtxConfig, CtxGraph, RenderedCtxBlock, TargetRenderInput } from '@agentctx/core'
+import type { AgentCtxConfig, CtxGraph, RenderedContextFile, RenderedCtxBlock, TargetRenderInput } from '@agentctx/core'
 
 import { agentsMdTarget } from '../src/agentsMd'
 import { claudeTarget } from '../src/claude'
@@ -62,7 +62,46 @@ const ctxBlocks: readonly RenderedCtxBlock[] = [
   { name: 'glossary', title: 'Glossary', content: '# Glossary\n\n- TERM\n', tokenEstimate: 5 },
 ]
 
-const input: TargetRenderInput = { config, graph, ctxBlocks }
+const contextFiles: readonly RenderedContextFile[] = [
+  {
+    name: 'overview',
+    title: 'Overview',
+    category: 'core',
+    path: '.agentctx/context/overview.md',
+    content: '# Overview\n',
+    tokenEstimate: 3,
+    publicSafe: true,
+    reason: 'universal context file',
+    definition: {
+      name: 'overview',
+      category: 'core',
+      requiredCapabilities: [],
+      maxTokens: 800,
+      priority: 100,
+      publicSafe: true,
+    },
+  },
+  {
+    name: 'security',
+    title: 'Security',
+    category: 'core',
+    path: '.agentctx/context/security.md',
+    content: '# Security\n',
+    tokenEstimate: 3,
+    publicSafe: false,
+    reason: 'universal context file',
+    definition: {
+      name: 'security',
+      category: 'core',
+      requiredCapabilities: [],
+      maxTokens: 1200,
+      priority: 99,
+      publicSafe: false,
+    },
+  },
+]
+
+const input: TargetRenderInput = { config, graph, ctxBlocks, contextFiles }
 
 describe('target renderers', () => {
   it('renders AGENTS.md with context links and generated block markers', async () => {
@@ -70,7 +109,8 @@ describe('target renderers', () => {
     expect(file.path).toBe('AGENTS.md')
     expect(file.content).toContain('<!-- agentctx:start -->')
     expect(file.content).toContain('Agent Instructions')
-    expect(file.content).toContain('- Architecture: `.agentctx/context/architecture.md`')
+    expect(file.content).toContain('- Overview: `.agentctx/context/overview.md`')
+    expect(file.content).toContain('Recommended Load Order')
     expect(file.content).toContain('# Workflows')
   })
 
@@ -103,5 +143,7 @@ describe('target renderers', () => {
     expect(file.content).toContain('Project index')
     expect(file.content).toContain('AGENTS.md')
     expect(file.content).toContain('Generated automatically')
+    expect(file.content).toContain('- Overview: `.agentctx/context/overview.md`')
+    expect(file.content).not.toContain('- Security: `.agentctx/context/security.md`')
   })
 })

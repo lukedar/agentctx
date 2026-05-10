@@ -72,15 +72,6 @@ body {
   z-index: -1;
 }
 
-.VPDoc h1,
-.VPDoc h2,
-.VPDoc h3,
-.VPHome h1,
-.VPHome h2,
-.VPHome h3 {
-  letter-spacing: -0.03em;
-}
-
 .VPDoc h1 {
   font-size: clamp(2.1rem, 4vw, 3.6rem);
   line-height: 1.03;
@@ -104,15 +95,114 @@ body {
   color: var(--vp-c-text-1);
 }
 
-.VPDoc code,
-.VPDoc kbd,
+.VPDoc :not(pre) > code,
+.VPDoc kbd {
+  border: 1px solid rgba(96, 165, 250, 0.28);
+  border-radius: 7px;
+  padding: 0.14em 0.38em;
+  background: rgba(15, 23, 42, 0.92);
+  color: #bfdbfe;
+  font-size: 0.9em;
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.75);
+}
+
+.VPDoc div[class*='language-'],
 .VPDoc pre {
-  border: 1px solid var(--vp-c-divider);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(96, 165, 250, 0.32);
+  border-radius: 16px;
+  background:
+    linear-gradient(rgba(96, 165, 250, 0.045) 1px, transparent 1px) 0 0 / 100% 28px,
+    linear-gradient(90deg, rgba(96, 165, 250, 0.035) 1px, transparent 1px) 0 0 / 28px 100%,
+    linear-gradient(180deg, rgba(2, 6, 23, 0.98), rgba(8, 17, 31, 0.96));
+  box-shadow:
+    0 22px 54px rgba(2, 6, 23, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 0 0 1px rgba(34, 197, 94, 0.08);
+}
+
+.VPDoc div[class*='language-']::before,
+.VPDoc pre::before {
+  content: 'CODE';
+  position: absolute;
+  top: 0.72rem;
+  right: 0.86rem;
+  z-index: 2;
+  color: rgba(191, 219, 254, 0.58);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.VPDoc div[class*='language-']::before {
+  right: 3.1rem;
+}
+
+.VPDoc div[class*='language-'] > span.lang {
+  display: none;
+}
+
+.VPDoc div.language-bash::before,
+.VPDoc pre.language-bash::before {
+  content: 'SHELL';
+}
+
+.VPDoc div.language-ts::before,
+.VPDoc div.language-typescript::before,
+.VPDoc pre.language-ts::before,
+.VPDoc pre.language-typescript::before {
+  content: 'TS';
+}
+
+.VPDoc div.language-text::before,
+.VPDoc pre.language-text::before {
+  content: 'TEXT';
+}
+
+.VPDoc div.language-mermaid::before {
+  content: 'GRAPH';
 }
 
 .VPDoc pre {
-  background: #0a1324;
-  border-radius: 18px;
+  padding: 1.05rem 1.1rem;
+}
+
+.VPDoc div[class*='language-'] pre {
+  margin: 0;
+  padding: 1.15rem 1.2rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.VPDoc div[class*='language-'] pre::before {
+  content: none;
+}
+
+.VPDoc pre code {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #dbeafe;
+  font-size: 0.9rem;
+  line-height: 1.75;
+  text-shadow: 0 0 18px rgba(96, 165, 250, 0.16);
+}
+
+.VPDoc div[class*='language-'] .line {
+  min-height: 1.75em;
+}
+
+.VPDoc div[class*='language-'] .line.highlighted {
+  background-color: rgba(96, 165, 250, 0.13);
+}
+
+.VPDoc div[class*='language-'] button.copy {
+  border-color: rgba(96, 165, 250, 0.3);
+  background-color: rgba(15, 23, 42, 0.78);
 }
 
 .VPDoc img,
@@ -311,6 +401,81 @@ body {
 .docs-callout p {
   margin: 0;
   color: #d1fae5;
+}
+
+.docs-terminal {
+  overflow: hidden;
+  border: 1px solid rgba(96, 165, 250, 0.32);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(2, 6, 23, 0.94), rgba(8, 17, 31, 0.96));
+  box-shadow:
+    0 24px 70px rgba(2, 6, 23, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.docs-terminal__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.72rem 0.9rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(15, 23, 42, 0.78);
+}
+
+.docs-terminal__bar span {
+  width: 0.62rem;
+  height: 0.62rem;
+  border-radius: 999px;
+  background: #60a5fa;
+  box-shadow: 0 0 18px rgba(96, 165, 250, 0.55);
+}
+
+.docs-terminal__bar span:nth-child(2) {
+  background: #22c55e;
+  box-shadow: 0 0 18px rgba(34, 197, 94, 0.5);
+}
+
+.docs-terminal__bar span:nth-child(3) {
+  background: #f59e0b;
+  box-shadow: 0 0 18px rgba(245, 158, 11, 0.45);
+}
+
+.docs-terminal__bar strong {
+  margin-left: 0.45rem;
+  color: #dbeafe;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.docs-terminal__prompt {
+  color: #60a5fa;
+  font-weight: 800;
+}
+
+.docs-terminal__ok {
+  color: #22c55e;
+  font-weight: 800;
+}
+
+.docs-terminal__body {
+  padding: 1rem 1.05rem 1.15rem;
+  color: #dbeafe;
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.92rem;
+  line-height: 1.75;
+}
+
+.docs-terminal__body code {
+  border: 0;
+  color: #dbeafe;
+  background: transparent;
+  padding: 0;
+}
+
+.docs-terminal__gap {
+  height: 0.55rem;
 }
 
 @media (max-width: 960px) {

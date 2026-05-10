@@ -7,7 +7,7 @@ import { log } from '../lib/logger'
 import { resolveCwd } from '../lib/paths'
 
 const defaultConfigTemplate = `export default {
-  targets: ["agents-md", "claude", "cursor", "copilot", "llms"],
+  targets: ["agents-md", "llms"],
 }
 `
 

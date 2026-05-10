@@ -28,6 +28,8 @@ describe('loadConfig', () => {
     expect(result.value.budgets.default).toBe('large')
     expect(result.value.ctxBlocks.architecture).toBe(true)
     expect(result.value.security.redactSecrets).toBe(true)
+    expect(result.value.contextFiles).toEqual({})
+    expect(result.value.allowUnsafeContextConfig).toBe(false)
     expect(result.value.include).toEqual(expect.arrayContaining([
       'pyproject.toml',
       '**/*.csproj',
@@ -59,5 +61,34 @@ describe('loadConfig', () => {
     if (result.ok) return
 
     expect(result.error.code).toBe('config_invalid')
+  })
+
+  it('normalizes context file config additively', async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), 'agentctx-core-config-'))
+    tempDirs.push(root)
+
+    await writeFile(
+      path.join(root, 'agentctx.config.ts'),
+      `export default {
+        targets: ["agents-md"],
+        allowUnsafeContextConfig: true,
+        contextFiles: { include: ["routes"], exclude: ["forms"], required: ["security"] },
+        ctxPoints: [{ name: "web", path: "apps/web", contextFiles: { required: ["api-client"] } }]
+      }\n`,
+      'utf8',
+    )
+
+    const result = await loadConfig(root)
+
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+
+    expect(result.value.allowUnsafeContextConfig).toBe(true)
+    expect(result.value.contextFiles).toEqual({
+      include: ['routes'],
+      exclude: ['forms'],
+      required: ['security'],
+    })
+    expect(result.value.ctxPoints[0]?.contextFiles).toEqual({ required: ['api-client'] })
   })
 })

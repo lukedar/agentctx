@@ -6,8 +6,11 @@ import {
   extractFacts,
   loadConfig,
   planCtxBlocks,
+  renderContextFiles,
+  selectContextFiles,
   type AgentCtxConfig,
   type ContextFile,
+  type ContextFileCategory,
   type Fact,
   type TargetName,
 } from '@agentctx/core'
@@ -41,6 +44,8 @@ export type BuildOptions = Readonly<{
   changed?: boolean
   targets?: readonly TargetName[]
   points?: readonly string[]
+  categories?: readonly ContextFileCategory[]
+  files?: readonly string[]
 }>
 
 export type BuildScopeResult = Readonly<{
@@ -48,6 +53,12 @@ export type BuildScopeResult = Readonly<{
   facts: readonly Fact[]
   filesWritten: number
   compiledTokens: number
+  contextFiles: readonly {
+    name: string
+    category: string
+    publicSafe: boolean
+    estimatedTokens: number
+  }[]
 }>
 
 export type BuildResult = Readonly<{
@@ -75,6 +86,8 @@ const buildScope = async (input: {
   dryRun?: boolean
   changed?: boolean
   targetsOverride?: readonly TargetName[]
+  categories?: readonly ContextFileCategory[]
+  files?: readonly string[]
 }): Promise<BuildScopeResult> => {
   const configHash = hashConfig(input.config)
 
@@ -117,6 +130,13 @@ const buildScope = async (input: {
 
   const graph = buildGraph(facts, input.config)
   const ctxBlocks = planCtxBlocks(graph, input.config)
+  const contextFileDefinitions = selectContextFiles({
+    graph,
+    config: input.config,
+    ...(input.categories === undefined ? {} : { categories: input.categories }),
+    ...(input.files === undefined ? {} : { files: input.files }),
+  })
+  const contextFiles = renderContextFiles(graph, input.config, contextFileDefinitions)
 
   const selectedTargets = pickTargets(input.config, input.targetsOverride)
 
@@ -127,13 +147,16 @@ const buildScope = async (input: {
     const files = await adapter.render({
       graph,
       ctxBlocks,
+      contextFiles,
       config: input.config,
     })
     for (const f of files) renderedFiles.push(f)
   }
 
   let written = 0
-  const compiledTokens = ctxBlocks.reduce((acc, block) => acc + block.tokenEstimate, 0)
+  const compiledTokens =
+    ctxBlocks.reduce((acc, block) => acc + block.tokenEstimate, 0) +
+    contextFiles.reduce((acc, file) => acc + file.tokenEstimate, 0)
 
   if (!input.dryRun) {
     await ensureDir(input.scopeDirAbs)
@@ -149,6 +172,12 @@ const buildScope = async (input: {
           scopeKey: input.scopeKey,
           facts: facts.length,
           compiledTokens,
+          contextFiles: contextFiles.map((file) => ({
+            name: file.name,
+            category: file.category,
+            publicSafe: file.publicSafe,
+            estimatedTokens: file.tokenEstimate,
+          })),
         },
         null,
         2,
@@ -172,6 +201,13 @@ const buildScope = async (input: {
       if (r.changed) written++
     }
 
+    for (const contextFile of contextFiles) {
+      const p = path.join(input.contextDirAbs, `${contextFile.name}.md`)
+      const safe = redactSecrets(contextFile.content)
+      const r = await writeTextIfChanged(p, safe)
+      if (r.changed) written++
+    }
+
     for (const f of renderedFiles) {
       const p = path.join(input.outDirAbs, f.path)
       const safe = redactSecrets(f.content)
@@ -185,6 +221,12 @@ const buildScope = async (input: {
     facts,
     filesWritten: written,
     compiledTokens,
+    contextFiles: contextFiles.map((file) => ({
+      name: file.name,
+      category: file.category,
+      publicSafe: file.publicSafe,
+      estimatedTokens: file.tokenEstimate,
+    })),
   }
 }
 
@@ -206,6 +248,8 @@ export const runBuild = async (opts: BuildOptions): Promise<BuildResult> => {
     ...(opts.dryRun === undefined ? {} : { dryRun: opts.dryRun }),
     ...(opts.changed === undefined ? {} : { changed: opts.changed }),
     ...(opts.targets === undefined ? {} : { targetsOverride: opts.targets }),
+    ...(opts.categories === undefined ? {} : { categories: opts.categories }),
+    ...(opts.files === undefined ? {} : { files: opts.files }),
   })
 
   const pointResults: BuildScopeResult[] = []
@@ -222,6 +266,8 @@ export const runBuild = async (opts: BuildOptions): Promise<BuildResult> => {
       ...(opts.dryRun === undefined ? {} : { dryRun: opts.dryRun }),
       ...(opts.changed === undefined ? {} : { changed: opts.changed }),
       ...(targetsOverride === undefined ? {} : { targetsOverride }),
+      ...(opts.categories === undefined ? {} : { categories: opts.categories }),
+      ...(opts.files === undefined ? {} : { files: opts.files }),
     })
     pointResults.push(res)
   }

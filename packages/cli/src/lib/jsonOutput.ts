@@ -19,11 +19,13 @@ export const formatBuildJson = (result: BuildResult) => ({
   workspace: {
     filesWritten: result.workspace.filesWritten,
     compiledTokens: result.workspace.compiledTokens,
+    contextFiles: result.workspace.contextFiles,
   },
   points: result.points.map((p) => ({
     scopeKey: p.scopeKey,
     filesWritten: p.filesWritten,
     compiledTokens: p.compiledTokens,
+    contextFiles: p.contextFiles,
   })),
 })
 

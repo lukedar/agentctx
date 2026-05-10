@@ -39,6 +39,7 @@ describe('json output formatters', () => {
         facts: [],
         filesWritten: 2,
         compiledTokens: 100,
+        contextFiles: [{ name: 'overview', category: 'core', publicSafe: true, estimatedTokens: 20 }],
       },
       points: [
         {
@@ -46,6 +47,7 @@ describe('json output formatters', () => {
           facts: [],
           filesWritten: 3,
           compiledTokens: 23,
+          contextFiles: [{ name: 'routes', category: 'frontend', publicSafe: true, estimatedTokens: 30 }],
         },
       ],
     })
@@ -58,12 +60,14 @@ describe('json output formatters', () => {
       workspace: {
         filesWritten: 2,
         compiledTokens: 100,
+        contextFiles: [{ name: 'overview', category: 'core', publicSafe: true, estimatedTokens: 20 }],
       },
       points: [
         {
           scopeKey: 'points/core',
           filesWritten: 3,
           compiledTokens: 23,
+          contextFiles: [{ name: 'routes', category: 'frontend', publicSafe: true, estimatedTokens: 30 }],
         },
       ],
     })

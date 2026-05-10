@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="420" viewBox="0 0 1240 420">
+  <style>
+    .box { fill: #0b1220; stroke: #3b82f6; stroke-width: 2; rx: 14; }
+    .box2 { fill: #0b1220; stroke: #22c55e; stroke-width: 2; rx: 14; }
+    .box3 { fill: #0b1220; stroke: #f59e0b; stroke-width: 2; rx: 14; }
+    .title { fill: #ffffff; font: 600 16px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    .text { fill: #e5e7eb; font: 13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    .muted { fill: #9ca3af; font: 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    .arrow { stroke: #94a3b8; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    .arrow2 { stroke: #22c55e; stroke-width: 2; fill: none; marker-end: url(#arrow2); }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8" />
+    </marker>
+    <marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#22c55e" />
+    </marker>
+  </defs>
+
+  <text class="title" x="30" y="32">AgentCtx application flow</text>
+  <text class="muted" x="30" y="54">One pipeline, many scopes. Workspace and points share the same stages.</text>
+
+  <rect class="box" x="30" y="90" width="145" height="84" rx="14" />
+  <text class="title" x="52" y="122">Config</text>
+  <text class="muted" x="52" y="144">agentctx.config.ts</text>
+
+  <rect class="box" x="205" y="90" width="145" height="84" rx="14" />
+  <text class="title" x="226" y="122">Scope</text>
+  <text class="muted" x="226" y="144">workspace / point</text>
+
+  <rect class="box" x="380" y="90" width="145" height="84" rx="14" />
+  <text class="title" x="398" y="122">Index</text>
+  <text class="muted" x="398" y="144">stable hashes</text>
+
+  <rect class="box" x="555" y="90" width="145" height="84" rx="14" />
+  <text class="title" x="572" y="122">Facts</text>
+  <text class="muted" x="572" y="144">metadata signals</text>
+
+  <rect class="box" x="730" y="90" width="145" height="84" rx="14" />
+  <text class="title" x="762" y="122">Graph</text>
+  <text class="muted" x="754" y="144">nodes + edges</text>
+
+  <rect class="box" x="905" y="90" width="145" height="84" rx="14" />
+  <text class="title" x="900" y="122">Context blocks</text>
+  <text class="muted" x="920" y="144">developer guidance</text>
+
+  <rect class="box" x="1080" y="90" width="130" height="84" rx="14" />
+  <text class="title" x="1100" y="122">Targets</text>
+  <text class="muted" x="1095" y="144">AGENTS, CLAUDE…</text>
+
+  <path class="arrow" d="M 175 132 L 205 132" />
+  <path class="arrow" d="M 350 132 L 380 132" />
+  <path class="arrow" d="M 525 132 L 555 132" />
+  <path class="arrow" d="M 700 132 L 730 132" />
+  <path class="arrow" d="M 875 132 L 905 132" />
+  <path class="arrow" d="M 1050 132 L 1080 132" />
+
+  <rect class="box2" x="120" y="245" width="190" height="88" rx="14" />
+  <text class="title" x="140" y="277">Sync</text>
+  <text class="muted" x="140" y="299">generated blocks + file writes</text>
+
+  <rect class="box3" x="405" y="245" width="210" height="88" rx="14" />
+  <text class="title" x="425" y="277">Check</text>
+  <text class="muted" x="425" y="299">drift + stale outputs</text>
+
+  <rect class="box2" x="695" y="245" width="220" height="88" rx="14" />
+  <text class="title" x="715" y="277">Dual Agent Runner</text>
+  <text class="muted" x="715" y="299">eval gate + step iteration</text>
+
+  <path class="arrow2" d="M 1080 174 C 1080 220 1040 232 1005 250" />
+  <path class="arrow2" d="M 940 174 C 900 220 830 232 800 250" />
+  <path class="arrow2" d="M 770 174 C 700 220 620 228 535 250" />
+  <path class="arrow2" d="M 600 174 C 545 220 420 228 215 250" />
+
+  <text class="muted" x="30" y="382">Pattern: compile once, render many. The same model feeds generated files, sync, and evaluation.</text>
+</svg>

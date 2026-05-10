@@ -1,106 +1,93 @@
 # AgentCtx
 
 <div class="docs-hero">
-  <span class="docs-kicker">Deterministic context compiler</span>
-  <h1>Agent context for any repo, any framework, and any agent.</h1>
+  <span class="docs-kicker">Semantic context compiler</span>
+  <h1>Context infrastructure for autonomous software engineering systems.</h1>
   <p class="docs-lead">
-    AgentCtx compiles repo metadata into deterministic CtxBlocks that adapt to the codebase and render into the instruction files your agents actually use.
+    AgentCtx compiles repositories into structured, secure, token-efficient operational context for coding agents, CI systems, review agents, docs crawlers, and future autonomous engineering workflows.
   </p>
   <div class="docs-chip-row">
-    <span class="docs-chip">any repo</span>
-    <span class="docs-chip">any framework</span>
-    <span class="docs-chip">any agent</span>
-    <span class="docs-chip">metadata-first</span>
-    <span class="docs-chip">deterministic output</span>
-  </div>
-</div>
-
-## Why AgentCtx
-
-<div class="docs-grid">
-  <div class="docs-card docs-span-4 docs-card--accent">
-    <h3>Any repo</h3>
-    <p>Use the same compiler model for monorepos, services, libraries, documentation, infrastructure, data, and Python-heavy research code.</p>
-  </div>
-  <div class="docs-card docs-span-4 docs-card--accent">
-    <h3>Any framework</h3>
-    <p>Adapters turn framework-specific evidence into normalized facts, so React, Angular, Node, .NET, Python, and future stacks can share the same pipeline.</p>
-  </div>
-  <div class="docs-card docs-span-4 docs-card--accent">
-    <h3>Any agent</h3>
-    <p>Targets render the same CtxBlocks into <code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>llms.txt</code>, and editor-specific formats without rescanning the repo.</p>
+    <span class="docs-chip">Any team</span>
+    <span class="docs-chip">Any framework</span>
+    <span class="docs-chip">Any repo</span>
+    <span class="docs-chip">Agent context for any repo, any framework, and any agent</span>
   </div>
 </div>
 
 <div class="docs-callout" style="margin-top: 1rem;">
-  <h3>The contract</h3>
-  <p>Repo files produce facts. Facts compile into a graph. The graph plans CtxBlocks. Targets render those blocks for each agent. That separation keeps the system portable across teams, frameworks, and tools.</p>
+  <h3>The shift</h3>
+  <p>AgentCtx transforms AI engineering from context reconstruction into context consumption. Agents should not rediscover architecture, ownership, workflows, and security rules on every task. They should consume compiled operational context that is evidence-backed, scoped, and safe.</p>
 </div>
+
+## Why It Exists
 
 <div class="docs-grid">
-  <div class="docs-card docs-span-6 docs-card--accent">
-    <h3>Pipeline</h3>
-    <p>Follow the compiler from config to drift checks, with the framework language defined in one place.</p>
-    <p><a href="/pipeline">Open Pipeline</a></p>
+  <div class="docs-card docs-span-4 docs-card--accent">
+    <h3>Long context is not strategy</h3>
+    <p>Large context windows help, but they do not remove the need for relevance, placement, and task-aware selection.</p>
+    <p><a href="/why-agentctx">Why AgentCtx</a></p>
   </div>
-  <div class="docs-card docs-span-6">
-    <h3>Architecture schematic</h3>
-    <p>The code map explains package boundaries, compiler contracts, and why the framework is arranged this way.</p>
-    <p><a href="/architecture">Open Architecture</a></p>
+  <div class="docs-card docs-span-4 docs-card--accent">
+    <h3>Repositories need structure</h3>
+    <p>Real software work depends on boundaries, dependency direction, workflows, security posture, and ownership.</p>
+    <p><a href="/architecture">Architecture</a></p>
   </div>
-  <div class="docs-card docs-span-6">
-    <h3>CtxPoints</h3>
-    <p>Points let the same compiler run at the workspace level or inside an app or package boundary.</p>
-    <p><a href="/context-points">Open CtxPoints</a></p>
-  </div>
-  <div class="docs-card docs-span-6">
-    <h3>CtxBlocks</h3>
-    <p>See the reusable block catalog and the team map for frontend, backend, SRE, quant, and data usage.</p>
-    <p><a href="/context-blocks">Open CtxBlocks</a></p>
-  </div>
-  <div class="docs-card docs-span-6">
-    <h3>Targets</h3>
-    <p>See how the shared CtxBlock model becomes <code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>llms.txt</code>, and the other shipped outputs.</p>
-    <p><a href="/targets">Open Targets</a></p>
-  </div>
-  <div class="docs-card docs-span-6">
-    <h3>Benchmark</h3>
-    <p>Compare the same task with no generated context and with a selected AgentCtx CtxBlock.</p>
-    <p><a href="/benchmark">Open Benchmark</a></p>
-  </div>
-  <div class="docs-card docs-span-6">
-    <h3>Tests</h3>
-    <p>Review generated Benchmark results by repo, CtxPoint, CtxBlock, performance, token usage, and agent compute.</p>
-    <p><a href="/tests">Open Tests</a></p>
+  <div class="docs-card docs-span-4 docs-card--accent">
+    <h3>Context must be governed</h3>
+    <p>Internal agents and public consumers should not receive the same visibility surface.</p>
+    <p><a href="/public-safe-context">Public-safe context</a></p>
   </div>
 </div>
 
-<div class="docs-callout" style="margin-top: 1rem;">
-  <h3>Start here</h3>
-  <p>Read <a href="/pipeline">Pipeline</a> for the canonical language, <a href="/context-points">CtxPoints</a> for boundary semantics, and <a href="/context-blocks">CtxBlocks</a> for the block catalog and team map.</p>
+## Compiler Model
+
+<div class="docs-panel">
+<pre><code>source code + config + docs
+  -> evidence-backed facts
+  -> context graph
+  -> context recipes
+  -> context blocks
+  -> context surfaces
+  -> AI systems</code></pre>
 </div>
 
-## Principles
+AgentCtx is not a raw-file dumper, embedding chunker, or generic summarizer. It is a semantic compiler for operational context.
+
+## Start Here
 
 <div class="docs-grid">
-  <div class="docs-card docs-span-6">
-    <h3>Deterministic</h3>
-    <p>Stable ordering, no timestamps, and explicit filtering keep repeated runs identical when the repo does not change.</p>
+  <div class="docs-card docs-span-4">
+    <h3>Why AgentCtx</h3>
+    <p>The market problem, research-backed context limits, and the missing infrastructure layer.</p>
+    <p><a href="/why-agentctx">Read the argument</a></p>
   </div>
-  <div class="docs-card docs-span-6">
-    <h3>Local-first</h3>
-    <p>The compiler runs on the repo you already have. There is no source exfiltration or network dependency in the core flow.</p>
+  <div class="docs-card docs-span-4">
+    <h3>Context files</h3>
+    <p>The v2 taxonomy for universal, framework-specific, safety, and public-safe context.</p>
+    <p><a href="/context-files">Explore the taxonomy</a></p>
   </div>
-  <div class="docs-card docs-span-6">
-    <h3>Secure by default</h3>
-    <p>Redaction and ignore rules keep secrets out of generated outputs and avoid scanning common secret files.</p>
+  <div class="docs-card docs-span-4">
+    <h3>Bench</h3>
+    <p>How AgentCtx Bench measures success, token use, runtime, file accuracy, and safety.</p>
+    <p><a href="/bench/overview">View benchmarks</a></p>
   </div>
-  <div class="docs-card docs-span-6">
-    <h3>Metadata-first</h3>
-    <p>Prefer manifests and config over full source dumps. The point is to explain the repo, not reproduce it.</p>
+  <div class="docs-card docs-span-4">
+    <h3>Frameworks</h3>
+    <p>How adapters add framework-specific understanding without coupling the compiler to one stack.</p>
+    <p><a href="/frameworks/support-matrix">View support</a></p>
   </div>
-  <div class="docs-card docs-span-6">
-    <h3>Portable</h3>
-    <p>Framework adapters, CtxBlocks, and targets are separate layers, so support can expand without coupling one repo shape to one agent format.</p>
+  <div class="docs-card docs-span-4">
+    <h3>CLI</h3>
+    <p>Build, plan, explain, sync, check, and inspect generated context surfaces.</p>
+    <p><a href="/cli">Open CLI</a></p>
+  </div>
+  <div class="docs-card docs-span-4">
+    <h3>Token density</h3>
+    <p>Why AgentCtx optimizes relevance and operational meaning instead of raw prompt volume.</p>
+    <p><a href="/concepts/token-density">Read token density</a></p>
   </div>
 </div>
+
+## Operating Principle
+
+AgentCtx gives AI systems the same operational understanding that senior engineers rely on to safely work inside complex software systems.

@@ -1,4 +1,4 @@
-import type { CtxBlockName, RenderedCtxBlock, TargetRenderInput } from '@agentctx/core'
+import type { CtxBlockName, RenderedContextFile, RenderedCtxBlock, TargetRenderInput } from '@agentctx/core'
 
 export const GENERATED_START = '<!-- agentctx:start -->'
 export const GENERATED_END = '<!-- agentctx:end -->'
@@ -77,6 +77,8 @@ export const renderSectionHeading = (title: string, note?: string): string =>
     : `<h2>${escapeHtml(title)}</h2>`
 
 export const getCtxBlocks = (input: TargetRenderInput): readonly RenderedCtxBlock[] => input.ctxBlocks
+
+export const getContextFiles = (input: TargetRenderInput): readonly RenderedContextFile[] => input.contextFiles
 
 export const findCtxBlock = (
   ctxBlocks: readonly RenderedCtxBlock[],

@@ -1,0 +1,121 @@
+{
+  "task": {
+    "id": "agentctx-v2-context-files",
+    "title": "AgentCtx v2 context-file taxonomy",
+    "goal": "Implement the v2 context-file taxonomy additively while preserving v1 compatibility and a tracked v1 docs snapshot.",
+    "constraints": [
+      "Keep existing CtxBlocks configuration and targets working",
+      "Preserve the docs tagline: Agent context for any repo, any framework, and any agent.",
+      "Generated output must stay deterministic, token-aware, and secret-safe",
+      "Use the dual-agent runner as a step gate after every implementation batch"
+    ],
+    "successCriteria": [
+      "Universal context files are generated for each context point",
+      "Capability files are generated only when relevant or explicitly configured",
+      "AGENTS.md remains compact and includes a clear load order",
+      "Public outputs exclude non-public-safe context files",
+      "CLI planning and explanation commands are available",
+      "The v2 docs build from the current docs base and v1 docs remain available for comparison"
+    ],
+    "filesLikelyAffected": [
+      "packages/core/src/**",
+      "packages/cli/src/**",
+      "packages/targets/src/**",
+      "docs-agentctx/**",
+      "docs-agentctx-v1/**",
+      "implementation-plan/agentctx-v2-context-files.runner-plan.json"
+    ],
+    "riskLevel": "high"
+  },
+  "steps": [
+    {
+      "id": "batch-00",
+      "title": "Preserve v1 docs",
+      "instructions": "Copy the current docs-agentctx source into docs-agentctx-v1 so v1 can be compared after v2 docs changes. Do not wire the snapshot into the v2 docs nav.",
+      "successCriteria": [
+        "docs-agentctx-v1 exists",
+        "The v1 snapshot contains the current docs markdown, VitePress config, scripts, and public assets",
+        "The v2 docs source remains in docs-agentctx"
+      ],
+      "filesLikelyAffected": [
+        "docs-agentctx-v1/**"
+      ]
+    },
+    {
+      "id": "batch-01",
+      "title": "Registry and config",
+      "instructions": "Add v2 context-file types, registry metadata, default token budgets, public-safe flags, and additive config support for contextFiles and allowUnsafeContextConfig.",
+      "successCriteria": [
+        "Registry definitions are deterministic and exported from @agentctx/core",
+        "Existing ctxBlocks config remains supported",
+        "Unit tests cover registry basics and config normalization"
+      ],
+      "filesLikelyAffected": [
+        "packages/core/src/**",
+        "packages/core/tests/**"
+      ]
+    },
+    {
+      "id": "batch-02",
+      "title": "Capability detection and selection",
+      "instructions": "Derive v2 capabilities from existing graph facts and implement context-file selection with include, exclude, required, and safety enforcement.",
+      "successCriteria": [
+        "Universal files always select",
+        "Capability files select only when required capabilities are present or included",
+        "Core safety files cannot be excluded unless unsafe config is enabled",
+        "Unit tests cover detected, skipped, required, excluded, and unsafe-config cases"
+      ],
+      "filesLikelyAffected": [
+        "packages/core/src/**",
+        "packages/core/tests/**"
+      ]
+    },
+    {
+      "id": "batch-03",
+      "title": "Renderers and generated outputs",
+      "instructions": "Render v2 context files from the graph, write them during build, keep legacy CtxBlocks compatible, redact secrets, and update AGENTS.md to use the v2 load order and context map.",
+      "successCriteria": [
+        "Universal and high-value capability files render with useful sections",
+        "Generated files are redacted before writing",
+        "AGENTS.md stays compact and links to deeper files",
+        "llms.txt uses only public-safe context files"
+      ],
+      "filesLikelyAffected": [
+        "packages/core/src/**",
+        "packages/cli/src/**",
+        "packages/targets/src/**",
+        "packages/targets/tests/**"
+      ]
+    },
+    {
+      "id": "batch-04",
+      "title": "CLI and cache metadata",
+      "instructions": "Add agentctx plan, agentctx explain, build --category, build --file, and file-level context metadata in cache/build outputs.",
+      "successCriteria": [
+        "CLI commands support text and JSON output",
+        "Build filters accept category and file names",
+        "Cache metadata records selected files, input hashes, estimated tokens, and public-safe state",
+        "CLI tests cover the new behavior"
+      ],
+      "filesLikelyAffected": [
+        "packages/cli/src/**",
+        "packages/cli/tests/**"
+      ]
+    },
+    {
+      "id": "batch-05",
+      "title": "V2 docs and integration fixture",
+      "instructions": "Update docs-agentctx from the current docs base to explain v2 context files, framework-specific context, plan/explain CLI commands, and public-safe outputs. Add a compact integration fixture for expected v2 output behavior.",
+      "successCriteria": [
+        "Docs preserve the tagline",
+        "Docs explain v2 while noting additive CtxBlocks compatibility",
+        "The v1 docs snapshot remains unchanged",
+        "Typecheck, tests, and build pass"
+      ],
+      "filesLikelyAffected": [
+        "docs-agentctx/**",
+        "packages/**/tests/**"
+      ]
+    }
+  ]
+}

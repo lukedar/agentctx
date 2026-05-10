@@ -53,6 +53,12 @@ export const createPointConfig = (
       default: point.budget ?? workspace.budgets.default,
     },
     ctxPoints: [],
+    contextFiles: {
+      ...workspace.contextFiles,
+      ...(point.contextFiles?.include ? { include: point.contextFiles.include } : {}),
+      ...(point.contextFiles?.exclude ? { exclude: point.contextFiles.exclude } : {}),
+      ...(point.contextFiles?.required ? { required: point.contextFiles.required } : {}),
+    },
   }
 }
 
@@ -60,11 +66,11 @@ export const selectContextPoints = (
   workspace: AgentCtxConfig,
   explicitPointNamesRaw: readonly string[],
 ): readonly CtxPointConfig[] => {
-  const explicitPointNames = explicitPointNamesRaw.map(normalizePointName)
+  const explicitPointNames = explicitPointNamesRaw.map((name) => normalizePointName(name).toLowerCase())
 
   return workspace.ctxPoints
     .map((p) => ({ ...p, name: normalizePointName(p.name) }))
-    .filter((p) => (explicitPointNames.length > 0 ? explicitPointNames.includes(p.name) : true))
+    .filter((p) => (explicitPointNames.length > 0 ? explicitPointNames.includes(p.name.toLowerCase()) : true))
     .sort((a, b) => a.name.localeCompare(b.name))
 }
 
@@ -72,10 +78,10 @@ export const resolvePointScope = (
   workspace: AgentCtxConfig,
   pointName: string,
 ): PointScope => {
-  const normalizedName = normalizePointName(pointName)
-  const point = workspace.ctxPoints.find((p) => normalizePointName(p.name) === normalizedName)
-  if (!point) throw new Error(`Unknown CtxPoint: ${normalizedName}`)
-  return { kind: 'point', name: normalizedName, pointPath: point.path }
+  const normalizedName = normalizePointName(pointName).toLowerCase()
+  const point = workspace.ctxPoints.find((p) => normalizePointName(p.name).toLowerCase() === normalizedName)
+  if (!point) throw new Error(`Unknown CtxPoint: ${normalizePointName(pointName)}`)
+  return { kind: 'point', name: normalizePointName(point.name), pointPath: point.path }
 }
 
 export const resolveSyncScopes = (

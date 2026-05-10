@@ -147,6 +147,13 @@ const ctxPointSchema = z.object({
   budget: tokenBudgetNameSchema.optional(),
   include: z.array(z.string()).optional(),
   exclude: z.array(z.string()).optional(),
+  contextFiles: z
+    .object({
+      include: z.array(z.string()).optional(),
+      exclude: z.array(z.string()).optional(),
+      required: z.array(z.string()).optional(),
+    })
+    .optional(),
 })
 
 const configSchema = z.object({
@@ -201,6 +208,14 @@ const configSchema = z.object({
       allowSourceSnippets: z.boolean().optional(),
     })
     .optional(),
+  contextFiles: z
+    .object({
+      include: z.array(z.string()).optional(),
+      exclude: z.array(z.string()).optional(),
+      required: z.array(z.string()).optional(),
+    })
+    .optional(),
+  allowUnsafeContextConfig: z.boolean().optional(),
 })
 
 export type UserAgentCtxConfig = z.infer<typeof configSchema>
@@ -217,20 +232,37 @@ const normalizeWorkspace = (w: UserAgentCtxConfig['workspace']): AgentCtxConfig[
   }
 }
 
+const normalizeContextFiles = (
+  contextFiles: UserAgentCtxConfig['contextFiles'],
+): AgentCtxConfig['contextFiles'] => {
+  if (!contextFiles) return undefined
+
+  return {
+    ...(contextFiles.include ? { include: contextFiles.include } : {}),
+    ...(contextFiles.exclude ? { exclude: contextFiles.exclude } : {}),
+    ...(contextFiles.required ? { required: contextFiles.required } : {}),
+  }
+}
+
 const normalizeCtxPoints = (points: UserAgentCtxConfig['ctxPoints']): AgentCtxConfig['ctxPoints'] => {
   const input = points ?? []
 
-  return input.map((p) => ({
-    name: p.name,
-    path: p.path,
-    ...(p.type ? { type: p.type } : {}),
-    ...(p.frameworks ? { frameworks: p.frameworks } : {}),
-    ...(p.dependsOn ? { dependsOn: p.dependsOn } : {}),
-    ...(p.targets ? { targets: p.targets } : {}),
-    ...(p.budget ? { budget: p.budget } : {}),
-    ...(p.include ? { include: p.include } : {}),
-    ...(p.exclude ? { exclude: p.exclude } : {}),
-  }))
+  return input.map((p) => {
+    const contextFiles = normalizeContextFiles(p.contextFiles)
+
+    return {
+      name: p.name,
+      path: p.path,
+      ...(p.type ? { type: p.type } : {}),
+      ...(p.frameworks ? { frameworks: p.frameworks } : {}),
+      ...(p.dependsOn ? { dependsOn: p.dependsOn } : {}),
+      ...(p.targets ? { targets: p.targets } : {}),
+      ...(p.budget ? { budget: p.budget } : {}),
+      ...(p.include ? { include: p.include } : {}),
+      ...(p.exclude ? { exclude: p.exclude } : {}),
+      ...(contextFiles ? { contextFiles } : {}),
+    }
+  })
 }
 
 const applyDefaults = (rootDir: string, user: UserAgentCtxConfig): AgentCtxConfig => {
@@ -255,7 +287,7 @@ const applyDefaults = (rootDir: string, user: UserAgentCtxConfig): AgentCtxConfi
     scope: { kind: 'workspace' },
     ctxPoints,
 
-    targets: user.targets ?? ['agents-md', 'claude', 'cursor', 'copilot', 'llms'],
+    targets: user.targets ?? ['agents-md', 'llms'],
     include: user.include ?? [...DEFAULT_INCLUDE],
     exclude: user.exclude ?? [...DEFAULT_EXCLUDE],
     ctxBlocks,
@@ -274,6 +306,8 @@ const applyDefaults = (rootDir: string, user: UserAgentCtxConfig): AgentCtxConfi
       includeEnvValues: user.security?.includeEnvValues ?? false,
       allowSourceSnippets: user.security?.allowSourceSnippets ?? false,
     },
+    contextFiles: normalizeContextFiles(user.contextFiles) ?? {},
+    allowUnsafeContextConfig: user.allowUnsafeContextConfig ?? false,
   }
 
   return {

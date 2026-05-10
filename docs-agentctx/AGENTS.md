@@ -1,3 +1,22 @@
+# AgentCtx Docs
+
+Generated instruction output is not the docs source of truth for v2 positioning.
+
+Use the VitePress pages for product documentation:
+
+- `index.md`
+- `why-agentctx.md`
+- `architecture.md`
+- `pipeline.md`
+- `context-files.md`
+- `context-points.md`
+- `public-safe-context.md`
+- `bench/overview.md`
+- `frameworks/support-matrix.md`
+- `concepts/token-density.md`
+
+The v1 docs snapshot lives in `docs-agentctx-v1/` for comparison only.
+
 <!-- agentctx:start -->
 <div class="docs-hero">
 <div class="docs-kicker">AGENTS.md</div>
@@ -26,31 +45,27 @@
 </div>
 
 <h2>Context map</h2>
+- Overview: `.agentctx/context/overview.md`
+- Security: `.agentctx/context/security.md`
 - Architecture: `.agentctx/context/architecture.md`
+- Boundaries: `.agentctx/context/boundaries.md`
 - Conventions: `.agentctx/context/conventions.md`
-- Runtime: `.agentctx/context/runtime.md`
+- Commands: `.agentctx/context/commands.md`
+- Dependencies: `.agentctx/context/dependencies.md`
 - Testing: `.agentctx/context/testing.md`
-- Workflows: `.agentctx/context/workflows.md`
+- Public Api: `.agentctx/context/public-api.md`
+- Exports: `.agentctx/context/exports.md`
+- Compatibility: `.agentctx/context/compatibility.md`
+- Usage: `.agentctx/context/usage.md`
+- Versioning: `.agentctx/context/versioning.md`
 
-<h2>Reading order</h2>
-<div class="docs-grid">
-<div class="docs-card docs-span-6">
-<h3>1. Architecture</h3>
-<p>Understand the compiler pipeline and package boundaries first.</p>
-</div>
-<div class="docs-card docs-span-6">
-<h3>2. Conventions</h3>
-<p>Check the rules that govern generated outputs and diffs.</p>
-</div>
-<div class="docs-card docs-span-6">
-<h3>3. Testing</h3>
-<p>Use the smallest relevant test suite before finalizing changes.</p>
-</div>
-<div class="docs-card docs-span-6">
-<h3>4. Workflows</h3>
-<p>Run build, sync, and check through the documented commands.</p>
-</div>
-</div>
+<h2>Recommended Load Order</h2>
+1. `.agentctx/context/overview.md`
+2. `.agentctx/context/security.md`
+3. `.agentctx/context/architecture.md`
+4. `.agentctx/context/boundaries.md`
+5. `.agentctx/context/commands.md`
+6. `.agentctx/context/testing.md`
 
 # Architecture
 

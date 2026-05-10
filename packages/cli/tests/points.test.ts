@@ -96,6 +96,11 @@ describe('point helpers', () => {
     expect(scope).toEqual({ kind: 'point', name: 'UI-Package', pointPath: 'packages/ui' })
   })
 
+  it('resolves sync scopes from normalized point aliases', () => {
+    const scope = resolvePointScope(createWorkspaceConfig(), 'ui-package')
+    expect(scope).toEqual({ kind: 'point', name: 'UI-Package', pointPath: 'packages/ui' })
+  })
+
   it('resolves sync scopes to workspace plus all configured points by default', () => {
     const scopes = resolveSyncScopes(createWorkspaceConfig(), [])
     expect(scopes).toEqual([

@@ -47,8 +47,5 @@
 - Compatibility: `.agentctx/context/compatibility.md`
 - Ci Cd: `.agentctx/context/ci-cd.md`
 - Usage: `.agentctx/context/usage.md`
-- Styling: `.agentctx/context/styling.md`
-- Accessibility: `.agentctx/context/accessibility.md`
-- Forms: `.agentctx/context/forms.md`
 - Versioning: `.agentctx/context/versioning.md`
 <!-- agentctx:end -->

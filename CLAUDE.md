@@ -33,11 +33,11 @@
 - Context scope: workspace
 - Package manager: pnpm
 - Languages: typescript
-- Frameworks: react, vite
+- Frameworks: (none detected)
 - Workspace: detected
 - Apps in scope: (none detected)
 - Packages in scope: @agentctx/adapters (packages/adapters), @agentctx/core (packages/core), @agentctx/targets (packages/targets), agentctx (packages/cli), agentctx-docs (docs-agentctx), …
-- Internal dependencies: @agentctx/adapters -> @agentctx/core, @agentctx/targets -> @agentctx/core, agentctx -> @agentctx/adapters, agentctx -> @agentctx/core, agentctx -> @agentctx/targets, …
+- Internal dependencies: @agentctx/adapters -> @agentctx/core, @agentctx/targets -> @agentctx/core, agentctx -> @agentctx/adapters, agentctx -> @agentctx/core, agentctx -> @agentctx/targets
 
 ## Dependencies
 
@@ -48,7 +48,6 @@
 - packages/adapters/package.json: Package/app manifest in scope
 - packages/cli/package.json: Package/app manifest in scope
 - packages/core/package.json: Package/app manifest in scope
-- packages/dual-agent-runner-ui/package.json: Package/app manifest in scope
 - packages/dual-agent-runner/package.json: Package/app manifest in scope
 - packages/targets/package.json: Package/app manifest in scope
 
@@ -83,7 +82,6 @@
 - `packages/adapters/package.json`: Package/app manifest in scope
 - `packages/cli/package.json`: Package/app manifest in scope
 - `packages/core/package.json`: Package/app manifest in scope
-- `packages/dual-agent-runner-ui/package.json`: Package/app manifest in scope
 - `packages/dual-agent-runner/package.json`: Package/app manifest in scope
 - `packages/targets/package.json`: Package/app manifest in scope
 
@@ -123,40 +121,6 @@
 ## Evidence
 
 - `docs-agentctx/package.json`: Runtime manifest or entrypoint
-
-# Frontend
-
-## Responsibilities
-
-- Frontend-related frameworks detected: react, vite
-- Frontend implementation shape: Component-driven React UI detected. Bundler-led frontend entrypoint detected.
-- Frontend-relevant scope entries: @agentctx/adapters (packages/adapters), @agentctx/core (packages/core), @agentctx/targets (packages/targets), agentctx (packages/cli), agentctx-docs (docs-agentctx), …
-
-## Dependencies
-
-- No confirmed dependencies detected.
-
-## Critical Invariants
-
-- Keep components, state boundaries, and adjacent route or data-loading code aligned when changing UI behavior.
-
-## Failure Modes
-
-- No confirmed failure modes detected.
-
-## Safe Commands
-
-- No confirmed safe commands detected.
-
-## Useful For
-
-- UI behavior changes
-- route updates
-- state and data-loading changes
-
-## Unsafe Changes
-
-- Changing route, auth, or state boundaries without checking related API and test surfaces.
 
 # Operations
 

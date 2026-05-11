@@ -6,7 +6,6 @@ export default {
     { name: "adapters", path: "packages/adapters", type: "package", dependsOn: ["core"] },
     { name: "targets", path: "packages/targets", type: "package", dependsOn: ["core"] },
     { name: "dual-agent-runner", path: "packages/dual-agent-runner", type: "package" },
-    { name: "dual-agent-runner-ui", path: "packages/dual-agent-runner-ui", type: "frontend", dependsOn: ["dual-agent-runner"] },
     { name: "docs-agentctx", path: "docs-agentctx", type: "docs" }
   ]
 }

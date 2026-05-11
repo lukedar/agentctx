@@ -49,9 +49,6 @@
 - Permissions: `.agentctx/context/permissions.md`
 - Environments: `.agentctx/context/environments.md`
 - Usage: `.agentctx/context/usage.md`
-- Styling: `.agentctx/context/styling.md`
-- Accessibility: `.agentctx/context/accessibility.md`
-- Forms: `.agentctx/context/forms.md`
 - Versioning: `.agentctx/context/versioning.md`
 
 <h2>Recommended Load Order</h2>
@@ -69,11 +66,11 @@
 - Context scope: workspace
 - Package manager: pnpm
 - Languages: typescript
-- Frameworks: react, vite
+- Frameworks: (none detected)
 - Workspace: detected
 - Apps in scope: (none detected)
 - Packages in scope: @agentctx/adapters (packages/adapters), @agentctx/core (packages/core), @agentctx/targets (packages/targets), agentctx (packages/cli), agentctx-docs (docs-agentctx), …
-- Internal dependencies: @agentctx/adapters -> @agentctx/core, @agentctx/targets -> @agentctx/core, agentctx -> @agentctx/adapters, agentctx -> @agentctx/core, agentctx -> @agentctx/targets, …
+- Internal dependencies: @agentctx/adapters -> @agentctx/core, @agentctx/targets -> @agentctx/core, agentctx -> @agentctx/adapters, agentctx -> @agentctx/core, agentctx -> @agentctx/targets
 
 ## Dependencies
 
@@ -84,7 +81,6 @@
 - packages/adapters/package.json: Package/app manifest in scope
 - packages/cli/package.json: Package/app manifest in scope
 - packages/core/package.json: Package/app manifest in scope
-- packages/dual-agent-runner-ui/package.json: Package/app manifest in scope
 - packages/dual-agent-runner/package.json: Package/app manifest in scope
 - packages/targets/package.json: Package/app manifest in scope
 
@@ -119,7 +115,6 @@
 - `packages/adapters/package.json`: Package/app manifest in scope
 - `packages/cli/package.json`: Package/app manifest in scope
 - `packages/core/package.json`: Package/app manifest in scope
-- `packages/dual-agent-runner-ui/package.json`: Package/app manifest in scope
 - `packages/dual-agent-runner/package.json`: Package/app manifest in scope
 - `packages/targets/package.json`: Package/app manifest in scope
 
@@ -135,7 +130,6 @@
 - packages/adapters/tsconfig.json: Project convention/config (typescript)
 - packages/cli/tsconfig.json: Project convention/config (typescript)
 - packages/core/tsconfig.json: Project convention/config (typescript)
-- packages/dual-agent-runner-ui/tsconfig.json: Project convention/config (typescript)
 - packages/dual-agent-runner/tsconfig.json: Project convention/config (typescript)
 - packages/targets/tsconfig.json: Project convention/config (typescript)
 
@@ -171,7 +165,6 @@
 - `packages/adapters/tsconfig.json`: Project convention/config (typescript)
 - `packages/cli/tsconfig.json`: Project convention/config (typescript)
 - `packages/core/tsconfig.json`: Project convention/config (typescript)
-- `packages/dual-agent-runner-ui/tsconfig.json`: Project convention/config (typescript)
 - `packages/dual-agent-runner/tsconfig.json`: Project convention/config (typescript)
 - `packages/targets/tsconfig.json`: Project convention/config (typescript)
 

@@ -34,7 +34,6 @@
 - packages/adapters/tsconfig.json: Project convention/config (typescript)
 - packages/cli/tsconfig.json: Project convention/config (typescript)
 - packages/core/tsconfig.json: Project convention/config (typescript)
-- packages/dual-agent-runner-ui/tsconfig.json: Project convention/config (typescript)
 - packages/dual-agent-runner/tsconfig.json: Project convention/config (typescript)
 - packages/targets/tsconfig.json: Project convention/config (typescript)
 
@@ -70,7 +69,6 @@
 - `packages/adapters/tsconfig.json`: Project convention/config (typescript)
 - `packages/cli/tsconfig.json`: Project convention/config (typescript)
 - `packages/core/tsconfig.json`: Project convention/config (typescript)
-- `packages/dual-agent-runner-ui/tsconfig.json`: Project convention/config (typescript)
 - `packages/dual-agent-runner/tsconfig.json`: Project convention/config (typescript)
 - `packages/targets/tsconfig.json`: Project convention/config (typescript)
 

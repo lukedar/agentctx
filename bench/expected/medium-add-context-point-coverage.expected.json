@@ -1,0 +1,6 @@
+{
+  "taskId": "medium-add-context-point-coverage",
+  "expectedContextPoints": ["dual-agent-runner", "core"],
+  "requiredReportFields": ["coverageByContextPoint"],
+  "mustPass": ["tests", "typecheck"]
+}

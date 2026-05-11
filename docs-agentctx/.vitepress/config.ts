@@ -110,6 +110,7 @@ export default defineConfig({
           { text: 'Token Density', link: '/concepts/token-density' },
           { text: 'Framework Support', link: '/frameworks/support-matrix' },
           { text: 'Bench Overview', link: '/bench/overview' },
+          { text: 'Bench Reports', link: '/bench/reports' },
           { text: 'Dual Agent Runner', link: '/quality-gate' },
         ],
       },

@@ -1,0 +1,6 @@
+{
+  "taskId": "complex-public-safe-context-validation",
+  "expectedContextPoints": ["core", "cli", "targets", "dual-agent-runner"],
+  "requiredReportFields": ["securityFindings", "publicSafeValidation", "coverageByContextPoint"],
+  "mustPass": ["tests", "typecheck", "build", "public-safe-check"]
+}

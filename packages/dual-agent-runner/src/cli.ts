@@ -6,7 +6,14 @@ import { renderRunReportMarkdown } from './report'
 import { createDefaultDecisionRecord, createDefaultTask, createGateEvaluation, runDeterministicChecks } from './qualityGate'
 import { createTaskPlanTemplate, runTaskPlanStep } from './taskRunner'
 import type { RunnerTask } from './types'
-import { prepareBenchmarkRun, rebuildBenchmarkReport } from './benchmark'
+import {
+  createBenchmarkRunPlan,
+  parseBenchmarkSuiteFile,
+  parseBenchmarkTaskFile,
+  prepareBenchmarkRun,
+  rebuildBenchmarkReport,
+  runBenchmarkTasks,
+} from './benchmark'
 
 const parseArgs = (argv: readonly string[]): {
   cmd: string
@@ -26,7 +33,11 @@ const parseArgs = (argv: readonly string[]): {
   taskName: string | undefined
   taskPrompt: string | undefined
   runDir: string | undefined
+  task: string | undefined
+  suite: string | undefined
   check: boolean
+  dryRun: boolean
+  open: boolean
 } => {
   const [cmd = 'help', maybeSubcmd, ...rest] = argv
 
@@ -34,6 +45,8 @@ const parseArgs = (argv: readonly string[]): {
   for (let i = 0; i < rest.length; i++) {
     const a = rest[i]
     if (a === '--check') out.check = true
+    else if (a === '--dry-run') out['dry-run'] = true
+    else if (a === '--open') out.open = true
     else if (a === '--cwd') out.cwd = rest[++i] ?? ''
     else if (a === '--task-id') out['task-id'] = rest[++i] ?? ''
     else if (a === '--task-file') out['task-file'] = rest[++i] ?? ''
@@ -49,6 +62,8 @@ const parseArgs = (argv: readonly string[]): {
     else if (a === '--task-name') out['task-name'] = rest[++i] ?? ''
     else if (a === '--task-prompt') out['task-prompt'] = rest[++i] ?? ''
     else if (a === '--run-dir') out['run-dir'] = rest[++i] ?? ''
+    else if (a === '--task') out.task = rest[++i] ?? ''
+    else if (a === '--suite') out.suite = rest[++i] ?? ''
   }
 
   const norm = (v: unknown): string | undefined => (typeof v === 'string' && v.trim() ? v.trim() : undefined)
@@ -71,13 +86,17 @@ const parseArgs = (argv: readonly string[]): {
     taskName: norm(out['task-name']),
     taskPrompt: norm(out['task-prompt']),
     runDir: norm(out['run-dir']),
+    task: norm(out.task),
+    suite: norm(out.suite),
     check: Boolean(out.check),
+    dryRun: Boolean(out['dry-run']),
+    open: Boolean(out.open),
   }
 }
 
 const help = (): void => {
   // eslint-disable-next-line no-console
-  console.log(`dual-agent-runner\n\nUsage:\n  dar eval [--cwd <dir>] [--task-id <id>] [--task-file <json>] [--out <file.md>] [--out-json <file.json>] [--check]\n  dar task template\n  dar plan template\n  dar plan eval --plan-file <json> [--step <id>] [--cwd <dir>] [--out-dir <dir>] [--check]\n  dar benchmark ctxblock --repo <dir> --ctx-block <name> --task-name <name> --task-prompt <text> [--ctx-point <name>] [--ctx-file <file>] [--out-dir <dir>]\n  dar benchmark report --run-dir <dir>\n  dar prompt\n\nCommands:\n  eval                 Run deterministic evaluation gate (typecheck/test/build) + write markdown & JSON reports\n  task template        Print a RunnerTask JSON template to stdout\n  plan template        Print a RunnerTaskPlan JSON template to stdout\n  plan eval            Evaluate the next or named task-plan step and persist step reports/state\n  benchmark ctxblock   Prepare no-context vs AgentCtx CtxBlock run packs\n  benchmark report     Rebuild a benchmark report from filled result files\n  prompt               Print the reusable dual-agent execution prompt template\n`)
+  console.log(`dual-agent-runner\n\nUsage:\n  dar eval [--cwd <dir>] [--task-id <id>] [--task-file <json>] [--out <file.md>] [--out-json <file.json>] [--check]\n  dar task template\n  dar plan template\n  dar plan eval --plan-file <json> [--step <id>] [--cwd <dir>] [--out-dir <dir>] [--check]\n  dar benchmark run [--task <file.md> | --suite <file.md>] [--cwd <dir>] [--dry-run]\n  dar benchmark ctxblock --repo <dir> --ctx-block <name> --task-name <name> --task-prompt <text> [--ctx-point <name>] [--ctx-file <file>] [--out-dir <dir>]\n  dar benchmark report --run-dir <dir>\n  dar prompt\n\nCommands:\n  eval                 Run deterministic evaluation gate (typecheck/test/build) + write markdown & JSON reports\n  task template        Print a RunnerTask JSON template to stdout\n  plan template        Print a RunnerTaskPlan JSON template to stdout\n  plan eval            Evaluate the next or named task-plan step and persist step reports/state\n  benchmark run        Parse mock benchmark tasks/suites and generate JSON, Markdown, HTML, and coverage reports\n  benchmark ctxblock   Prepare no-context vs AgentCtx CtxBlock run packs\n  benchmark report     Rebuild a benchmark report from filled result files\n  prompt               Print the reusable dual-agent execution prompt template\n`)
 }
 
 const ensureDir = async (dir: string): Promise<void> => {
@@ -136,6 +155,50 @@ const main = async (): Promise<void> => {
       `Step ${result.step.id} status: ${result.evaluation.status.toUpperCase()} (avg ${result.evaluation.average.toFixed(2)}/5)`,
     )
     if (args.check && !result.ok) process.exitCode = 1
+    return
+  }
+
+  if (args.cmd === 'benchmark' && args.subcmd === 'run') {
+    if (!args.task && !args.suite) throw new Error('Missing required --task <file.md> or --suite <file.md>')
+
+    const cwd = args.cwd ? path.resolve(process.cwd(), args.cwd) : process.cwd()
+    const suitePath = args.suite ? path.resolve(process.cwd(), args.suite) : undefined
+    const taskPaths = args.task
+      ? [path.resolve(process.cwd(), args.task)]
+      : suitePath
+        ? (await parseBenchmarkSuiteFile(suitePath)).tasks.map((taskPath) => path.resolve(path.dirname(suitePath), taskPath))
+        : []
+    const suite = suitePath ? await parseBenchmarkSuiteFile(suitePath) : undefined
+    const tasks = await Promise.all(taskPaths.map((taskPath) => parseBenchmarkTaskFile(taskPath)))
+    const plan = createBenchmarkRunPlan(tasks, suite?.conditions)
+
+    if (args.dryRun) {
+      // eslint-disable-next-line no-console
+      console.log(`Parsed ${plan.length} benchmark task${plan.length === 1 ? '' : 's'}`)
+      // eslint-disable-next-line no-console
+      console.log(JSON.stringify({ version: 1, plan }, null, 2))
+      return
+    }
+
+    const result = await runBenchmarkTasks(cwd, tasks)
+
+    // eslint-disable-next-line no-console
+    console.log(`Parsed ${plan.length} benchmark task${plan.length === 1 ? '' : 's'}`)
+    // eslint-disable-next-line no-console
+    console.log('Ran no-context condition')
+    // eslint-disable-next-line no-console
+    console.log('Built AgentCtx context')
+    // eslint-disable-next-line no-console
+    console.log('Ran agentctx-context condition')
+    // eslint-disable-next-line no-console
+    console.log('Generated reports')
+    // eslint-disable-next-line no-console
+    console.log(`\nReports:\n${result.reportIndexPath}`)
+    if (args.open) {
+      // The runner is intentionally non-GUI in CI; --open prints the stable local file path.
+      // eslint-disable-next-line no-console
+      console.log(`Open: ${result.reportIndexPath}`)
+    }
     return
   }
 

@@ -1,0 +1,6 @@
+{
+  "taskId": "small-add-token-summary",
+  "expectedContextPoints": ["dual-agent-runner"],
+  "requiredReportFields": ["tokenSummary"],
+  "mustPass": ["tests", "typecheck"]
+}

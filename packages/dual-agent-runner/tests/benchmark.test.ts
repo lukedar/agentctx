@@ -1,16 +1,25 @@
 import { promises as fs } from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 import { describe, expect, it } from 'vitest'
 
 import {
+  calculateCoverageByContextPoint,
   compareBenchmarkResults,
+  createBenchmarkRunPlan,
+  createTokenSummary,
+  parseBenchmarkSuiteFile,
+  parseBenchmarkTaskFile,
   prepareBenchmarkRun,
   rebuildBenchmarkReport,
+  runBenchmarkTasks,
   slugify,
   type BenchmarkConditionResult,
 } from '../src/benchmark'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const mkRepo = async (): Promise<string> => {
   const repo = await fs.mkdtemp(path.join(os.tmpdir(), 'agentctx-benchmark-repo-'))
@@ -174,5 +183,67 @@ describe('benchmark', () => {
 
     expect(report.comparison.outcome).toBe('helped')
     expect(reportMarkdown).toContain('Outcome: **helped**')
+    expect(report.tokenSummary.delta).toBe(1800)
+    expect(reportMarkdown).toContain('## Context Point Coverage')
+  })
+
+  it('parses mock task fixtures and creates a run plan', async () => {
+    const repoRoot = path.resolve(__dirname, '../../..')
+    const suitePath = path.join(repoRoot, 'bench/suites/agentctx-core-validation.md')
+    const suite = await parseBenchmarkSuiteFile(suitePath)
+    const tasks = await Promise.all(
+      suite.tasks.map((taskPath) => parseBenchmarkTaskFile(path.resolve(path.dirname(suitePath), taskPath))),
+    )
+    const plan = createBenchmarkRunPlan(tasks, suite.conditions)
+
+    expect(suite.conditions).toEqual(['no-context', 'agentctx-context'])
+    expect(plan).toHaveLength(3)
+    expect(plan.map((item) => item.difficulty)).toEqual(['small', 'medium', 'complex'])
+    expect(plan.at(1)?.contextPoints).toContain('core')
+  })
+
+  it('calculates token summary and Context Point coverage states', () => {
+    const tokenSummary = createTokenSummary(
+      completedResult({ condition: 'no-context', totalTokens: 5000 }),
+      completedResult({ condition: 'agentctx-context', totalTokens: 3000 }),
+    )
+    const coverage = calculateCoverageByContextPoint(
+      ['core', 'cli', 'targets'],
+      ['packages/core/src/index.ts', 'packages/cli/src/commands/check.ts'],
+      ['packages/core/tests/index.test.ts'],
+    )
+
+    expect(tokenSummary.delta).toBe(2000)
+    expect(tokenSummary.reductionPercent).toBe(40)
+    expect(coverage.find((item) => item.contextPoint === 'core')?.status).toBe('covered')
+    expect(coverage.find((item) => item.contextPoint === 'cli')?.status).toBe('covered')
+    expect(coverage.find((item) => item.contextPoint === 'targets')?.status).toBe('missing')
+  })
+
+  it('generates JSON, Markdown, HTML, and coverage reports for the mock suite', async () => {
+    const repo = await mkRepo()
+    const repoRoot = path.resolve(__dirname, '../../..')
+    const suitePath = path.join(repoRoot, 'bench/suites/agentctx-core-validation.md')
+    const suite = await parseBenchmarkSuiteFile(suitePath)
+    const tasks = await Promise.all(
+      suite.tasks.map((taskPath) => parseBenchmarkTaskFile(path.resolve(path.dirname(suitePath), taskPath))),
+    )
+
+    const result = await runBenchmarkTasks(repo, tasks)
+    const indexHtml = await fs.readFile(result.reportIndexPath, 'utf8')
+    const reportJson = JSON.parse(
+      await fs.readFile(path.join(repo, '.agentctx/bench/runs/complex-public-safe-context-validation/report.json'), 'utf8'),
+    ) as { securityFindings: readonly string[]; publicSafeValidation: { checked: boolean }; coverageByContextPoint: readonly unknown[] }
+    const coverageHtml = await fs.readFile(
+      path.join(repo, '.agentctx/bench/runs/medium-add-context-point-coverage/coverage/index.html'),
+      'utf8',
+    )
+
+    expect(result.reports).toHaveLength(3)
+    expect(indexHtml).toContain('AgentCtx Bench Reports')
+    expect(indexHtml).toContain('Token')
+    expect(coverageHtml).toContain('Context Point')
+    expect(reportJson.publicSafeValidation.checked).toBe(true)
+    expect(reportJson.coverageByContextPoint.length).toBeGreaterThan(0)
   })
 })

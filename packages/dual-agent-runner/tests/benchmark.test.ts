@@ -183,6 +183,7 @@ describe('benchmark', () => {
 
     expect(report.comparison.outcome).toBe('helped')
     expect(reportMarkdown).toContain('Outcome: **helped**')
+    expect(reportMarkdown).toContain('(+45.0%)')
     expect(report.tokenSummary.delta).toBe(1800)
     expect(reportMarkdown).toContain('## Context Point Coverage')
   })

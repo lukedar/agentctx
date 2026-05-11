@@ -8,31 +8,13 @@
   </p>
 </div>
 
-## Current Suite
-
-```bash
-pnpm run benchmark:mock
-```
-
-Generated local report:
-
-```text
-.agentctx/bench/reports/index.html
-```
-
-Published data:
-
-```text
-docs-agentctx/public/benchmark/results.json
-```
-
 ## Executive Metrics
 
 | Task | Outcome | No-context tokens | AgentCtx tokens | Token reduction | Runtime saved | Context Point coverage |
 |---|---|---:|---:|---:|---:|---:|
-| Add Token Summary to Bench JSON Report | helped | 3,500 | 1,820 | 48.0% | 36.0s | 1/1 |
-| Add Context Point Coverage to Bench Reports | helped | 7,000 | 3,640 | 48.0% | 72.0s | 2/2 |
-| Add Public-safe Context Validation to Bench and CLI | helped | 10,500 | 5,460 | 48.0% | 108.0s | 4/4 |
+| Add Token Summary to Bench JSON Report | helped | 3,500 | 1,820 | 48.0% `+48.0%` | 36.0s `+46.2%` | 1/1 |
+| Add Context Point Coverage to Bench Reports | helped | 7,000 | 3,640 | 48.0% `+48.0%` | 72.0s `+46.2%` | 2/2 |
+| Add Public-safe Context Validation to Bench and CLI | helped | 10,500 | 5,460 | 48.0% `+48.0%` | 108.0s `+46.2%` | 4/4 |
 
 ## Coverage
 

@@ -680,8 +680,14 @@ export const summarizeBenchmarkRun = async (runDir: string): Promise<BenchmarkRe
 
 const seconds = (ms: number): string => `${(ms / 1000).toFixed(1)}s`
 
+const deltaPercent = (base: number, delta: number): number =>
+  base > 0 ? Number(((delta / base) * 100).toFixed(1)) : 0
+
+const signedPercent = (value: number): string => `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`
+
 export const renderBenchmarkReportMarkdown = (report: BenchmarkReport): string => {
   const { benchmark, noContext, agentctxContext, comparison, tokenSummary, coverageByContextPoint } = report
+  const runtimeDeltaPercent = deltaPercent(noContext.elapsedMs, comparison.speedDeltaMs)
 
   return [
     `# Benchmark Report: ${benchmark.taskName}`,
@@ -699,8 +705,8 @@ export const renderBenchmarkReportMarkdown = (report: BenchmarkReport): string =
     '| Metric | No context | AgentCtx context | Delta |',
     '| --- | ---: | ---: | ---: |',
     `| Status | ${noContext.status} | ${agentctxContext.status} | ${comparison.outcome} |`,
-    `| Elapsed | ${seconds(noContext.elapsedMs)} | ${seconds(agentctxContext.elapsedMs)} | ${seconds(comparison.speedDeltaMs)} |`,
-    `| Tokens | ${noContext.totalTokens} | ${agentctxContext.totalTokens} | ${comparison.tokenDelta} |`,
+    `| Elapsed | ${seconds(noContext.elapsedMs)} | ${seconds(agentctxContext.elapsedMs)} | ${seconds(comparison.speedDeltaMs)} (${signedPercent(runtimeDeltaPercent)}) |`,
+    `| Tokens | ${noContext.totalTokens} | ${agentctxContext.totalTokens} | ${comparison.tokenDelta} (${signedPercent(tokenSummary.reductionPercent)}) |`,
     `| Evaluator score | ${noContext.evaluatorScore.toFixed(1)} | ${agentctxContext.evaluatorScore.toFixed(1)} | ${comparison.evaluatorScoreDelta.toFixed(1)} |`,
     `| Retries | ${noContext.agentCompute.retries} | ${agentctxContext.agentCompute.retries} | ${comparison.computeDelta.retries} |`,
     `| Tool calls | ${noContext.agentCompute.toolCalls} | ${agentctxContext.agentCompute.toolCalls} | ${comparison.computeDelta.toolCalls} |`,
@@ -708,7 +714,7 @@ export const renderBenchmarkReportMarkdown = (report: BenchmarkReport): string =
     '## Token Summary',
     '',
     `AgentCtx used ${tokenSummary.agentctxContextTotal} tokens vs ${tokenSummary.noContextTotal} without context.`,
-    `Token delta: ${tokenSummary.delta} (${tokenSummary.reductionPercent.toFixed(1)}%).`,
+    `Token delta: ${tokenSummary.delta} (${signedPercent(tokenSummary.reductionPercent)}).`,
     '',
     '## Context Point Coverage',
     '',
@@ -747,6 +753,7 @@ const percent = (value: number): string => `${value.toFixed(1)}%`
 
 export const renderBenchmarkReportHtml = (report: BenchmarkReport): string => {
   const { benchmark, noContext, agentctxContext, comparison, tokenSummary, testCoverageSummary } = report
+  const runtimeDeltaPercent = deltaPercent(noContext.elapsedMs, comparison.speedDeltaMs)
   const coverageRows = report.coverageByContextPoint
     .map(
       (item) =>
@@ -788,9 +795,9 @@ export const renderBenchmarkReportHtml = (report: BenchmarkReport): string => {
     <h1>${escapeHtml(benchmark.taskName)}</h1>
     <p>Outcome <span class="pill ${comparison.outcome}">${comparison.outcome}</span> for <code>${escapeHtml(benchmark.ctxPoint)}</code>.</p>
     <section class="grid">
-      <div class="card"><div class="metric">Token reduction</div><div class="value">${percent(tokenSummary.reductionPercent)}</div></div>
+      <div class="card"><div class="metric">Token reduction</div><div class="value">${percent(tokenSummary.reductionPercent)} <small>${signedPercent(tokenSummary.reductionPercent)}</small></div></div>
       <div class="card"><div class="metric">Token delta</div><div class="value">${tokenSummary.delta}</div></div>
-      <div class="card"><div class="metric">Runtime saved</div><div class="value">${seconds(comparison.speedDeltaMs)}</div></div>
+      <div class="card"><div class="metric">Runtime saved</div><div class="value">${seconds(comparison.speedDeltaMs)} <small>${signedPercent(runtimeDeltaPercent)}</small></div></div>
       <div class="card"><div class="metric">Covered points</div><div class="value">${testCoverageSummary.coveredContextPoints}/${testCoverageSummary.totalContextPoints}</div></div>
     </section>
     <h2>Condition Comparison</h2>
@@ -798,8 +805,8 @@ export const renderBenchmarkReportHtml = (report: BenchmarkReport): string => {
       <thead><tr><th>Metric</th><th>No context</th><th>AgentCtx context</th><th>Delta</th></tr></thead>
       <tbody>
         <tr><td>Status</td><td>${noContext.status}</td><td>${agentctxContext.status}</td><td>${comparison.outcome}</td></tr>
-        <tr><td>Elapsed</td><td>${seconds(noContext.elapsedMs)}</td><td>${seconds(agentctxContext.elapsedMs)}</td><td>${seconds(comparison.speedDeltaMs)}</td></tr>
-        <tr><td>Total tokens</td><td>${noContext.totalTokens}</td><td>${agentctxContext.totalTokens}</td><td>${comparison.tokenDelta}</td></tr>
+        <tr><td>Elapsed</td><td>${seconds(noContext.elapsedMs)}</td><td>${seconds(agentctxContext.elapsedMs)}</td><td>${seconds(comparison.speedDeltaMs)} (${signedPercent(runtimeDeltaPercent)})</td></tr>
+        <tr><td>Total tokens</td><td>${noContext.totalTokens}</td><td>${agentctxContext.totalTokens}</td><td>${comparison.tokenDelta} (${signedPercent(tokenSummary.reductionPercent)})</td></tr>
         <tr><td>Evaluator score</td><td>${noContext.evaluatorScore.toFixed(1)}</td><td>${agentctxContext.evaluatorScore.toFixed(1)}</td><td>${comparison.evaluatorScoreDelta.toFixed(1)}</td></tr>
         <tr><td>Tool calls</td><td>${noContext.agentCompute.toolCalls}</td><td>${agentctxContext.agentCompute.toolCalls}</td><td>${comparison.computeDelta.toolCalls}</td></tr>
       </tbody>
@@ -835,7 +842,8 @@ export const renderBenchmarkIndexHtml = (reports: readonly BenchmarkReport[]): s
     .map((report) => {
       const runPath = `../runs/${report.benchmark.taskId}/index.html`
       const coveragePath = `../runs/${report.benchmark.taskId}/coverage/index.html`
-      return `<tr><td><a href="${runPath}">${escapeHtml(report.benchmark.taskName)}</a></td><td>${escapeHtml(report.benchmark.ctxPoint)}</td><td><span class="pill ${report.comparison.outcome}">${report.comparison.outcome}</span></td><td>${report.tokenSummary.noContextTotal}</td><td>${report.tokenSummary.agentctxContextTotal}</td><td>${percent(report.tokenSummary.reductionPercent)}</td><td>${seconds(report.comparison.speedDeltaMs)}</td><td>${report.testCoverageSummary.coveredContextPoints}/${report.testCoverageSummary.totalContextPoints}</td><td><a href="${coveragePath}">coverage</a></td></tr>`
+      const runtimeDeltaPercent = deltaPercent(report.noContext.elapsedMs, report.comparison.speedDeltaMs)
+      return `<tr><td><a href="${runPath}">${escapeHtml(report.benchmark.taskName)}</a></td><td>${escapeHtml(report.benchmark.ctxPoint)}</td><td><span class="pill ${report.comparison.outcome}">${report.comparison.outcome}</span></td><td>${report.tokenSummary.noContextTotal}</td><td>${report.tokenSummary.agentctxContextTotal}</td><td>${percent(report.tokenSummary.reductionPercent)} <small>${signedPercent(report.tokenSummary.reductionPercent)}</small></td><td>${seconds(report.comparison.speedDeltaMs)} <small>${signedPercent(runtimeDeltaPercent)}</small></td><td>${report.testCoverageSummary.coveredContextPoints}/${report.testCoverageSummary.totalContextPoints}</td><td><a href="${coveragePath}">coverage</a></td></tr>`
     })
     .join('')
 

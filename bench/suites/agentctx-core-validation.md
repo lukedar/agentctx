@@ -2,16 +2,28 @@
 
 ## Purpose
 
-Validate that AgentCtx Bench can evaluate small, medium, and complex repository tasks.
+Validate that AgentCtx Bench can evaluate medium, large, and very-large senior engineering tasks for every main Context Point.
 
 ## Tasks
 
-- ../tasks/small-add-token-summary.md
-- ../tasks/small-adapter-target-smoke-coverage.md
-- ../tasks/medium-add-context-point-coverage.md
-- ../tasks/medium-cli-docs-benchmark-command.md
-- ../tasks/complex-public-safe-context-validation.md
-- ../tasks/complex-compiler-surface-integration.md
+- ../tasks/medium-core-capability-metadata.md
+- ../tasks/large-core-capability-weighting.md
+- ../tasks/very-large-core-versioned-fact-visibility.md
+- ../tasks/medium-cli-bench-command-ux.md
+- ../tasks/large-cli-explainable-workflow-output.md
+- ../tasks/very-large-cli-workflow-orchestration.md
+- ../tasks/medium-adapters-framework-detector.md
+- ../tasks/large-adapters-monorepo-composition.md
+- ../tasks/very-large-adapters-plugin-evidence-pipeline.md
+- ../tasks/medium-targets-rendering-parity.md
+- ../tasks/large-targets-public-safe-filtering.md
+- ../tasks/very-large-targets-compatibility-migration.md
+- ../tasks/medium-runner-aggregate-scoring.md
+- ../tasks/large-runner-suite-coverage-links.md
+- ../tasks/very-large-runner-benchmark-lifecycle.md
+- ../tasks/medium-docs-benchmark-methodology.md
+- ../tasks/large-docs-report-examples.md
+- ../tasks/very-large-docs-evidence-narrative.md
 
 ## Conditions
 

@@ -108,7 +108,7 @@ export type BenchmarkTaskDefinition = Readonly<{
   requiredCommands: readonly string[]
   successCriteria: readonly string[]
   contextPoints: readonly string[]
-  difficulty: 'small' | 'medium' | 'complex'
+  difficulty: 'small' | 'medium' | 'large' | 'complex' | 'very-large'
   tags: readonly string[]
   prompt: string
 }>
@@ -398,7 +398,13 @@ export const parseBenchmarkTaskMarkdown = (raw: string): BenchmarkTaskDefinition
 
   const difficultyRaw = firstParagraph(section(raw, 'Difficulty')).toLowerCase()
   const difficulty =
-    difficultyRaw === 'medium' || difficultyRaw === 'complex' || difficultyRaw === 'small' ? difficultyRaw : 'small'
+    difficultyRaw === 'medium' ||
+    difficultyRaw === 'large' ||
+    difficultyRaw === 'complex' ||
+    difficultyRaw === 'very-large' ||
+    difficultyRaw === 'small'
+      ? difficultyRaw
+      : 'medium'
 
   const contextPoints = uniqueSorted(listItems(section(raw, 'Context Points')))
   if (contextPoints.length === 0) throw new Error(`Invalid benchmark task "${title}": missing Context Points`)
@@ -1041,7 +1047,16 @@ const mockResultForTask = (
   task: BenchmarkTaskDefinition,
   condition: BenchmarkCondition,
 ): BenchmarkConditionResult => {
-  const scale = task.difficulty === 'complex' ? 3 : task.difficulty === 'medium' ? 2 : 1
+  const scale =
+    task.difficulty === 'very-large'
+      ? 8
+      : task.difficulty === 'large'
+        ? 4
+        : task.difficulty === 'complex'
+          ? 3
+          : task.difficulty === 'medium'
+            ? 2
+            : 1
   const agentctx = condition === 'agentctx-context'
   const inputTokens = agentctx ? 1300 * scale : 2600 * scale
   const outputTokens = agentctx ? 520 * scale : 900 * scale
@@ -1058,7 +1073,7 @@ const mockResultForTask = (
       model: 'mock-senior-dev-agent',
       retries: agentctx ? 0 : 1,
       toolCalls: agentctx ? 4 + scale : 8 + scale * 2,
-      reasoningEffort: task.difficulty === 'complex' ? 'high' : 'medium',
+      reasoningEffort: task.difficulty === 'large' || task.difficulty === 'very-large' || task.difficulty === 'complex' ? 'high' : 'medium',
       providerLatencyMs: agentctx ? 37_000 * scale : 69_000 * scale,
     },
     changedFiles,
@@ -1168,13 +1183,8 @@ const updateBenchmarkResultsIndexForReports = async (
   reportsToAdd: readonly BenchmarkReport[],
 ): Promise<BenchmarkResultsIndex> => {
   const indexPath = path.join(rootDir, '.dual-agent-runner', 'benchmark-results.json')
-  const existing = await safeReadJson<BenchmarkResultsIndex>(indexPath)
   const reports = new Map<string, BenchmarkReport>()
 
-  for (const item of existing?.results ?? []) {
-    const sanitized = sanitizeBenchmarkReport(item)
-    reports.set(reportKey(sanitized), sanitized)
-  }
   for (const item of reportsToAdd) {
     const sanitized = sanitizeBenchmarkReport(item)
     reports.set(reportKey(sanitized), sanitized)

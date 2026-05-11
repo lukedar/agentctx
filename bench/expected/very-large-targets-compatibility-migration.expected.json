@@ -1,0 +1,1 @@
+{"taskId":"very-large-targets-compatibility-migration","expectedContextPoints":["targets"],"requiredReportFields":["tokenSummary","coverageByContextPoint"],"mustPass":["tests","typecheck","build"]}

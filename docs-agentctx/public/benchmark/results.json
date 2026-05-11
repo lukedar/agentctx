@@ -6,10 +6,10 @@
         "version": 1,
         "repo": "agentctx",
         "ctxPoint": "adapters",
-        "ctxBlock": "complex-compiler-surface-integration",
-        "taskName": "Validate Compiler Surface Integration Across Core Packages",
-        "taskId": "complex-compiler-surface-integration",
-        "taskPrompt": "# Task: Validate Compiler Surface Integration Across Core Packages\n\n## Goal\n\nValidate the compiler surface across core, adapters, targets, CLI, runner, and docs.\n\n## Background\n\nAgentCtx behaves like a deterministic compiler. A complex benchmark should show that config, fact extraction, target rendering, command execution, benchmark reporting, and docs all stay aligned.\n\n## Required Changes\n\n- Add a core contract test for Context Point selection.\n- Add adapter evidence for package and framework facts.\n- Add target rendering assertions for generated context surfaces.\n- Add CLI coverage for build, sync, and check pathways.\n- Add benchmark report assertions for token summary and coverage.\n- Add docs coverage for benchmark methodology and reports.\n\n## Expected Files\n\n- packages/core/**\n- packages/adapters/**\n- packages/targets/**\n- packages/cli/**\n- packages/dual-agent-runner/**\n- docs-agentctx/**\n\n## Forbidden Files\n\n- .env\n- .npmrc\n- package-lock.json\n- **/*.pem\n- **/*.key\n\n## Required Commands\n\n- pnpm run test\n- pnpm run typecheck\n- pnpm run build\n- VITEPRESS_BASE=/agentctx/ pnpm -C docs-agentctx build\n\n## Success Criteria\n\n- All main Context Points are represented in the coverage report.\n- JSON, Markdown, and HTML reports include token and runtime deltas.\n- Public docs render without leaking local paths.\n- Scope misses are lower for AgentCtx-context than no-context.\n- Build, test, and typecheck pass.\n\n## Context Points\n\n- core\n- adapters\n- targets\n- cli\n- dual-agent-runner\n- docs-agentctx\n\n## Difficulty\n\ncomplex\n\n## Tags\n\ncompiler\nintegration\ncoverage\ndocs\nbench",
+        "ctxBlock": "large-adapters-monorepo-composition",
+        "taskName": "Add Monorepo Adapter Composition",
+        "taskId": "large-adapters-monorepo-composition",
+        "taskPrompt": "# Task: Add Monorepo Adapter Composition\n\n## Goal\n\nAdd monorepo-aware adapter composition across multiple package frameworks.\n\n## Background\n\nEnterprise repos often include several framework stacks in one workspace, and adapters need to compose evidence cleanly.\n\n## Required Changes\n\n- Detect framework evidence per package.\n- Merge adapter facts without duplicates.\n- Add tests for multiple packages and stable ordering.\n\n## Expected Files\n\n- packages/adapters/**\n\n## Forbidden Files\n\n- .env\n- package-lock.json\n\n## Required Commands\n\n- pnpm -C packages/adapters test\n- pnpm run typecheck\n\n## Success Criteria\n\n- Monorepo framework evidence is scoped per package.\n- Duplicate facts are avoided.\n- Tests cover stable ordering.\n\n## Context Points\n\n- adapters\n\n## Difficulty\n\nlarge\n\n## Tags\n\nadapters\nmonorepo\ncomposition",
         "contextFile": ".agentctx/context/overview.md",
         "conditions": [
           "no-context",
@@ -27,29 +27,24 @@
       "noContext": {
         "condition": "no-context",
         "status": "completed",
-        "elapsedMs": 234000,
-        "inputTokens": 7800,
-        "outputTokens": 2700,
-        "totalTokens": 10500,
+        "elapsedMs": 312000,
+        "inputTokens": 10400,
+        "outputTokens": 3600,
+        "totalTokens": 14000,
         "agentCompute": {
           "model": "mock-senior-dev-agent",
           "retries": 1,
-          "toolCalls": 14,
+          "toolCalls": 16,
           "reasoningEffort": "high",
-          "providerLatencyMs": 207000
+          "providerLatencyMs": 276000
         },
         "changedFiles": [
-          "packages/adapters/src/index.ts",
-          "packages/cli/src/commands/check.ts",
-          "packages/core/src/contextFiles.ts",
-          "docs-agentctx/bench/reports.md",
-          "packages/dual-agent-runner/src/benchmark.ts",
-          "packages/targets/src/index.ts"
+          "packages/adapters/src/index.ts"
         ],
         "checksPassed": true,
         "validationNotes": [
-          "4 required command(s) represented in mock validation.",
-          "5 success criteria covered by deterministic report evidence."
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
         ],
         "evaluatorScore": 3.3,
         "scopeMisses": [
@@ -59,49 +54,44 @@
       "agentctxContext": {
         "condition": "agentctx-context",
         "status": "completed",
-        "elapsedMs": 126000,
-        "inputTokens": 3900,
-        "outputTokens": 1560,
-        "totalTokens": 5460,
+        "elapsedMs": 168000,
+        "inputTokens": 5200,
+        "outputTokens": 2080,
+        "totalTokens": 7280,
         "agentCompute": {
           "model": "mock-senior-dev-agent",
           "retries": 0,
-          "toolCalls": 7,
+          "toolCalls": 8,
           "reasoningEffort": "high",
-          "providerLatencyMs": 111000
+          "providerLatencyMs": 148000
         },
         "changedFiles": [
-          "packages/adapters/src/index.ts",
-          "packages/cli/src/commands/check.ts",
-          "packages/core/src/contextFiles.ts",
-          "docs-agentctx/bench/reports.md",
-          "packages/dual-agent-runner/src/benchmark.ts",
-          "packages/targets/src/index.ts"
+          "packages/adapters/src/index.ts"
         ],
         "checksPassed": true,
         "validationNotes": [
-          "4 required command(s) represented in mock validation.",
-          "5 success criteria covered by deterministic report evidence."
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
         ],
         "evaluatorScore": 4.4,
         "scopeMisses": []
       },
       "comparison": {
         "outcome": "helped",
-        "speedDeltaMs": 108000,
-        "tokenDelta": 5040,
+        "speedDeltaMs": 144000,
+        "tokenDelta": 6720,
         "computeDelta": {
           "retries": 1,
-          "toolCalls": 7,
-          "providerLatencyMs": 96000
+          "toolCalls": 8,
+          "providerLatencyMs": 128000
         },
         "evaluatorScoreDelta": 1.1000000000000005,
         "rationale": "AgentCtx improved evaluator score and at least one efficiency metric."
       },
       "tokenSummary": {
-        "noContextTotal": 10500,
-        "agentctxContextTotal": 5460,
-        "delta": 5040,
+        "noContextTotal": 14000,
+        "agentctxContextTotal": 7280,
+        "delta": 6720,
         "reductionPercent": 48
       },
       "coverageByContextPoint": [
@@ -114,61 +104,11 @@
             "packages/adapters/tests/**/*.test.ts"
           ],
           "status": "covered"
-        },
-        {
-          "contextPoint": "cli",
-          "changedFiles": [
-            "packages/cli/src/commands/check.ts"
-          ],
-          "testFiles": [
-            "packages/cli/tests/**/*.test.ts"
-          ],
-          "status": "covered"
-        },
-        {
-          "contextPoint": "core",
-          "changedFiles": [
-            "packages/core/src/contextFiles.ts"
-          ],
-          "testFiles": [
-            "packages/core/tests/**/*.test.ts"
-          ],
-          "status": "covered"
-        },
-        {
-          "contextPoint": "docs-agentctx",
-          "changedFiles": [
-            "docs-agentctx/bench/reports.md"
-          ],
-          "testFiles": [
-            "VITEPRESS_BASE=/agentctx/ pnpm -C docs-agentctx build"
-          ],
-          "status": "covered"
-        },
-        {
-          "contextPoint": "dual-agent-runner",
-          "changedFiles": [
-            "packages/dual-agent-runner/src/benchmark.ts"
-          ],
-          "testFiles": [
-            "packages/dual-agent-runner/tests/benchmark.test.ts"
-          ],
-          "status": "covered"
-        },
-        {
-          "contextPoint": "targets",
-          "changedFiles": [
-            "packages/targets/src/index.ts"
-          ],
-          "testFiles": [
-            "packages/targets/tests/**/*.test.ts"
-          ],
-          "status": "covered"
         }
       ],
       "testCoverageSummary": {
-        "totalContextPoints": 6,
-        "coveredContextPoints": 6,
+        "totalContextPoints": 1,
+        "coveredContextPoints": 1,
         "partialContextPoints": 0,
         "missingContextPoints": 0
       },
@@ -185,10 +125,10 @@
         "version": 1,
         "repo": "agentctx",
         "ctxPoint": "adapters",
-        "ctxBlock": "small-adapter-target-smoke-coverage",
-        "taskName": "Add Adapter and Target Smoke Coverage",
-        "taskId": "small-adapter-target-smoke-coverage",
-        "taskPrompt": "# Task: Add Adapter and Target Smoke Coverage\n\n## Goal\n\nAdd a small smoke benchmark that proves adapter facts flow into target rendering without broad source scanning.\n\n## Background\n\nAdapters extract repo evidence and targets render agent-facing context. A small benchmark should verify that a change crossing those two Context Points remains tightly scoped.\n\n## Required Changes\n\n- Add an adapter fixture that emits one framework fact.\n- Add a target assertion that renders the fact into an agent surface.\n- Add a focused test for adapter-to-target flow.\n\n## Expected Files\n\n- packages/adapters/**\n- packages/targets/**\n\n## Forbidden Files\n\n- .env\n- package-lock.json\n- docs/generated/**\n\n## Required Commands\n\n- pnpm -C packages/adapters test\n- pnpm -C packages/targets test\n- pnpm run typecheck\n\n## Success Criteria\n\n- Adapter fixture emits a deterministic fact.\n- Target renderer includes the expected fact.\n- Tests pass for both touched Context Points.\n- No unrelated package files are modified.\n\n## Context Points\n\n- adapters\n- targets\n\n## Difficulty\n\nsmall\n\n## Tags\n\nadapter\ntargets\ncoverage\nsmoke",
+        "ctxBlock": "medium-adapters-framework-detector",
+        "taskName": "Add Framework Detector Fixture",
+        "taskId": "medium-adapters-framework-detector",
+        "taskPrompt": "# Task: Add Framework Detector Fixture\n\n## Goal\n\nAdd a framework detector fixture and fact extractor.\n\n## Background\n\nAdapter coverage should prove that new framework evidence can be detected without broad source dumps.\n\n## Required Changes\n\n- Add a detector fixture.\n- Emit a compact framework fact.\n- Add tests for confidence and source path.\n\n## Expected Files\n\n- packages/adapters/**\n\n## Forbidden Files\n\n- .env\n- package-lock.json\n\n## Required Commands\n\n- pnpm -C packages/adapters test\n- pnpm run typecheck\n\n## Success Criteria\n\n- Detector emits deterministic facts.\n- Confidence is conservative.\n- Tests pass.\n\n## Context Points\n\n- adapters\n\n## Difficulty\n\nmedium\n\n## Tags\n\nadapters\nframework\nfacts",
         "contextFile": ".agentctx/context/overview.md",
         "conditions": [
           "no-context",
@@ -206,71 +146,71 @@
       "noContext": {
         "condition": "no-context",
         "status": "completed",
-        "elapsedMs": 78000,
-        "inputTokens": 2600,
-        "outputTokens": 900,
-        "totalTokens": 3500,
+        "elapsedMs": 156000,
+        "inputTokens": 5200,
+        "outputTokens": 1800,
+        "totalTokens": 7000,
         "agentCompute": {
           "model": "mock-senior-dev-agent",
           "retries": 1,
-          "toolCalls": 10,
+          "toolCalls": 12,
           "reasoningEffort": "medium",
-          "providerLatencyMs": 69000
+          "providerLatencyMs": 138000
         },
         "changedFiles": [
-          "packages/adapters/src/index.ts",
-          "packages/targets/src/index.ts"
+          "packages/adapters/src/index.ts"
         ],
         "checksPassed": true,
         "validationNotes": [
-          "3 required command(s) represented in mock validation.",
-          "4 success criteria covered by deterministic report evidence."
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
         ],
         "evaluatorScore": 3.3,
-        "scopeMisses": []
+        "scopeMisses": [
+          "Broader file discovery required without generated context."
+        ]
       },
       "agentctxContext": {
         "condition": "agentctx-context",
         "status": "completed",
-        "elapsedMs": 42000,
-        "inputTokens": 1300,
-        "outputTokens": 520,
-        "totalTokens": 1820,
+        "elapsedMs": 84000,
+        "inputTokens": 2600,
+        "outputTokens": 1040,
+        "totalTokens": 3640,
         "agentCompute": {
           "model": "mock-senior-dev-agent",
           "retries": 0,
-          "toolCalls": 5,
+          "toolCalls": 6,
           "reasoningEffort": "medium",
-          "providerLatencyMs": 37000
+          "providerLatencyMs": 74000
         },
         "changedFiles": [
-          "packages/adapters/src/index.ts",
-          "packages/targets/src/index.ts"
+          "packages/adapters/src/index.ts"
         ],
         "checksPassed": true,
         "validationNotes": [
-          "3 required command(s) represented in mock validation.",
-          "4 success criteria covered by deterministic report evidence."
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
         ],
         "evaluatorScore": 4.4,
         "scopeMisses": []
       },
       "comparison": {
         "outcome": "helped",
-        "speedDeltaMs": 36000,
-        "tokenDelta": 1680,
+        "speedDeltaMs": 72000,
+        "tokenDelta": 3360,
         "computeDelta": {
           "retries": 1,
-          "toolCalls": 5,
-          "providerLatencyMs": 32000
+          "toolCalls": 6,
+          "providerLatencyMs": 64000
         },
         "evaluatorScoreDelta": 1.1000000000000005,
         "rationale": "AgentCtx improved evaluator score and at least one efficiency metric."
       },
       "tokenSummary": {
-        "noContextTotal": 3500,
-        "agentctxContextTotal": 1820,
-        "delta": 1680,
+        "noContextTotal": 7000,
+        "agentctxContextTotal": 3640,
+        "delta": 3360,
         "reductionPercent": 48
       },
       "coverageByContextPoint": [
@@ -283,21 +223,130 @@
             "packages/adapters/tests/**/*.test.ts"
           ],
           "status": "covered"
+        }
+      ],
+      "testCoverageSummary": {
+        "totalContextPoints": 1,
+        "coveredContextPoints": 1,
+        "partialContextPoints": 0,
+        "missingContextPoints": 0
+      },
+      "securityFindings": [],
+      "publicSafeValidation": {
+        "checked": false,
+        "passed": true,
+        "excludedFactCount": 0,
+        "notes": []
+      }
+    },
+    {
+      "benchmark": {
+        "version": 1,
+        "repo": "agentctx",
+        "ctxPoint": "adapters",
+        "ctxBlock": "very-large-adapters-plugin-evidence-pipeline",
+        "taskName": "Add Plugin Evidence Pipeline",
+        "taskId": "very-large-adapters-plugin-evidence-pipeline",
+        "taskPrompt": "# Task: Add Plugin Evidence Pipeline\n\n## Goal\n\nAdd a plugin extension pipeline for adapter detection, confidence, and evidence reuse.\n\n## Background\n\nFramework extensions should be added as plugins that reuse scan context and emit structured facts.\n\n## Required Changes\n\n- Add plugin lifecycle hooks for detect and extract.\n- Reuse cached scan context reads.\n- Add confidence aggregation.\n- Add fixture tests for multiple plugins.\n\n## Expected Files\n\n- packages/adapters/**\n\n## Forbidden Files\n\n- .env\n- .npmrc\n- package-lock.json\n\n## Required Commands\n\n- pnpm -C packages/adapters test\n- pnpm run typecheck\n- pnpm run build\n\n## Success Criteria\n\n- Plugins can add framework evidence safely.\n- Detection work is reused during extraction.\n- Confidence aggregation is deterministic.\n\n## Context Points\n\n- adapters\n\n## Difficulty\n\nvery-large\n\n## Tags\n\nadapters\nplugins\nframework-extensions",
+        "contextFile": ".agentctx/context/overview.md",
+        "conditions": [
+          "no-context",
+          "agentctx-context"
+        ],
+        "prompts": {
+          "no-context": "no-context/prompt.md",
+          "agentctx-context": "agentctx-context/prompt.md"
         },
+        "results": {
+          "no-context": "no-context/result.json",
+          "agentctx-context": "agentctx-context/result.json"
+        }
+      },
+      "noContext": {
+        "condition": "no-context",
+        "status": "completed",
+        "elapsedMs": 624000,
+        "inputTokens": 20800,
+        "outputTokens": 7200,
+        "totalTokens": 28000,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 1,
+          "toolCalls": 24,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 552000
+        },
+        "changedFiles": [
+          "packages/adapters/src/index.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "3 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 3.3,
+        "scopeMisses": [
+          "Broader file discovery required without generated context."
+        ]
+      },
+      "agentctxContext": {
+        "condition": "agentctx-context",
+        "status": "completed",
+        "elapsedMs": 336000,
+        "inputTokens": 10400,
+        "outputTokens": 4160,
+        "totalTokens": 14560,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 0,
+          "toolCalls": 12,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 296000
+        },
+        "changedFiles": [
+          "packages/adapters/src/index.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "3 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 4.4,
+        "scopeMisses": []
+      },
+      "comparison": {
+        "outcome": "helped",
+        "speedDeltaMs": 288000,
+        "tokenDelta": 13440,
+        "computeDelta": {
+          "retries": 1,
+          "toolCalls": 12,
+          "providerLatencyMs": 256000
+        },
+        "evaluatorScoreDelta": 1.1000000000000005,
+        "rationale": "AgentCtx improved evaluator score and at least one efficiency metric."
+      },
+      "tokenSummary": {
+        "noContextTotal": 28000,
+        "agentctxContextTotal": 14560,
+        "delta": 13440,
+        "reductionPercent": 48
+      },
+      "coverageByContextPoint": [
         {
-          "contextPoint": "targets",
+          "contextPoint": "adapters",
           "changedFiles": [
-            "packages/targets/src/index.ts"
+            "packages/adapters/src/index.ts"
           ],
           "testFiles": [
-            "packages/targets/tests/**/*.test.ts"
+            "packages/adapters/tests/**/*.test.ts"
           ],
           "status": "covered"
         }
       ],
       "testCoverageSummary": {
-        "totalContextPoints": 2,
-        "coveredContextPoints": 2,
+        "totalContextPoints": 1,
+        "coveredContextPoints": 1,
         "partialContextPoints": 0,
         "missingContextPoints": 0
       },
@@ -314,10 +363,10 @@
         "version": 1,
         "repo": "agentctx",
         "ctxPoint": "cli",
-        "ctxBlock": "complex-public-safe-context-validation",
-        "taskName": "Add Public-safe Context Validation to Bench and CLI",
-        "taskId": "complex-public-safe-context-validation",
-        "taskPrompt": "# Task: Add Public-safe Context Validation to Bench and CLI\n\n## Goal\n\nAdd public-safe context validation so AgentCtx can verify that public outputs only contain facts classified as public.\n\n## Background\n\nAgentCtx generates internal operational context and public-safe surfaces such as `llms.txt` and public manifests.\n\nPublic outputs must not contain sensitive, internal, or secret operational facts.\n\nBench should be able to test this behavior and report security findings.\n\n## Required Changes\n\n- Add visibility validation for public-safe outputs.\n- Add `agentctx check --public-safe`.\n- Add Bench scorer for public-safe context violations.\n- Add security findings to Bench JSON and HTML reports.\n- Add test fixtures for public, internal, sensitive, and secret facts.\n- Ensure `llms.txt` renders only public facts.\n- Ensure public manifests report excluded fact counts.\n\n## Expected Files\n\n- packages/core/**\n- packages/cli/**\n- packages/targets/**\n- packages/dual-agent-runner/**\n\n## Forbidden Files\n\n- .env\n- .npmrc\n- package-lock.json\n- docs/generated/**\n- examples/private/**\n- **/*.pem\n- **/*.key\n\n## Required Commands\n\n- pnpm run test\n- pnpm run typecheck\n- pnpm run build\n- pnpm -C packages/cli test\n\n## Success Criteria\n\n- `agentctx check --public-safe` exists and passes for valid fixtures.\n- Public outputs only contain public facts.\n- Internal, sensitive, and secret facts are excluded from public outputs.\n- Bench report includes public-safe validation findings.\n- HTML report shows security findings clearly.\n- Tests cover public, internal, sensitive, and secret classifications.\n- No forbidden files are modified.\n- No secret-like values are emitted.\n\n## Context Points\n\n- core\n- cli\n- targets\n- dual-agent-runner\n\n## Difficulty\n\ncomplex\n\n## Tags\n\nsecurity\npublic-safe\nllms\nbench\ncli\nvisibility\ncross-package",
+        "ctxBlock": "large-cli-explainable-workflow-output",
+        "taskName": "Add Explainable Build Sync Check Workflow Output",
+        "taskId": "large-cli-explainable-workflow-output",
+        "taskPrompt": "# Task: Add Explainable Build Sync Check Workflow Output\n\n## Goal\n\nAdd explainable workflow output for build, sync, and check commands.\n\n## Background\n\nAgents need clear command output that shows what changed, what was skipped, and what should happen next.\n\n## Required Changes\n\n- Add workflow summaries to CLI commands.\n- Keep JSON and human output equivalent.\n- Add tests for stable command output.\n\n## Expected Files\n\n- packages/cli/**\n\n## Forbidden Files\n\n- .env\n- package-lock.json\n\n## Required Commands\n\n- pnpm -C packages/cli test\n- pnpm run typecheck\n\n## Success Criteria\n\n- Build, sync, and check explain their decisions.\n- JSON output keeps machine-readable parity.\n- Tests cover success and drift cases.\n\n## Context Points\n\n- cli\n\n## Difficulty\n\nlarge\n\n## Tags\n\ncli\nworkflow\njson",
         "contextFile": ".agentctx/context/overview.md",
         "conditions": [
           "no-context",
@@ -335,27 +384,24 @@
       "noContext": {
         "condition": "no-context",
         "status": "completed",
-        "elapsedMs": 234000,
-        "inputTokens": 7800,
-        "outputTokens": 2700,
-        "totalTokens": 10500,
+        "elapsedMs": 312000,
+        "inputTokens": 10400,
+        "outputTokens": 3600,
+        "totalTokens": 14000,
         "agentCompute": {
           "model": "mock-senior-dev-agent",
           "retries": 1,
-          "toolCalls": 14,
+          "toolCalls": 16,
           "reasoningEffort": "high",
-          "providerLatencyMs": 207000
+          "providerLatencyMs": 276000
         },
         "changedFiles": [
-          "packages/cli/src/commands/check.ts",
-          "packages/core/src/contextFiles.ts",
-          "packages/dual-agent-runner/src/benchmark.ts",
-          "packages/targets/src/index.ts"
+          "packages/cli/src/commands/check.ts"
         ],
         "checksPassed": true,
         "validationNotes": [
-          "4 required command(s) represented in mock validation.",
-          "8 success criteria covered by deterministic report evidence."
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
         ],
         "evaluatorScore": 3.3,
         "scopeMisses": [
@@ -365,47 +411,44 @@
       "agentctxContext": {
         "condition": "agentctx-context",
         "status": "completed",
-        "elapsedMs": 126000,
-        "inputTokens": 3900,
-        "outputTokens": 1560,
-        "totalTokens": 5460,
+        "elapsedMs": 168000,
+        "inputTokens": 5200,
+        "outputTokens": 2080,
+        "totalTokens": 7280,
         "agentCompute": {
           "model": "mock-senior-dev-agent",
           "retries": 0,
-          "toolCalls": 7,
+          "toolCalls": 8,
           "reasoningEffort": "high",
-          "providerLatencyMs": 111000
+          "providerLatencyMs": 148000
         },
         "changedFiles": [
-          "packages/cli/src/commands/check.ts",
-          "packages/core/src/contextFiles.ts",
-          "packages/dual-agent-runner/src/benchmark.ts",
-          "packages/targets/src/index.ts"
+          "packages/cli/src/commands/check.ts"
         ],
         "checksPassed": true,
         "validationNotes": [
-          "4 required command(s) represented in mock validation.",
-          "8 success criteria covered by deterministic report evidence."
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
         ],
         "evaluatorScore": 4.4,
         "scopeMisses": []
       },
       "comparison": {
         "outcome": "helped",
-        "speedDeltaMs": 108000,
-        "tokenDelta": 5040,
+        "speedDeltaMs": 144000,
+        "tokenDelta": 6720,
         "computeDelta": {
           "retries": 1,
-          "toolCalls": 7,
-          "providerLatencyMs": 96000
+          "toolCalls": 8,
+          "providerLatencyMs": 128000
         },
         "evaluatorScoreDelta": 1.1000000000000005,
         "rationale": "AgentCtx improved evaluator score and at least one efficiency metric."
       },
       "tokenSummary": {
-        "noContextTotal": 10500,
-        "agentctxContextTotal": 5460,
-        "delta": 5040,
+        "noContextTotal": 14000,
+        "agentctxContextTotal": 7280,
+        "delta": 6720,
         "reductionPercent": 48
       },
       "coverageByContextPoint": [
@@ -418,7 +461,354 @@
             "packages/cli/tests/**/*.test.ts"
           ],
           "status": "covered"
+        }
+      ],
+      "testCoverageSummary": {
+        "totalContextPoints": 1,
+        "coveredContextPoints": 1,
+        "partialContextPoints": 0,
+        "missingContextPoints": 0
+      },
+      "securityFindings": [],
+      "publicSafeValidation": {
+        "checked": false,
+        "passed": true,
+        "excludedFactCount": 0,
+        "notes": []
+      }
+    },
+    {
+      "benchmark": {
+        "version": 1,
+        "repo": "agentctx",
+        "ctxPoint": "cli",
+        "ctxBlock": "medium-cli-bench-command-ux",
+        "taskName": "Add Bench Command UX",
+        "taskId": "medium-cli-bench-command-ux",
+        "taskPrompt": "# Task: Add Bench Command UX\n\n## Goal\n\nAdd clear CLI help and dry-run output for benchmark execution.\n\n## Background\n\nSenior developers need predictable commands for validating benchmark task plans before running reports.\n\n## Required Changes\n\n- Add `benchmark run --suite` help coverage.\n- Add parser-only dry-run output.\n- Add CLI tests for missing arguments.\n\n## Expected Files\n\n- packages/cli/**\n\n## Forbidden Files\n\n- .env\n- package-lock.json\n\n## Required Commands\n\n- pnpm -C packages/cli test\n- pnpm run typecheck\n\n## Success Criteria\n\n- Help output documents benchmark usage.\n- Dry-run output is deterministic.\n- CLI tests pass.\n\n## Context Points\n\n- cli\n\n## Difficulty\n\nmedium\n\n## Tags\n\ncli\nbench\nux",
+        "contextFile": ".agentctx/context/overview.md",
+        "conditions": [
+          "no-context",
+          "agentctx-context"
+        ],
+        "prompts": {
+          "no-context": "no-context/prompt.md",
+          "agentctx-context": "agentctx-context/prompt.md"
         },
+        "results": {
+          "no-context": "no-context/result.json",
+          "agentctx-context": "agentctx-context/result.json"
+        }
+      },
+      "noContext": {
+        "condition": "no-context",
+        "status": "completed",
+        "elapsedMs": 156000,
+        "inputTokens": 5200,
+        "outputTokens": 1800,
+        "totalTokens": 7000,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 1,
+          "toolCalls": 12,
+          "reasoningEffort": "medium",
+          "providerLatencyMs": 138000
+        },
+        "changedFiles": [
+          "packages/cli/src/commands/check.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 3.3,
+        "scopeMisses": [
+          "Broader file discovery required without generated context."
+        ]
+      },
+      "agentctxContext": {
+        "condition": "agentctx-context",
+        "status": "completed",
+        "elapsedMs": 84000,
+        "inputTokens": 2600,
+        "outputTokens": 1040,
+        "totalTokens": 3640,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 0,
+          "toolCalls": 6,
+          "reasoningEffort": "medium",
+          "providerLatencyMs": 74000
+        },
+        "changedFiles": [
+          "packages/cli/src/commands/check.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 4.4,
+        "scopeMisses": []
+      },
+      "comparison": {
+        "outcome": "helped",
+        "speedDeltaMs": 72000,
+        "tokenDelta": 3360,
+        "computeDelta": {
+          "retries": 1,
+          "toolCalls": 6,
+          "providerLatencyMs": 64000
+        },
+        "evaluatorScoreDelta": 1.1000000000000005,
+        "rationale": "AgentCtx improved evaluator score and at least one efficiency metric."
+      },
+      "tokenSummary": {
+        "noContextTotal": 7000,
+        "agentctxContextTotal": 3640,
+        "delta": 3360,
+        "reductionPercent": 48
+      },
+      "coverageByContextPoint": [
+        {
+          "contextPoint": "cli",
+          "changedFiles": [
+            "packages/cli/src/commands/check.ts"
+          ],
+          "testFiles": [
+            "packages/cli/tests/**/*.test.ts"
+          ],
+          "status": "covered"
+        }
+      ],
+      "testCoverageSummary": {
+        "totalContextPoints": 1,
+        "coveredContextPoints": 1,
+        "partialContextPoints": 0,
+        "missingContextPoints": 0
+      },
+      "securityFindings": [],
+      "publicSafeValidation": {
+        "checked": false,
+        "passed": true,
+        "excludedFactCount": 0,
+        "notes": []
+      }
+    },
+    {
+      "benchmark": {
+        "version": 1,
+        "repo": "agentctx",
+        "ctxPoint": "cli",
+        "ctxBlock": "very-large-cli-workflow-orchestration",
+        "taskName": "Add Multi-step Repo Workflow Orchestration",
+        "taskId": "very-large-cli-workflow-orchestration",
+        "taskPrompt": "# Task: Add Multi-step Repo Workflow Orchestration\n\n## Goal\n\nAdd deterministic CLI orchestration for multi-step repo workflows.\n\n## Background\n\nLarge agent tasks need repeatable command plans that can build context, sync targets, check drift, run benchmarks, and report status.\n\n## Required Changes\n\n- Add a workflow command plan contract.\n- Add deterministic step reports.\n- Add failure handling for partial command completion.\n- Add tests for JSON output and exit codes.\n\n## Expected Files\n\n- packages/cli/**\n\n## Forbidden Files\n\n- .env\n- .npmrc\n- package-lock.json\n\n## Required Commands\n\n- pnpm -C packages/cli test\n- pnpm run typecheck\n- pnpm run build\n\n## Success Criteria\n\n- Multi-step workflows are reproducible.\n- Failures preserve actionable reports.\n- Exit codes match command status.\n\n## Context Points\n\n- cli\n\n## Difficulty\n\nvery-large\n\n## Tags\n\ncli\norchestration\nworkflow",
+        "contextFile": ".agentctx/context/overview.md",
+        "conditions": [
+          "no-context",
+          "agentctx-context"
+        ],
+        "prompts": {
+          "no-context": "no-context/prompt.md",
+          "agentctx-context": "agentctx-context/prompt.md"
+        },
+        "results": {
+          "no-context": "no-context/result.json",
+          "agentctx-context": "agentctx-context/result.json"
+        }
+      },
+      "noContext": {
+        "condition": "no-context",
+        "status": "completed",
+        "elapsedMs": 624000,
+        "inputTokens": 20800,
+        "outputTokens": 7200,
+        "totalTokens": 28000,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 1,
+          "toolCalls": 24,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 552000
+        },
+        "changedFiles": [
+          "packages/cli/src/commands/check.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "3 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 3.3,
+        "scopeMisses": [
+          "Broader file discovery required without generated context."
+        ]
+      },
+      "agentctxContext": {
+        "condition": "agentctx-context",
+        "status": "completed",
+        "elapsedMs": 336000,
+        "inputTokens": 10400,
+        "outputTokens": 4160,
+        "totalTokens": 14560,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 0,
+          "toolCalls": 12,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 296000
+        },
+        "changedFiles": [
+          "packages/cli/src/commands/check.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "3 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 4.4,
+        "scopeMisses": []
+      },
+      "comparison": {
+        "outcome": "helped",
+        "speedDeltaMs": 288000,
+        "tokenDelta": 13440,
+        "computeDelta": {
+          "retries": 1,
+          "toolCalls": 12,
+          "providerLatencyMs": 256000
+        },
+        "evaluatorScoreDelta": 1.1000000000000005,
+        "rationale": "AgentCtx improved evaluator score and at least one efficiency metric."
+      },
+      "tokenSummary": {
+        "noContextTotal": 28000,
+        "agentctxContextTotal": 14560,
+        "delta": 13440,
+        "reductionPercent": 48
+      },
+      "coverageByContextPoint": [
+        {
+          "contextPoint": "cli",
+          "changedFiles": [
+            "packages/cli/src/commands/check.ts"
+          ],
+          "testFiles": [
+            "packages/cli/tests/**/*.test.ts"
+          ],
+          "status": "covered"
+        }
+      ],
+      "testCoverageSummary": {
+        "totalContextPoints": 1,
+        "coveredContextPoints": 1,
+        "partialContextPoints": 0,
+        "missingContextPoints": 0
+      },
+      "securityFindings": [],
+      "publicSafeValidation": {
+        "checked": false,
+        "passed": true,
+        "excludedFactCount": 0,
+        "notes": []
+      }
+    },
+    {
+      "benchmark": {
+        "version": 1,
+        "repo": "agentctx",
+        "ctxPoint": "core",
+        "ctxBlock": "large-core-capability-weighting",
+        "taskName": "Redesign Context Block Selection with Capability Weighting",
+        "taskId": "large-core-capability-weighting",
+        "taskPrompt": "# Task: Redesign Context Block Selection with Capability Weighting\n\n## Goal\n\nRedesign Context Block selection to use capability weighting.\n\n## Background\n\nThe compiler should prefer high-signal context for a task instead of treating every Context Block equally.\n\n## Required Changes\n\n- Add weighted capability scoring.\n- Explain selected and skipped Context Blocks.\n- Add regression tests for stable ordering.\n\n## Expected Files\n\n- packages/core/**\n\n## Forbidden Files\n\n- .env\n- package-lock.json\n\n## Required Commands\n\n- pnpm -C packages/core test\n- pnpm run typecheck\n\n## Success Criteria\n\n- Selection uses weighted capability scores.\n- Output remains deterministic.\n- Tests cover ties and missing capabilities.\n\n## Context Points\n\n- core\n\n## Difficulty\n\nlarge\n\n## Tags\n\ncore\ncompiler\nselection",
+        "contextFile": ".agentctx/context/overview.md",
+        "conditions": [
+          "no-context",
+          "agentctx-context"
+        ],
+        "prompts": {
+          "no-context": "no-context/prompt.md",
+          "agentctx-context": "agentctx-context/prompt.md"
+        },
+        "results": {
+          "no-context": "no-context/result.json",
+          "agentctx-context": "agentctx-context/result.json"
+        }
+      },
+      "noContext": {
+        "condition": "no-context",
+        "status": "completed",
+        "elapsedMs": 312000,
+        "inputTokens": 10400,
+        "outputTokens": 3600,
+        "totalTokens": 14000,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 1,
+          "toolCalls": 16,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 276000
+        },
+        "changedFiles": [
+          "packages/core/src/contextFiles.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 3.3,
+        "scopeMisses": [
+          "Broader file discovery required without generated context."
+        ]
+      },
+      "agentctxContext": {
+        "condition": "agentctx-context",
+        "status": "completed",
+        "elapsedMs": 168000,
+        "inputTokens": 5200,
+        "outputTokens": 2080,
+        "totalTokens": 7280,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 0,
+          "toolCalls": 8,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 148000
+        },
+        "changedFiles": [
+          "packages/core/src/contextFiles.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 4.4,
+        "scopeMisses": []
+      },
+      "comparison": {
+        "outcome": "helped",
+        "speedDeltaMs": 144000,
+        "tokenDelta": 6720,
+        "computeDelta": {
+          "retries": 1,
+          "toolCalls": 8,
+          "providerLatencyMs": 128000
+        },
+        "evaluatorScoreDelta": 1.1000000000000005,
+        "rationale": "AgentCtx improved evaluator score and at least one efficiency metric."
+      },
+      "tokenSummary": {
+        "noContextTotal": 14000,
+        "agentctxContextTotal": 7280,
+        "delta": 6720,
+        "reductionPercent": 48
+      },
+      "coverageByContextPoint": [
         {
           "contextPoint": "core",
           "changedFiles": [
@@ -428,31 +818,249 @@
             "packages/core/tests/**/*.test.ts"
           ],
           "status": "covered"
+        }
+      ],
+      "testCoverageSummary": {
+        "totalContextPoints": 1,
+        "coveredContextPoints": 1,
+        "partialContextPoints": 0,
+        "missingContextPoints": 0
+      },
+      "securityFindings": [],
+      "publicSafeValidation": {
+        "checked": false,
+        "passed": true,
+        "excludedFactCount": 0,
+        "notes": []
+      }
+    },
+    {
+      "benchmark": {
+        "version": 1,
+        "repo": "agentctx",
+        "ctxPoint": "core",
+        "ctxBlock": "medium-core-capability-metadata",
+        "taskName": "Add Typed Context Point Capability Metadata",
+        "taskId": "medium-core-capability-metadata",
+        "taskPrompt": "# Task: Add Typed Context Point Capability Metadata\n\n## Goal\n\nAdd typed capability metadata to Context Point selection.\n\n## Background\n\nContext Points should explain what evidence they contain and what tasks they support.\n\n## Required Changes\n\n- Add capability metadata to core Context Point models.\n- Preserve deterministic sorting.\n- Add tests for capability selection.\n\n## Expected Files\n\n- packages/core/**\n\n## Forbidden Files\n\n- .env\n- package-lock.json\n\n## Required Commands\n\n- pnpm -C packages/core test\n- pnpm run typecheck\n\n## Success Criteria\n\n- Capability metadata is typed.\n- Selection remains deterministic.\n- Core tests pass.\n\n## Context Points\n\n- core\n\n## Difficulty\n\nmedium\n\n## Tags\n\ncore\ncontext-architecture\nmetadata",
+        "contextFile": ".agentctx/context/overview.md",
+        "conditions": [
+          "no-context",
+          "agentctx-context"
+        ],
+        "prompts": {
+          "no-context": "no-context/prompt.md",
+          "agentctx-context": "agentctx-context/prompt.md"
         },
+        "results": {
+          "no-context": "no-context/result.json",
+          "agentctx-context": "agentctx-context/result.json"
+        }
+      },
+      "noContext": {
+        "condition": "no-context",
+        "status": "completed",
+        "elapsedMs": 156000,
+        "inputTokens": 5200,
+        "outputTokens": 1800,
+        "totalTokens": 7000,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 1,
+          "toolCalls": 12,
+          "reasoningEffort": "medium",
+          "providerLatencyMs": 138000
+        },
+        "changedFiles": [
+          "packages/core/src/contextFiles.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 3.3,
+        "scopeMisses": [
+          "Broader file discovery required without generated context."
+        ]
+      },
+      "agentctxContext": {
+        "condition": "agentctx-context",
+        "status": "completed",
+        "elapsedMs": 84000,
+        "inputTokens": 2600,
+        "outputTokens": 1040,
+        "totalTokens": 3640,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 0,
+          "toolCalls": 6,
+          "reasoningEffort": "medium",
+          "providerLatencyMs": 74000
+        },
+        "changedFiles": [
+          "packages/core/src/contextFiles.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 4.4,
+        "scopeMisses": []
+      },
+      "comparison": {
+        "outcome": "helped",
+        "speedDeltaMs": 72000,
+        "tokenDelta": 3360,
+        "computeDelta": {
+          "retries": 1,
+          "toolCalls": 6,
+          "providerLatencyMs": 64000
+        },
+        "evaluatorScoreDelta": 1.1000000000000005,
+        "rationale": "AgentCtx improved evaluator score and at least one efficiency metric."
+      },
+      "tokenSummary": {
+        "noContextTotal": 7000,
+        "agentctxContextTotal": 3640,
+        "delta": 3360,
+        "reductionPercent": 48
+      },
+      "coverageByContextPoint": [
         {
-          "contextPoint": "dual-agent-runner",
+          "contextPoint": "core",
           "changedFiles": [
-            "packages/dual-agent-runner/src/benchmark.ts"
+            "packages/core/src/contextFiles.ts"
           ],
           "testFiles": [
-            "packages/dual-agent-runner/tests/benchmark.test.ts"
-          ],
-          "status": "covered"
-        },
-        {
-          "contextPoint": "targets",
-          "changedFiles": [
-            "packages/targets/src/index.ts"
-          ],
-          "testFiles": [
-            "packages/targets/tests/**/*.test.ts"
+            "packages/core/tests/**/*.test.ts"
           ],
           "status": "covered"
         }
       ],
       "testCoverageSummary": {
-        "totalContextPoints": 4,
-        "coveredContextPoints": 4,
+        "totalContextPoints": 1,
+        "coveredContextPoints": 1,
+        "partialContextPoints": 0,
+        "missingContextPoints": 0
+      },
+      "securityFindings": [],
+      "publicSafeValidation": {
+        "checked": false,
+        "passed": true,
+        "excludedFactCount": 0,
+        "notes": []
+      }
+    },
+    {
+      "benchmark": {
+        "version": 1,
+        "repo": "agentctx",
+        "ctxPoint": "core",
+        "ctxBlock": "very-large-core-versioned-fact-visibility",
+        "taskName": "Introduce Versioned Fact Visibility and Graph Contracts",
+        "taskId": "very-large-core-versioned-fact-visibility",
+        "taskPrompt": "# Task: Introduce Versioned Fact Visibility and Graph Contracts\n\n## Goal\n\nIntroduce migration-safe fact visibility and versioned graph contracts.\n\n## Background\n\nAgentCtx needs stable public and internal context contracts as facts evolve across adapters and targets.\n\n## Required Changes\n\n- Add versioned fact visibility metadata.\n- Add migration tests for graph contract changes.\n- Validate public-safe exclusions from graph data.\n- Document compatibility expectations in core tests.\n\n## Expected Files\n\n- packages/core/**\n\n## Forbidden Files\n\n- .env\n- .npmrc\n- package-lock.json\n- **/*.pem\n- **/*.key\n\n## Required Commands\n\n- pnpm -C packages/core test\n- pnpm run typecheck\n- pnpm run build\n\n## Success Criteria\n\n- Graph contracts are versioned.\n- Public/internal visibility remains explicit.\n- Migration tests protect existing facts.\n\n## Context Points\n\n- core\n\n## Difficulty\n\nvery-large\n\n## Tags\n\ncore\nvisibility\ngraph\ncompatibility",
+        "contextFile": ".agentctx/context/overview.md",
+        "conditions": [
+          "no-context",
+          "agentctx-context"
+        ],
+        "prompts": {
+          "no-context": "no-context/prompt.md",
+          "agentctx-context": "agentctx-context/prompt.md"
+        },
+        "results": {
+          "no-context": "no-context/result.json",
+          "agentctx-context": "agentctx-context/result.json"
+        }
+      },
+      "noContext": {
+        "condition": "no-context",
+        "status": "completed",
+        "elapsedMs": 624000,
+        "inputTokens": 20800,
+        "outputTokens": 7200,
+        "totalTokens": 28000,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 1,
+          "toolCalls": 24,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 552000
+        },
+        "changedFiles": [
+          "packages/core/src/contextFiles.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "3 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 3.3,
+        "scopeMisses": [
+          "Broader file discovery required without generated context."
+        ]
+      },
+      "agentctxContext": {
+        "condition": "agentctx-context",
+        "status": "completed",
+        "elapsedMs": 336000,
+        "inputTokens": 10400,
+        "outputTokens": 4160,
+        "totalTokens": 14560,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 0,
+          "toolCalls": 12,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 296000
+        },
+        "changedFiles": [
+          "packages/core/src/contextFiles.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "3 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 4.4,
+        "scopeMisses": []
+      },
+      "comparison": {
+        "outcome": "helped",
+        "speedDeltaMs": 288000,
+        "tokenDelta": 13440,
+        "computeDelta": {
+          "retries": 1,
+          "toolCalls": 12,
+          "providerLatencyMs": 256000
+        },
+        "evaluatorScoreDelta": 1.1000000000000005,
+        "rationale": "AgentCtx improved evaluator score and at least one efficiency metric."
+      },
+      "tokenSummary": {
+        "noContextTotal": 28000,
+        "agentctxContextTotal": 14560,
+        "delta": 13440,
+        "reductionPercent": 48
+      },
+      "coverageByContextPoint": [
+        {
+          "contextPoint": "core",
+          "changedFiles": [
+            "packages/core/src/contextFiles.ts"
+          ],
+          "testFiles": [
+            "packages/core/tests/**/*.test.ts"
+          ],
+          "status": "covered"
+        }
+      ],
+      "testCoverageSummary": {
+        "totalContextPoints": 1,
+        "coveredContextPoints": 1,
         "partialContextPoints": 0,
         "missingContextPoints": 0
       },
@@ -472,11 +1080,11 @@
       "benchmark": {
         "version": 1,
         "repo": "agentctx",
-        "ctxPoint": "core",
-        "ctxBlock": "medium-add-context-point-coverage",
-        "taskName": "Add Context Point Coverage to Bench Reports",
-        "taskId": "medium-add-context-point-coverage",
-        "taskPrompt": "# Task: Add Context Point Coverage to Bench Reports\n\n## Goal\n\nAdd Context Point coverage reporting to Bench.\n\n## Background\n\nAgentCtx uses Context Points to describe bounded operational domains. Bench should show which Context Points were touched by a task and whether they were covered by tests.\n\n## Required Changes\n\n- Detect changed files by Context Point.\n- Map test files to Context Points.\n- Add `coverageByContextPoint` to the JSON report.\n- Add Context Point coverage section to Markdown report.\n- Add Context Point coverage section to HTML report.\n- Add tests for covered, partial, and missing coverage states.\n\n## Expected Files\n\n- packages/dual-agent-runner/**\n- packages/core/**\n\n## Forbidden Files\n\n- .env\n- package-lock.json\n- docs/generated/**\n- examples/**\n\n## Required Commands\n\n- pnpm -C packages/dual-agent-runner test\n- pnpm -C packages/core test\n- pnpm run typecheck\n\n## Success Criteria\n\n- JSON report includes `coverageByContextPoint`.\n- Markdown report includes Context Point coverage.\n- HTML report includes Context Point coverage.\n- Covered, partial, and missing states are tested.\n- No forbidden files are modified.\n- Irrelevant package edits are minimized.\n\n## Context Points\n\n- dual-agent-runner\n- core\n\n## Difficulty\n\nmedium\n\n## Tags\n\nbench\ncontext-points\ncoverage\nreporting\ncross-package",
+        "ctxPoint": "docs-agentctx",
+        "ctxBlock": "large-docs-report-examples",
+        "taskName": "Add Generated Report Examples",
+        "taskId": "large-docs-report-examples",
+        "taskPrompt": "# Task: Add Generated Report Examples\n\n## Goal\n\nAdd generated report examples and Context Point coverage interpretation.\n\n## Background\n\nReaders should understand how to read suite totals, per-task tables, and Context Point coverage.\n\n## Required Changes\n\n- Add report interpretation examples.\n- Explain aggregate token and runtime deltas.\n- Explain Context Point coverage rows.\n\n## Expected Files\n\n- docs-agentctx/**\n\n## Forbidden Files\n\n- .env\n- package-lock.json\n\n## Required Commands\n\n- VITEPRESS_BASE=/agentctx/ pnpm -C docs-agentctx build\n- pnpm run typecheck\n\n## Success Criteria\n\n- Examples match generated report output.\n- Coverage interpretation is clear.\n- Docs build passes.\n\n## Context Points\n\n- docs-agentctx\n\n## Difficulty\n\nlarge\n\n## Tags\n\ndocs\nexamples\ncoverage",
         "contextFile": ".agentctx/context/overview.md",
         "conditions": [
           "no-context",
@@ -494,25 +1102,24 @@
       "noContext": {
         "condition": "no-context",
         "status": "completed",
-        "elapsedMs": 156000,
-        "inputTokens": 5200,
-        "outputTokens": 1800,
-        "totalTokens": 7000,
+        "elapsedMs": 312000,
+        "inputTokens": 10400,
+        "outputTokens": 3600,
+        "totalTokens": 14000,
         "agentCompute": {
           "model": "mock-senior-dev-agent",
           "retries": 1,
-          "toolCalls": 12,
-          "reasoningEffort": "medium",
-          "providerLatencyMs": 138000
+          "toolCalls": 16,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 276000
         },
         "changedFiles": [
-          "packages/core/src/contextFiles.ts",
-          "packages/dual-agent-runner/src/benchmark.ts"
+          "docs-agentctx/bench/reports.md"
         ],
         "checksPassed": true,
         "validationNotes": [
-          "3 required command(s) represented in mock validation.",
-          "6 success criteria covered by deterministic report evidence."
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
         ],
         "evaluatorScore": 3.3,
         "scopeMisses": [
@@ -522,72 +1129,61 @@
       "agentctxContext": {
         "condition": "agentctx-context",
         "status": "completed",
-        "elapsedMs": 84000,
-        "inputTokens": 2600,
-        "outputTokens": 1040,
-        "totalTokens": 3640,
+        "elapsedMs": 168000,
+        "inputTokens": 5200,
+        "outputTokens": 2080,
+        "totalTokens": 7280,
         "agentCompute": {
           "model": "mock-senior-dev-agent",
           "retries": 0,
-          "toolCalls": 6,
-          "reasoningEffort": "medium",
-          "providerLatencyMs": 74000
+          "toolCalls": 8,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 148000
         },
         "changedFiles": [
-          "packages/core/src/contextFiles.ts",
-          "packages/dual-agent-runner/src/benchmark.ts"
+          "docs-agentctx/bench/reports.md"
         ],
         "checksPassed": true,
         "validationNotes": [
-          "3 required command(s) represented in mock validation.",
-          "6 success criteria covered by deterministic report evidence."
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
         ],
         "evaluatorScore": 4.4,
         "scopeMisses": []
       },
       "comparison": {
         "outcome": "helped",
-        "speedDeltaMs": 72000,
-        "tokenDelta": 3360,
+        "speedDeltaMs": 144000,
+        "tokenDelta": 6720,
         "computeDelta": {
           "retries": 1,
-          "toolCalls": 6,
-          "providerLatencyMs": 64000
+          "toolCalls": 8,
+          "providerLatencyMs": 128000
         },
         "evaluatorScoreDelta": 1.1000000000000005,
         "rationale": "AgentCtx improved evaluator score and at least one efficiency metric."
       },
       "tokenSummary": {
-        "noContextTotal": 7000,
-        "agentctxContextTotal": 3640,
-        "delta": 3360,
+        "noContextTotal": 14000,
+        "agentctxContextTotal": 7280,
+        "delta": 6720,
         "reductionPercent": 48
       },
       "coverageByContextPoint": [
         {
-          "contextPoint": "core",
+          "contextPoint": "docs-agentctx",
           "changedFiles": [
-            "packages/core/src/contextFiles.ts"
+            "docs-agentctx/bench/reports.md"
           ],
           "testFiles": [
-            "packages/core/tests/**/*.test.ts"
-          ],
-          "status": "covered"
-        },
-        {
-          "contextPoint": "dual-agent-runner",
-          "changedFiles": [
-            "packages/dual-agent-runner/src/benchmark.ts"
-          ],
-          "testFiles": [
-            "packages/dual-agent-runner/tests/benchmark.test.ts"
+            "VITEPRESS_BASE=/agentctx/ pnpm -C docs-agentctx build"
           ],
           "status": "covered"
         }
       ],
       "testCoverageSummary": {
-        "totalContextPoints": 2,
-        "coveredContextPoints": 2,
+        "totalContextPoints": 1,
+        "coveredContextPoints": 1,
         "partialContextPoints": 0,
         "missingContextPoints": 0
       },
@@ -604,10 +1200,10 @@
         "version": 1,
         "repo": "agentctx",
         "ctxPoint": "docs-agentctx",
-        "ctxBlock": "medium-cli-docs-benchmark-command",
-        "taskName": "Add CLI and Docs Benchmark Command Coverage",
-        "taskId": "medium-cli-docs-benchmark-command",
-        "taskPrompt": "# Task: Add CLI and Docs Benchmark Command Coverage\n\n## Goal\n\nAdd benchmark command documentation and CLI coverage for running the mock benchmark suite.\n\n## Background\n\nThe benchmark runner is exposed through package scripts and the dual-agent-runner CLI. Docs should show the command surface while CLI tests keep the command parser stable.\n\n## Required Changes\n\n- Add CLI coverage for `benchmark run --suite`.\n- Add docs coverage for the benchmark reports page.\n- Verify generated public benchmark JSON is safe to publish.\n- Add a test that parser-only dry runs list every suite task.\n\n## Expected Files\n\n- packages/dual-agent-runner/**\n- docs-agentctx/**\n- package.json\n\n## Forbidden Files\n\n- .env\n- package-lock.json\n- examples/private/**\n\n## Required Commands\n\n- pnpm -C packages/dual-agent-runner test\n- VITEPRESS_BASE=/agentctx/ pnpm -C docs-agentctx build\n- pnpm run typecheck\n\n## Success Criteria\n\n- CLI dry-run output includes all suite tasks.\n- Docs build with the benchmark reports page.\n- Public benchmark JSON has no local absolute paths.\n- Context Point coverage includes runner and docs surfaces.\n\n## Context Points\n\n- dual-agent-runner\n- docs-agentctx\n\n## Difficulty\n\nmedium\n\n## Tags\n\ncli\ndocs\nbench\nreporting",
+        "ctxBlock": "medium-docs-benchmark-methodology",
+        "taskName": "Add Benchmark Methodology Docs",
+        "taskId": "medium-docs-benchmark-methodology",
+        "taskPrompt": "# Task: Add Benchmark Methodology Docs\n\n## Goal\n\nAdd benchmark methodology docs for senior engineers.\n\n## Background\n\nBenchmark claims need methodology, assumptions, and limitations beside the report data.\n\n## Required Changes\n\n- Document no-context versus AgentCtx-context methodology.\n- Document mock evidence limitations.\n- Add docs build coverage.\n\n## Expected Files\n\n- docs-agentctx/**\n\n## Forbidden Files\n\n- .env\n- package-lock.json\n\n## Required Commands\n\n- VITEPRESS_BASE=/agentctx/ pnpm -C docs-agentctx build\n- pnpm run typecheck\n\n## Success Criteria\n\n- Methodology is clear.\n- Limitations are explicit.\n- Docs build passes.\n\n## Context Points\n\n- docs-agentctx\n\n## Difficulty\n\nmedium\n\n## Tags\n\ndocs\nbench\nmethodology",
         "contextFile": ".agentctx/context/overview.md",
         "conditions": [
           "no-context",
@@ -637,13 +1233,12 @@
           "providerLatencyMs": 138000
         },
         "changedFiles": [
-          "docs-agentctx/bench/reports.md",
-          "packages/dual-agent-runner/src/benchmark.ts"
+          "docs-agentctx/bench/reports.md"
         ],
         "checksPassed": true,
         "validationNotes": [
-          "3 required command(s) represented in mock validation.",
-          "4 success criteria covered by deterministic report evidence."
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
         ],
         "evaluatorScore": 3.3,
         "scopeMisses": [
@@ -665,13 +1260,12 @@
           "providerLatencyMs": 74000
         },
         "changedFiles": [
-          "docs-agentctx/bench/reports.md",
-          "packages/dual-agent-runner/src/benchmark.ts"
+          "docs-agentctx/bench/reports.md"
         ],
         "checksPassed": true,
         "validationNotes": [
-          "3 required command(s) represented in mock validation.",
-          "4 success criteria covered by deterministic report evidence."
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
         ],
         "evaluatorScore": 4.4,
         "scopeMisses": []
@@ -704,21 +1298,11 @@
             "VITEPRESS_BASE=/agentctx/ pnpm -C docs-agentctx build"
           ],
           "status": "covered"
-        },
-        {
-          "contextPoint": "dual-agent-runner",
-          "changedFiles": [
-            "packages/dual-agent-runner/src/benchmark.ts"
-          ],
-          "testFiles": [
-            "packages/dual-agent-runner/tests/benchmark.test.ts"
-          ],
-          "status": "covered"
         }
       ],
       "testCoverageSummary": {
-        "totalContextPoints": 2,
-        "coveredContextPoints": 2,
+        "totalContextPoints": 1,
+        "coveredContextPoints": 1,
         "partialContextPoints": 0,
         "missingContextPoints": 0
       },
@@ -734,11 +1318,11 @@
       "benchmark": {
         "version": 1,
         "repo": "agentctx",
-        "ctxPoint": "dual-agent-runner",
-        "ctxBlock": "small-add-token-summary",
-        "taskName": "Add Token Summary to Bench JSON Report",
-        "taskId": "small-add-token-summary",
-        "taskPrompt": "# Task: Add Token Summary to Bench JSON Report\n\n## Goal\n\nAdd a `tokenSummary` object to the Bench JSON report.\n\n## Background\n\nBench captures token usage for each condition, but reports need a compact summary field so docs and HTML reports can show token deltas clearly.\n\n## Required Changes\n\n- Add `tokenSummary` to the JSON report output.\n- Include total tokens per condition.\n- Include token delta between `no-context` and `agentctx-context`.\n- Add unit tests for token summary generation.\n\n## Expected Files\n\n- packages/dual-agent-runner/**\n\n## Forbidden Files\n\n- .env\n- package-lock.json\n- docs/generated/**\n\n## Required Commands\n\n- pnpm -C packages/dual-agent-runner test\n- pnpm run typecheck\n\n## Success Criteria\n\n- JSON report includes `tokenSummary`.\n- Unit tests pass.\n- Typecheck passes.\n- No forbidden files are modified.\n- No unrelated packages are changed.\n\n## Context Points\n\n- dual-agent-runner\n\n## Difficulty\n\nsmall\n\n## Tags\n\nbench\ntokens\nreporting",
+        "ctxPoint": "docs-agentctx",
+        "ctxBlock": "very-large-docs-evidence-narrative",
+        "taskName": "Add Full Benchmark Evidence Narrative",
+        "taskId": "very-large-docs-evidence-narrative",
+        "taskPrompt": "# Task: Add Full Benchmark Evidence Narrative\n\n## Goal\n\nAdd a full benchmark evidence narrative showing framework extension and compiler architecture improvements.\n\n## Background\n\nVery large docs work should explain how AgentCtx improves senior developer workflows across architecture, frameworks, targets, CLI, and reporting.\n\n## Required Changes\n\n- Add a narrative around framework extension tasks.\n- Explain context architecture changes.\n- Explain how benchmark evidence maps to repo Context Points.\n- Keep public docs concise and inspectable.\n\n## Expected Files\n\n- docs-agentctx/**\n\n## Forbidden Files\n\n- .env\n- .npmrc\n- package-lock.json\n\n## Required Commands\n\n- VITEPRESS_BASE=/agentctx/ pnpm -C docs-agentctx build\n- pnpm run typecheck\n- pnpm run build\n\n## Success Criteria\n\n- Narrative ties benchmark evidence to architecture.\n- Context Point coverage is easy to inspect.\n- Docs build passes.\n\n## Context Points\n\n- docs-agentctx\n\n## Difficulty\n\nvery-large\n\n## Tags\n\ndocs\nevidence\narchitecture",
         "contextFile": ".agentctx/context/overview.md",
         "conditions": [
           "no-context",
@@ -756,69 +1340,190 @@
       "noContext": {
         "condition": "no-context",
         "status": "completed",
-        "elapsedMs": 78000,
-        "inputTokens": 2600,
-        "outputTokens": 900,
-        "totalTokens": 3500,
+        "elapsedMs": 624000,
+        "inputTokens": 20800,
+        "outputTokens": 7200,
+        "totalTokens": 28000,
         "agentCompute": {
           "model": "mock-senior-dev-agent",
           "retries": 1,
-          "toolCalls": 10,
-          "reasoningEffort": "medium",
-          "providerLatencyMs": 69000
+          "toolCalls": 24,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 552000
         },
         "changedFiles": [
-          "packages/dual-agent-runner/src/benchmark.ts"
+          "docs-agentctx/bench/reports.md"
         ],
         "checksPassed": true,
         "validationNotes": [
-          "2 required command(s) represented in mock validation.",
-          "5 success criteria covered by deterministic report evidence."
+          "3 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
         ],
         "evaluatorScore": 3.3,
-        "scopeMisses": []
+        "scopeMisses": [
+          "Broader file discovery required without generated context."
+        ]
       },
       "agentctxContext": {
         "condition": "agentctx-context",
         "status": "completed",
-        "elapsedMs": 42000,
-        "inputTokens": 1300,
-        "outputTokens": 520,
-        "totalTokens": 1820,
+        "elapsedMs": 336000,
+        "inputTokens": 10400,
+        "outputTokens": 4160,
+        "totalTokens": 14560,
         "agentCompute": {
           "model": "mock-senior-dev-agent",
           "retries": 0,
-          "toolCalls": 5,
-          "reasoningEffort": "medium",
-          "providerLatencyMs": 37000
+          "toolCalls": 12,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 296000
         },
         "changedFiles": [
-          "packages/dual-agent-runner/src/benchmark.ts"
+          "docs-agentctx/bench/reports.md"
         ],
         "checksPassed": true,
         "validationNotes": [
-          "2 required command(s) represented in mock validation.",
-          "5 success criteria covered by deterministic report evidence."
+          "3 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
         ],
         "evaluatorScore": 4.4,
         "scopeMisses": []
       },
       "comparison": {
         "outcome": "helped",
-        "speedDeltaMs": 36000,
-        "tokenDelta": 1680,
+        "speedDeltaMs": 288000,
+        "tokenDelta": 13440,
         "computeDelta": {
           "retries": 1,
-          "toolCalls": 5,
-          "providerLatencyMs": 32000
+          "toolCalls": 12,
+          "providerLatencyMs": 256000
         },
         "evaluatorScoreDelta": 1.1000000000000005,
         "rationale": "AgentCtx improved evaluator score and at least one efficiency metric."
       },
       "tokenSummary": {
-        "noContextTotal": 3500,
-        "agentctxContextTotal": 1820,
-        "delta": 1680,
+        "noContextTotal": 28000,
+        "agentctxContextTotal": 14560,
+        "delta": 13440,
+        "reductionPercent": 48
+      },
+      "coverageByContextPoint": [
+        {
+          "contextPoint": "docs-agentctx",
+          "changedFiles": [
+            "docs-agentctx/bench/reports.md"
+          ],
+          "testFiles": [
+            "VITEPRESS_BASE=/agentctx/ pnpm -C docs-agentctx build"
+          ],
+          "status": "covered"
+        }
+      ],
+      "testCoverageSummary": {
+        "totalContextPoints": 1,
+        "coveredContextPoints": 1,
+        "partialContextPoints": 0,
+        "missingContextPoints": 0
+      },
+      "securityFindings": [],
+      "publicSafeValidation": {
+        "checked": false,
+        "passed": true,
+        "excludedFactCount": 0,
+        "notes": []
+      }
+    },
+    {
+      "benchmark": {
+        "version": 1,
+        "repo": "agentctx",
+        "ctxPoint": "dual-agent-runner",
+        "ctxBlock": "large-runner-suite-coverage-links",
+        "taskName": "Add Suite Coverage Links",
+        "taskId": "large-runner-suite-coverage-links",
+        "taskPrompt": "# Task: Add Suite Coverage Links\n\n## Goal\n\nAdd suite-level Context Point coverage and per-task report links.\n\n## Background\n\nSenior reviewers need to move from aggregate report status to exact task and Context Point evidence.\n\n## Required Changes\n\n- Render Context Point coverage by suite.\n- Link each task to its run report.\n- Link each task to its coverage report.\n\n## Expected Files\n\n- packages/dual-agent-runner/**\n\n## Forbidden Files\n\n- .env\n- package-lock.json\n\n## Required Commands\n\n- pnpm -C packages/dual-agent-runner test\n- pnpm run typecheck\n\n## Success Criteria\n\n- Coverage links are generated.\n- Report links are stable.\n- Tests cover HTML output.\n\n## Context Points\n\n- dual-agent-runner\n\n## Difficulty\n\nlarge\n\n## Tags\n\ndual-agent-runner\ncoverage\nhtml",
+        "contextFile": ".agentctx/context/overview.md",
+        "conditions": [
+          "no-context",
+          "agentctx-context"
+        ],
+        "prompts": {
+          "no-context": "no-context/prompt.md",
+          "agentctx-context": "agentctx-context/prompt.md"
+        },
+        "results": {
+          "no-context": "no-context/result.json",
+          "agentctx-context": "agentctx-context/result.json"
+        }
+      },
+      "noContext": {
+        "condition": "no-context",
+        "status": "completed",
+        "elapsedMs": 312000,
+        "inputTokens": 10400,
+        "outputTokens": 3600,
+        "totalTokens": 14000,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 1,
+          "toolCalls": 16,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 276000
+        },
+        "changedFiles": [
+          "packages/dual-agent-runner/src/benchmark.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 3.3,
+        "scopeMisses": [
+          "Broader file discovery required without generated context."
+        ]
+      },
+      "agentctxContext": {
+        "condition": "agentctx-context",
+        "status": "completed",
+        "elapsedMs": 168000,
+        "inputTokens": 5200,
+        "outputTokens": 2080,
+        "totalTokens": 7280,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 0,
+          "toolCalls": 8,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 148000
+        },
+        "changedFiles": [
+          "packages/dual-agent-runner/src/benchmark.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 4.4,
+        "scopeMisses": []
+      },
+      "comparison": {
+        "outcome": "helped",
+        "speedDeltaMs": 144000,
+        "tokenDelta": 6720,
+        "computeDelta": {
+          "retries": 1,
+          "toolCalls": 8,
+          "providerLatencyMs": 128000
+        },
+        "evaluatorScoreDelta": 1.1000000000000005,
+        "rationale": "AgentCtx improved evaluator score and at least one efficiency metric."
+      },
+      "tokenSummary": {
+        "noContextTotal": 14000,
+        "agentctxContextTotal": 7280,
+        "delta": 6720,
         "reductionPercent": 48
       },
       "coverageByContextPoint": [
@@ -850,13 +1555,13 @@
     {
       "benchmark": {
         "version": 1,
-        "repo": "Quantifeed",
-        "ctxPoint": "quantifeed-webapp",
-        "ctxBlock": "WebApp",
-        "taskName": "Refactor research view option initialisation",
-        "taskId": "refactor-research-view-option-initialisation",
-        "taskPrompt": "Medium benchmark test: refactor Quantifeed Angular research view-option initialisation.\n\nObjective:\nIn ClassicResearchPageComponent, remove the local `$this = this` alias from `ngOnInit` and extract the default view-option setup into a named private method. Preserve the route subscription behaviour and all user-facing labels.\n\nExpected file:\n- Source/Apps/WebApp/Quantifeed.WebApp/classic/research/research.page.component.ts\n\nRequired behaviour:\n- Add a private method, for example `_initialiseViewOptions`, that sets `adjustReturnsByTodaysMargin`, `showReturnsToDate`, and `chartOptions`.\n- Call the method at the start of `ngOnInit`.\n- Replace `$this` usage in `ngOnInit` with direct `this` usage.\n- Preserve the route params, service init, constraint loading, redirect, and subscription behaviour.\n- Do not change templates, l10n keys, tests, package files, generated context, backend, SRE, data, or unrelated files.\n\nValidation:\n- Verify `const $this = this` no longer exists in the research component.\n- Verify `$this.` no longer exists in the research component.\n- Verify `_initialiseViewOptions` exists and is called from `ngOnInit`.\n- Verify only `research.page.component.ts` changed.\n- No Angular unit test update is expected because this is a behaviour-preserving internal refactor.\n\nScoring metrics:\n- Correctness: behaviour is preserved and the default view-option setup is isolated.\n- Performance: no extra subscriptions, runtime loops, or repeated template work are added.\n- Token usage: agent should find the target component without broad repo scanning.\n- Agent compute: record elapsedMs, inputTokens, outputTokens, retries, toolCalls, and providerLatencyMs if available.\n- Scope control: exactly one file should change.\n- Evaluator score should be 0-5 based on static validation, minimal diff, readability, and scope discipline.",
-        "contextFile": ".agentctx/context/frontend.md",
+        "repo": "agentctx",
+        "ctxPoint": "dual-agent-runner",
+        "ctxBlock": "medium-runner-aggregate-scoring",
+        "taskName": "Add Aggregate Benchmark Scoring",
+        "taskId": "medium-runner-aggregate-scoring",
+        "taskPrompt": "# Task: Add Aggregate Benchmark Scoring\n\n## Goal\n\nAdd aggregate token and runtime scoring to benchmark reports.\n\n## Background\n\nBench reports should show suite-level performance, not only per-task deltas.\n\n## Required Changes\n\n- Aggregate condition token usage.\n- Aggregate condition runtime.\n- Add tests for percentage deltas.\n\n## Expected Files\n\n- packages/dual-agent-runner/**\n\n## Forbidden Files\n\n- .env\n- package-lock.json\n\n## Required Commands\n\n- pnpm -C packages/dual-agent-runner test\n- pnpm run typecheck\n\n## Success Criteria\n\n- Suite reports include aggregate deltas.\n- Percentages are stable.\n- Tests pass.\n\n## Context Points\n\n- dual-agent-runner\n\n## Difficulty\n\nmedium\n\n## Tags\n\ndual-agent-runner\nscoring\ntokens",
+        "contextFile": ".agentctx/context/overview.md",
         "conditions": [
           "no-context",
           "agentctx-context"
@@ -873,71 +1578,577 @@
       "noContext": {
         "condition": "no-context",
         "status": "completed",
-        "elapsedMs": 94000,
-        "inputTokens": 3300,
-        "outputTokens": 520,
-        "totalTokens": 3820,
+        "elapsedMs": 156000,
+        "inputTokens": 5200,
+        "outputTokens": 1800,
+        "totalTokens": 7000,
         "agentCompute": {
-          "model": "codex",
-          "retries": 0,
-          "toolCalls": 6,
+          "model": "mock-senior-dev-agent",
+          "retries": 1,
+          "toolCalls": 12,
           "reasoningEffort": "medium",
-          "providerLatencyMs": 94000
+          "providerLatencyMs": 138000
         },
         "changedFiles": [
-          "Source/Apps/WebApp/Quantifeed.WebApp/classic/research/research.page.component.ts"
+          "packages/dual-agent-runner/src/benchmark.ts"
         ],
         "checksPassed": true,
         "validationNotes": [
-          "Executed in isolated /tmp no-context copy from Quantifeed commit af24701ccf5.",
-          "Static validation passed: no `const $this = this` or `$this.` references remain in the research component.",
-          "Static validation passed: `_initialiseViewOptions()` exists and is called from `ngOnInit`.",
-          "Changed exactly one expected Angular component file.",
-          "No Angular unit test update required because this is a behaviour-preserving internal refactor."
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
         ],
-        "evaluatorScore": 4.6,
-        "scopeMisses": []
+        "evaluatorScore": 3.3,
+        "scopeMisses": [
+          "Broader file discovery required without generated context."
+        ]
       },
       "agentctxContext": {
         "condition": "agentctx-context",
         "status": "completed",
-        "elapsedMs": 68000,
-        "inputTokens": 3650,
-        "outputTokens": 480,
-        "totalTokens": 4130,
+        "elapsedMs": 84000,
+        "inputTokens": 2600,
+        "outputTokens": 1040,
+        "totalTokens": 3640,
         "agentCompute": {
-          "model": "codex",
+          "model": "mock-senior-dev-agent",
           "retries": 0,
-          "toolCalls": 4,
+          "toolCalls": 6,
           "reasoningEffort": "medium",
-          "providerLatencyMs": 68000
+          "providerLatencyMs": 74000
         },
         "changedFiles": [
-          "Source/Apps/WebApp/Quantifeed.WebApp/classic/research/research.page.component.ts"
+          "packages/dual-agent-runner/src/benchmark.ts"
         ],
         "checksPassed": true,
         "validationNotes": [
-          "Executed in isolated /tmp agentctx-context copy from Quantifeed commit af24701ccf5.",
-          "Started from the generated frontend CtxBlock, then inspected the expected research component.",
-          "Static validation passed: no `const $this = this` or `$this.` references remain in the research component.",
-          "Static validation passed: `_initialiseViewOptions()` exists and is called from `ngOnInit`.",
-          "Changed exactly one expected Angular component file.",
-          "No Angular unit test update required because this is a behaviour-preserving internal refactor."
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
         ],
-        "evaluatorScore": 4.8,
+        "evaluatorScore": 4.4,
         "scopeMisses": []
       },
       "comparison": {
-        "outcome": "neutral",
-        "speedDeltaMs": 26000,
-        "tokenDelta": -310,
+        "outcome": "helped",
+        "speedDeltaMs": 72000,
+        "tokenDelta": 3360,
         "computeDelta": {
-          "retries": 0,
-          "toolCalls": 2,
-          "providerLatencyMs": 26000
+          "retries": 1,
+          "toolCalls": 6,
+          "providerLatencyMs": 64000
         },
-        "evaluatorScoreDelta": 0.20000000000000018,
-        "rationale": "Completed results do not show a decisive improvement or regression."
+        "evaluatorScoreDelta": 1.1000000000000005,
+        "rationale": "AgentCtx improved evaluator score and at least one efficiency metric."
+      },
+      "tokenSummary": {
+        "noContextTotal": 7000,
+        "agentctxContextTotal": 3640,
+        "delta": 3360,
+        "reductionPercent": 48
+      },
+      "coverageByContextPoint": [
+        {
+          "contextPoint": "dual-agent-runner",
+          "changedFiles": [
+            "packages/dual-agent-runner/src/benchmark.ts"
+          ],
+          "testFiles": [
+            "packages/dual-agent-runner/tests/benchmark.test.ts"
+          ],
+          "status": "covered"
+        }
+      ],
+      "testCoverageSummary": {
+        "totalContextPoints": 1,
+        "coveredContextPoints": 1,
+        "partialContextPoints": 0,
+        "missingContextPoints": 0
+      },
+      "securityFindings": [],
+      "publicSafeValidation": {
+        "checked": false,
+        "passed": true,
+        "excludedFactCount": 0,
+        "notes": []
+      }
+    },
+    {
+      "benchmark": {
+        "version": 1,
+        "repo": "agentctx",
+        "ctxPoint": "dual-agent-runner",
+        "ctxBlock": "very-large-runner-benchmark-lifecycle",
+        "taskName": "Add Benchmark Lifecycle Reporting",
+        "taskId": "very-large-runner-benchmark-lifecycle",
+        "taskPrompt": "# Task: Add Benchmark Lifecycle Reporting\n\n## Goal\n\nAdd benchmark lifecycle reporting across JSON, Markdown, HTML, and coverage artifacts.\n\n## Background\n\nVery large benchmark runs need reproducible evidence for task parsing, condition execution, coverage, and publication.\n\n## Required Changes\n\n- Add lifecycle state to benchmark run metadata.\n- Generate JSON, Markdown, HTML, and coverage artifacts.\n- Add tests for completed and failed lifecycle states.\n- Publish sanitized report indexes.\n\n## Expected Files\n\n- packages/dual-agent-runner/**\n\n## Forbidden Files\n\n- .env\n- .npmrc\n- package-lock.json\n\n## Required Commands\n\n- pnpm -C packages/dual-agent-runner test\n- pnpm run typecheck\n- pnpm run build\n\n## Success Criteria\n\n- Lifecycle state is visible in every report.\n- Failed runs still produce diagnostics.\n- Public report data is sanitized.\n\n## Context Points\n\n- dual-agent-runner\n\n## Difficulty\n\nvery-large\n\n## Tags\n\ndual-agent-runner\nlifecycle\nreporting",
+        "contextFile": ".agentctx/context/overview.md",
+        "conditions": [
+          "no-context",
+          "agentctx-context"
+        ],
+        "prompts": {
+          "no-context": "no-context/prompt.md",
+          "agentctx-context": "agentctx-context/prompt.md"
+        },
+        "results": {
+          "no-context": "no-context/result.json",
+          "agentctx-context": "agentctx-context/result.json"
+        }
+      },
+      "noContext": {
+        "condition": "no-context",
+        "status": "completed",
+        "elapsedMs": 624000,
+        "inputTokens": 20800,
+        "outputTokens": 7200,
+        "totalTokens": 28000,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 1,
+          "toolCalls": 24,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 552000
+        },
+        "changedFiles": [
+          "packages/dual-agent-runner/src/benchmark.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "3 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 3.3,
+        "scopeMisses": [
+          "Broader file discovery required without generated context."
+        ]
+      },
+      "agentctxContext": {
+        "condition": "agentctx-context",
+        "status": "completed",
+        "elapsedMs": 336000,
+        "inputTokens": 10400,
+        "outputTokens": 4160,
+        "totalTokens": 14560,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 0,
+          "toolCalls": 12,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 296000
+        },
+        "changedFiles": [
+          "packages/dual-agent-runner/src/benchmark.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "3 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 4.4,
+        "scopeMisses": []
+      },
+      "comparison": {
+        "outcome": "helped",
+        "speedDeltaMs": 288000,
+        "tokenDelta": 13440,
+        "computeDelta": {
+          "retries": 1,
+          "toolCalls": 12,
+          "providerLatencyMs": 256000
+        },
+        "evaluatorScoreDelta": 1.1000000000000005,
+        "rationale": "AgentCtx improved evaluator score and at least one efficiency metric."
+      },
+      "tokenSummary": {
+        "noContextTotal": 28000,
+        "agentctxContextTotal": 14560,
+        "delta": 13440,
+        "reductionPercent": 48
+      },
+      "coverageByContextPoint": [
+        {
+          "contextPoint": "dual-agent-runner",
+          "changedFiles": [
+            "packages/dual-agent-runner/src/benchmark.ts"
+          ],
+          "testFiles": [
+            "packages/dual-agent-runner/tests/benchmark.test.ts"
+          ],
+          "status": "covered"
+        }
+      ],
+      "testCoverageSummary": {
+        "totalContextPoints": 1,
+        "coveredContextPoints": 1,
+        "partialContextPoints": 0,
+        "missingContextPoints": 0
+      },
+      "securityFindings": [],
+      "publicSafeValidation": {
+        "checked": false,
+        "passed": true,
+        "excludedFactCount": 0,
+        "notes": []
+      }
+    },
+    {
+      "benchmark": {
+        "version": 1,
+        "repo": "agentctx",
+        "ctxPoint": "targets",
+        "ctxBlock": "large-targets-public-safe-filtering",
+        "taskName": "Add Public-safe Filtering Across Targets",
+        "taskId": "large-targets-public-safe-filtering",
+        "taskPrompt": "# Task: Add Public-safe Filtering Across Targets\n\n## Goal\n\nAdd public-safe visibility filtering across every target renderer.\n\n## Background\n\nPublic targets must exclude internal, sensitive, and secret operational facts.\n\n## Required Changes\n\n- Apply public-safe filtering to supported targets.\n- Add exclusion count reporting.\n- Add tests for internal and sensitive facts.\n\n## Expected Files\n\n- packages/targets/**\n\n## Forbidden Files\n\n- .env\n- .npmrc\n- package-lock.json\n- **/*.pem\n- **/*.key\n\n## Required Commands\n\n- pnpm -C packages/targets test\n- pnpm run typecheck\n\n## Success Criteria\n\n- Public outputs exclude unsafe facts.\n- Exclusion counts are deterministic.\n- Tests cover every target renderer.\n\n## Context Points\n\n- targets\n\n## Difficulty\n\nlarge\n\n## Tags\n\ntargets\npublic-safe\nsecurity",
+        "contextFile": ".agentctx/context/overview.md",
+        "conditions": [
+          "no-context",
+          "agentctx-context"
+        ],
+        "prompts": {
+          "no-context": "no-context/prompt.md",
+          "agentctx-context": "agentctx-context/prompt.md"
+        },
+        "results": {
+          "no-context": "no-context/result.json",
+          "agentctx-context": "agentctx-context/result.json"
+        }
+      },
+      "noContext": {
+        "condition": "no-context",
+        "status": "completed",
+        "elapsedMs": 312000,
+        "inputTokens": 10400,
+        "outputTokens": 3600,
+        "totalTokens": 14000,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 1,
+          "toolCalls": 16,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 276000
+        },
+        "changedFiles": [
+          "packages/targets/src/index.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 3.3,
+        "scopeMisses": [
+          "Broader file discovery required without generated context."
+        ]
+      },
+      "agentctxContext": {
+        "condition": "agentctx-context",
+        "status": "completed",
+        "elapsedMs": 168000,
+        "inputTokens": 5200,
+        "outputTokens": 2080,
+        "totalTokens": 7280,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 0,
+          "toolCalls": 8,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 148000
+        },
+        "changedFiles": [
+          "packages/targets/src/index.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 4.4,
+        "scopeMisses": []
+      },
+      "comparison": {
+        "outcome": "helped",
+        "speedDeltaMs": 144000,
+        "tokenDelta": 6720,
+        "computeDelta": {
+          "retries": 1,
+          "toolCalls": 8,
+          "providerLatencyMs": 128000
+        },
+        "evaluatorScoreDelta": 1.1000000000000005,
+        "rationale": "AgentCtx improved evaluator score and at least one efficiency metric."
+      },
+      "tokenSummary": {
+        "noContextTotal": 14000,
+        "agentctxContextTotal": 7280,
+        "delta": 6720,
+        "reductionPercent": 48
+      },
+      "coverageByContextPoint": [
+        {
+          "contextPoint": "targets",
+          "changedFiles": [
+            "packages/targets/src/index.ts"
+          ],
+          "testFiles": [
+            "packages/targets/tests/**/*.test.ts"
+          ],
+          "status": "covered"
+        }
+      ],
+      "testCoverageSummary": {
+        "totalContextPoints": 1,
+        "coveredContextPoints": 1,
+        "partialContextPoints": 0,
+        "missingContextPoints": 0
+      },
+      "securityFindings": [
+        "No public-safe leakage detected in completed mock evidence."
+      ],
+      "publicSafeValidation": {
+        "checked": true,
+        "passed": true,
+        "excludedFactCount": 4,
+        "notes": [
+          "Mock validation confirms internal, sensitive, and secret facts remain excluded from public outputs."
+        ]
+      }
+    },
+    {
+      "benchmark": {
+        "version": 1,
+        "repo": "agentctx",
+        "ctxPoint": "targets",
+        "ctxBlock": "medium-targets-rendering-parity",
+        "taskName": "Add Target Rendering Parity Checks",
+        "taskId": "medium-targets-rendering-parity",
+        "taskPrompt": "# Task: Add Target Rendering Parity Checks\n\n## Goal\n\nAdd rendering parity checks across generated target surfaces.\n\n## Background\n\nAGENTS, CLAUDE, Cursor, Copilot, and llms targets should agree on shared safe context.\n\n## Required Changes\n\n- Add target parity test fixtures.\n- Compare shared generated sections.\n- Preserve target-specific formatting.\n\n## Expected Files\n\n- packages/targets/**\n\n## Forbidden Files\n\n- .env\n- package-lock.json\n\n## Required Commands\n\n- pnpm -C packages/targets test\n- pnpm run typecheck\n\n## Success Criteria\n\n- Shared context is consistent across targets.\n- Target-specific formatting is preserved.\n- Tests pass.\n\n## Context Points\n\n- targets\n\n## Difficulty\n\nmedium\n\n## Tags\n\ntargets\nrendering\nparity",
+        "contextFile": ".agentctx/context/overview.md",
+        "conditions": [
+          "no-context",
+          "agentctx-context"
+        ],
+        "prompts": {
+          "no-context": "no-context/prompt.md",
+          "agentctx-context": "agentctx-context/prompt.md"
+        },
+        "results": {
+          "no-context": "no-context/result.json",
+          "agentctx-context": "agentctx-context/result.json"
+        }
+      },
+      "noContext": {
+        "condition": "no-context",
+        "status": "completed",
+        "elapsedMs": 156000,
+        "inputTokens": 5200,
+        "outputTokens": 1800,
+        "totalTokens": 7000,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 1,
+          "toolCalls": 12,
+          "reasoningEffort": "medium",
+          "providerLatencyMs": 138000
+        },
+        "changedFiles": [
+          "packages/targets/src/index.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 3.3,
+        "scopeMisses": [
+          "Broader file discovery required without generated context."
+        ]
+      },
+      "agentctxContext": {
+        "condition": "agentctx-context",
+        "status": "completed",
+        "elapsedMs": 84000,
+        "inputTokens": 2600,
+        "outputTokens": 1040,
+        "totalTokens": 3640,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 0,
+          "toolCalls": 6,
+          "reasoningEffort": "medium",
+          "providerLatencyMs": 74000
+        },
+        "changedFiles": [
+          "packages/targets/src/index.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "2 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 4.4,
+        "scopeMisses": []
+      },
+      "comparison": {
+        "outcome": "helped",
+        "speedDeltaMs": 72000,
+        "tokenDelta": 3360,
+        "computeDelta": {
+          "retries": 1,
+          "toolCalls": 6,
+          "providerLatencyMs": 64000
+        },
+        "evaluatorScoreDelta": 1.1000000000000005,
+        "rationale": "AgentCtx improved evaluator score and at least one efficiency metric."
+      },
+      "tokenSummary": {
+        "noContextTotal": 7000,
+        "agentctxContextTotal": 3640,
+        "delta": 3360,
+        "reductionPercent": 48
+      },
+      "coverageByContextPoint": [
+        {
+          "contextPoint": "targets",
+          "changedFiles": [
+            "packages/targets/src/index.ts"
+          ],
+          "testFiles": [
+            "packages/targets/tests/**/*.test.ts"
+          ],
+          "status": "covered"
+        }
+      ],
+      "testCoverageSummary": {
+        "totalContextPoints": 1,
+        "coveredContextPoints": 1,
+        "partialContextPoints": 0,
+        "missingContextPoints": 0
+      },
+      "securityFindings": [],
+      "publicSafeValidation": {
+        "checked": false,
+        "passed": true,
+        "excludedFactCount": 0,
+        "notes": []
+      }
+    },
+    {
+      "benchmark": {
+        "version": 1,
+        "repo": "agentctx",
+        "ctxPoint": "targets",
+        "ctxBlock": "very-large-targets-compatibility-migration",
+        "taskName": "Add Target Compatibility Migration Tests",
+        "taskId": "very-large-targets-compatibility-migration",
+        "taskPrompt": "# Task: Add Target Compatibility Migration Tests\n\n## Goal\n\nAdd target compatibility migration tests for generated-block preservation.\n\n## Background\n\nTarget output changes must preserve manual edits outside generated blocks and remain compatible with existing files.\n\n## Required Changes\n\n- Add compatibility fixtures for existing target files.\n- Preserve manual content outside generated blocks.\n- Add migration tests for all target surfaces.\n- Validate deterministic diff output.\n\n## Expected Files\n\n- packages/targets/**\n\n## Forbidden Files\n\n- .env\n- package-lock.json\n\n## Required Commands\n\n- pnpm -C packages/targets test\n- pnpm run typecheck\n- pnpm run build\n\n## Success Criteria\n\n- Manual edits survive target regeneration.\n- Migration tests cover all supported targets.\n- Diffs remain stable.\n\n## Context Points\n\n- targets\n\n## Difficulty\n\nvery-large\n\n## Tags\n\ntargets\ncompatibility\nmigration",
+        "contextFile": ".agentctx/context/overview.md",
+        "conditions": [
+          "no-context",
+          "agentctx-context"
+        ],
+        "prompts": {
+          "no-context": "no-context/prompt.md",
+          "agentctx-context": "agentctx-context/prompt.md"
+        },
+        "results": {
+          "no-context": "no-context/result.json",
+          "agentctx-context": "agentctx-context/result.json"
+        }
+      },
+      "noContext": {
+        "condition": "no-context",
+        "status": "completed",
+        "elapsedMs": 624000,
+        "inputTokens": 20800,
+        "outputTokens": 7200,
+        "totalTokens": 28000,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 1,
+          "toolCalls": 24,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 552000
+        },
+        "changedFiles": [
+          "packages/targets/src/index.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "3 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 3.3,
+        "scopeMisses": [
+          "Broader file discovery required without generated context."
+        ]
+      },
+      "agentctxContext": {
+        "condition": "agentctx-context",
+        "status": "completed",
+        "elapsedMs": 336000,
+        "inputTokens": 10400,
+        "outputTokens": 4160,
+        "totalTokens": 14560,
+        "agentCompute": {
+          "model": "mock-senior-dev-agent",
+          "retries": 0,
+          "toolCalls": 12,
+          "reasoningEffort": "high",
+          "providerLatencyMs": 296000
+        },
+        "changedFiles": [
+          "packages/targets/src/index.ts"
+        ],
+        "checksPassed": true,
+        "validationNotes": [
+          "3 required command(s) represented in mock validation.",
+          "3 success criteria covered by deterministic report evidence."
+        ],
+        "evaluatorScore": 4.4,
+        "scopeMisses": []
+      },
+      "comparison": {
+        "outcome": "helped",
+        "speedDeltaMs": 288000,
+        "tokenDelta": 13440,
+        "computeDelta": {
+          "retries": 1,
+          "toolCalls": 12,
+          "providerLatencyMs": 256000
+        },
+        "evaluatorScoreDelta": 1.1000000000000005,
+        "rationale": "AgentCtx improved evaluator score and at least one efficiency metric."
+      },
+      "tokenSummary": {
+        "noContextTotal": 28000,
+        "agentctxContextTotal": 14560,
+        "delta": 13440,
+        "reductionPercent": 48
+      },
+      "coverageByContextPoint": [
+        {
+          "contextPoint": "targets",
+          "changedFiles": [
+            "packages/targets/src/index.ts"
+          ],
+          "testFiles": [
+            "packages/targets/tests/**/*.test.ts"
+          ],
+          "status": "covered"
+        }
+      ],
+      "testCoverageSummary": {
+        "totalContextPoints": 1,
+        "coveredContextPoints": 1,
+        "partialContextPoints": 0,
+        "missingContextPoints": 0
+      },
+      "securityFindings": [],
+      "publicSafeValidation": {
+        "checked": false,
+        "passed": true,
+        "excludedFactCount": 0,
+        "notes": []
       }
     }
   ]

@@ -1,0 +1,1 @@
+{"taskId":"medium-core-capability-metadata","expectedContextPoints":["core"],"requiredReportFields":["tokenSummary","coverageByContextPoint"],"mustPass":["tests","typecheck"]}

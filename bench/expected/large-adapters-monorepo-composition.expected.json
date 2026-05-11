@@ -1,0 +1,1 @@
+{"taskId":"large-adapters-monorepo-composition","expectedContextPoints":["adapters"],"requiredReportFields":["tokenSummary","coverageByContextPoint"],"mustPass":["tests","typecheck"]}

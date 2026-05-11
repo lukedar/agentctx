@@ -198,17 +198,12 @@ describe('benchmark', () => {
     const plan = createBenchmarkRunPlan(tasks, suite.conditions)
 
     expect(suite.conditions).toEqual(['no-context', 'agentctx-context'])
-    expect(plan).toHaveLength(6)
-    expect(plan.map((item) => item.difficulty)).toEqual(['small', 'small', 'medium', 'medium', 'complex', 'complex'])
-    expect(plan.at(2)?.contextPoints).toContain('core')
-    expect(plan.at(5)?.contextPoints).toEqual([
-      'adapters',
-      'cli',
-      'core',
-      'docs-agentctx',
-      'dual-agent-runner',
-      'targets',
-    ])
+    expect(plan).toHaveLength(18)
+    expect(plan.filter((item) => item.difficulty === 'medium')).toHaveLength(6)
+    expect(plan.filter((item) => item.difficulty === 'large')).toHaveLength(6)
+    expect(plan.filter((item) => item.difficulty === 'very-large')).toHaveLength(6)
+    expect(plan.filter((item) => item.contextPoints.includes('core'))).toHaveLength(3)
+    expect(plan.filter((item) => item.contextPoints.includes('docs-agentctx'))).toHaveLength(3)
   })
 
   it('calculates token summary and Context Point coverage states', () => {
@@ -241,17 +236,19 @@ describe('benchmark', () => {
     const result = await runBenchmarkTasks(repo, tasks)
     const indexHtml = await fs.readFile(result.reportIndexPath, 'utf8')
     const reportJson = JSON.parse(
-      await fs.readFile(path.join(repo, '.agentctx/bench/runs/complex-public-safe-context-validation/report.json'), 'utf8'),
+      await fs.readFile(path.join(repo, '.agentctx/bench/runs/large-targets-public-safe-filtering/report.json'), 'utf8'),
     ) as { securityFindings: readonly string[]; publicSafeValidation: { checked: boolean }; coverageByContextPoint: readonly unknown[] }
     const coverageHtml = await fs.readFile(
-      path.join(repo, '.agentctx/bench/runs/medium-add-context-point-coverage/coverage/index.html'),
+      path.join(repo, '.agentctx/bench/runs/medium-core-capability-metadata/coverage/index.html'),
       'utf8',
     )
 
-    expect(result.reports).toHaveLength(6)
+    expect(result.reports).toHaveLength(18)
     expect(indexHtml).toContain('AgentCtx Bench Reports')
     expect(indexHtml).toContain('Suite Metric')
     expect(indexHtml).toContain('Context Point Coverage')
+    expect(indexHtml).toContain('294000')
+    expect(indexHtml).toContain('152880')
     expect(coverageHtml).toContain('Context Point')
     expect(reportJson.publicSafeValidation.checked).toBe(true)
     expect(reportJson.coverageByContextPoint.length).toBeGreaterThan(0)

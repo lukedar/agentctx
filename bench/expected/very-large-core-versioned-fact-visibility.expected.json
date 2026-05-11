@@ -1,0 +1,1 @@
+{"taskId":"very-large-core-versioned-fact-visibility","expectedContextPoints":["core"],"requiredReportFields":["tokenSummary","coverageByContextPoint","publicSafeValidation"],"mustPass":["tests","typecheck","build"]}

@@ -3,7 +3,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 import {
   calculateCoverageByContextPoint,
@@ -20,6 +20,10 @@ import {
 } from '../src/benchmark'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+beforeEach(() => {
+  process.env.AGENTCTX_BENCH_ALLOW_SYNTHETIC = '1'
+})
 
 const mkRepo = async (): Promise<string> => {
   const repo = await fs.mkdtemp(path.join(os.tmpdir(), 'agentctx-benchmark-repo-'))
@@ -188,7 +192,7 @@ describe('benchmark', () => {
     expect(reportMarkdown).toContain('## Context Point Coverage')
   })
 
-  it('parses mock task fixtures and creates a run plan', async () => {
+  it('parses benchmark task fixtures and creates a run plan', async () => {
     const repoRoot = path.resolve(__dirname, '../../..')
     const suitePath = path.join(repoRoot, 'bench/suites/agentctx-core-validation.md')
     const suite = await parseBenchmarkSuiteFile(suitePath)
@@ -224,7 +228,7 @@ describe('benchmark', () => {
     expect(coverage.find((item) => item.contextPoint === 'targets')?.status).toBe('missing')
   })
 
-  it('generates JSON, Markdown, HTML, and coverage reports for the mock suite', async () => {
+  it('generates JSON, Markdown, HTML, and coverage reports for the internal fixture suite', async () => {
     const repo = await mkRepo()
     const repoRoot = path.resolve(__dirname, '../../..')
     const suitePath = path.join(repoRoot, 'bench/suites/agentctx-core-validation.md')
@@ -254,7 +258,7 @@ describe('benchmark', () => {
     expect(reportJson.coverageByContextPoint.length).toBeGreaterThan(0)
   })
 
-  it('generates analytical metrics for the real-world validation suite', async () => {
+  it('generates analytical metrics for the React and .NET validation suite', async () => {
     const repo = await mkRepo()
     const repoRoot = path.resolve(__dirname, '../../..')
     const suitePath = path.join(repoRoot, 'bench/suites/real-world-validation.md')
@@ -272,7 +276,7 @@ describe('benchmark', () => {
 
     expect(result.reports).toHaveLength(6)
     expect(result.reports.map((report) => report.operationalScope.benchmarkRepo)).toContain('React')
-    expect(result.reports.map((report) => report.operationalScope.benchmarkRepo)).toContain('Backend + Infra')
+    expect(result.reports.map((report) => report.operationalScope.benchmarkRepo)).toContain('.NET')
     expect(result.reports.every((report) => report.metrics.performanceImprovementPercent > 0)).toBe(true)
     expect(indexHtml).toContain('Benchmark Matrix')
     expect(indexHtml).toContain('Context Precision')

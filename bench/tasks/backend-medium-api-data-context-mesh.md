@@ -2,7 +2,7 @@
 
 ## Benchmark Repo
 
-Backend + Infra
+.NET
 
 ## Expected Effort
 

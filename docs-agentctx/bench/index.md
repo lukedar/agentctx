@@ -4,13 +4,13 @@
   <span class="docs-kicker">Operational benchmarking</span>
   <h1>Benchmark testing for operational AI context.</h1>
   <p class="docs-lead">
-    AgentCtx Bench compares no-context workflows against AgentCtx operational-context workflows across realistic senior engineering tasks.
+    AgentCtx Bench is the test framework for proving AgentCtx against real React and .NET codebases.
   </p>
 </div>
 
 ## Framework Overview
 
-AgentCtx Bench is the evidence layer for the AgentCtx framework. It checks whether generated operational context helps an agent load the right repository domains, avoid unrelated files, reduce token usage, reduce runtime, and still complete the task.
+AgentCtx Bench is the evidence layer for the AgentCtx framework. It checks whether generated operational context helps an agent load the right repository domains, avoid unrelated files, reduce token usage, reduce runtime, and still complete the task in a real codebase.
 
 Each task runs under two conditions:
 
@@ -19,12 +19,14 @@ Each task runs under two conditions:
 | No context | Task file and minimal repository instructions. |
 | AgentCtx context | Task file plus operational context, Context Points, selected blocks, and exclusions. |
 
+Both conditions must be completed by an agent against an isolated local copy of the target repo. Reports are only proof when they come from real agent runs, real file changes, and passing verification commands.
+
 ## Benchmark Targets
 
 | Target | Purpose | Tasks |
 |---|---|---:|
 | React | Frontend framework complexity across packages, fixtures, scheduler, reconciler, and release infrastructure. | 3 |
-| Backend + Infra | Service boundaries, runtime dependencies, data contracts, infrastructure, observability, and security. | 3 |
+| .NET backend | Service boundaries, runtime dependencies, data contracts, infrastructure, observability, and security. | 3 |
 
 ## Task Complexity
 
@@ -39,6 +41,8 @@ Each task runs under two conditions:
 ```bash
 pnpm run benchmark:metrics
 ```
+
+This command is intended for real agent execution against local React and .NET benchmark repos. It should fail rather than publish metrics when the agent command, repo checkout, result files, or verification commands are missing.
 
 Generated dashboard:
 
@@ -90,6 +94,17 @@ The generated report is intentionally shaped like a coding test runner:
 - Context Point coverage for changed files and tests
 - public JSON for docs and downstream analysis
 
-## Limitations
+## Standalone Framework Shape
 
-The current metrics suite uses deterministic mock evidence so the reports, formulas, dashboards, and task model can be validated reproducibly. Real agent executions can replace the condition result files without changing the report contract.
+Bench is structured around a reusable schema and runner contract:
+
+- `BenchmarkTaskDefinition` describes the task, target repo, expected files, forbidden files, commands, and Context Points.
+- `BenchmarkConditionResult` captures the agent output for no-context and AgentCtx-context runs.
+- `BenchmarkReport` combines real run results, scope metrics, coverage, and verification evidence.
+- `benchmark report` rebuilds reports from completed result files without changing the run contract.
+
+The schema is exported from `@agentctx/dual-agent-runner` so other tools can build their own task packs, agent launchers, or report publishers around the same evidence format.
+
+## Evidence Requirement
+
+Published metrics must come from real agent-completed tasks against local React and .NET repo copies. If a run does not include agent execution, changed files, completed result files, and passing verification commands, it is not benchmark evidence.

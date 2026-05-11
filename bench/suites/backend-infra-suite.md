@@ -1,8 +1,8 @@
-# Suite: Backend Infrastructure Operational Benchmark
+# Suite: .NET Operational Benchmark
 
 ## Purpose
 
-Validate AgentCtx Bench against backend service and infrastructure complexity.
+Validate AgentCtx Bench against .NET service and infrastructure complexity.
 
 ## Tasks
 

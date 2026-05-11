@@ -19,7 +19,6 @@
     "da:step": "pnpm -C packages/dual-agent-runner build && node packages/dual-agent-runner/dist/cli.js plan eval --check",
     "benchmark:ctxblock": "pnpm -C packages/dual-agent-runner build && node packages/dual-agent-runner/dist/cli.js benchmark ctxblock",
     "benchmark:report": "pnpm -C packages/dual-agent-runner build && node packages/dual-agent-runner/dist/cli.js benchmark report",
-    "benchmark:mock": "pnpm -C packages/dual-agent-runner build && node packages/dual-agent-runner/dist/cli.js benchmark run --suite ./bench/suites/agentctx-core-validation.md",
     "benchmark:metrics": "pnpm -C packages/dual-agent-runner build && node packages/dual-agent-runner/dist/cli.js benchmark run --suite ./bench/suites/real-world-validation.md"
   },
   "devDependencies": {

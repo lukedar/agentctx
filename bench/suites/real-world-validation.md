@@ -1,8 +1,8 @@
-# Suite: Real World Operational Validation
+# Suite: React And .NET Operational Validation
 
 ## Purpose
 
-Validate whether AgentCtx operational context improves AI engineering workflows across frontend framework and backend infrastructure repositories.
+Validate whether AgentCtx operational context improves AI engineering workflows across React and .NET codebases.
 
 ## Tasks
 
@@ -28,6 +28,6 @@ Validate whether AgentCtx operational context improves AI engineering workflows 
 
 ## Success Criteria
 
-- All six real-world benchmark tasks parse successfully.
+- All six React and .NET benchmark tasks parse successfully.
 - Reports include aggregate metrics, benchmark matrix, framework sections, and task detail pages.
 - Context Point precision, recall, waste, token reduction, runtime reduction, performance, success rate, and irrelevant edits are measured.

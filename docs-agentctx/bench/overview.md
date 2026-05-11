@@ -26,15 +26,15 @@ AgentCtx Bench measures whether operational context improves task success, token
 - irrelevant edits
 - reproducibility notes
 
-## Mock Validation Suite
+## React And .NET Proof Suite
 
-The repo includes three committed benchmark fixtures for validating the Bench framework itself:
+Bench is designed to prove AgentCtx with real agent-completed work against local React and .NET codebase copies:
 
 ```bash
-pnpm run benchmark:mock
+pnpm run benchmark:metrics
 ```
 
-For parser-only validation:
+For parser-only validation of the task contract:
 
 ```bash
 pnpm -C packages/dual-agent-runner build
@@ -66,7 +66,7 @@ Each benchmark should record:
 - the raw evidence
 - known limitations
 
-The mock suite is deterministic and exists to prove reporting, task parsing, suite execution, token summaries, and Context Point coverage. Real benchmark runs should replace the mock condition results with captured agent execution evidence.
+Benchmark reports are valid proof only when the agent completes the task, changes files in the target repo copy, writes result files, and passes the repo verification commands.
 
 ## Example Result Shape
 
@@ -78,7 +78,7 @@ The mock suite is deterministic and exists to prove reporting, task parsing, sui
 | Context Point Coverage | 2/5 | 5/5 |
 | Security Findings | 3 | 0 |
 
-These numbers are illustrative. AgentCtx should publish benchmark evidence with methodology and limitations instead of vague productivity claims.
+AgentCtx should publish only benchmark evidence generated from real agent runs with methodology and limitations instead of vague productivity claims.
 
 ## Report Page
 

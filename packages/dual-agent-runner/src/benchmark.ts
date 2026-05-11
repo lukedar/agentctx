@@ -240,7 +240,9 @@ const fileToContextPoint = (filePath: string): string | undefined => {
   return match[1] === 'cli' ? 'cli' : match[1]
 }
 
-const testFileForContextPoint = (contextPoint: string): string => {
+const testFileForContextPoint = (contextPoint: string, changedFile?: string): string => {
+  if (changedFile?.startsWith('react/')) return `react/${contextPoint}/tests`
+  if (changedFile?.startsWith('backend-infra/')) return `backend-infra/${contextPoint}/tests`
   if (contextPoint.startsWith('react-')) return `react/${contextPoint}/tests`
   if (
     [
@@ -673,7 +675,7 @@ export const calculateCoverageByContextPoint = (
     const changedForPoint = uniqueSorted(
       changedFiles.filter((filePath) => fileToContextPoint(filePath) === contextPoint),
     )
-    const inferredTests = changedForPoint.length > 0 ? [testFileForContextPoint(contextPoint)] : []
+    const inferredTests = changedForPoint.length > 0 ? [testFileForContextPoint(contextPoint, changedForPoint[0])] : []
     const testFiles = uniqueSorted([
       ...explicitTestFiles.filter((filePath) => fileToContextPoint(filePath) === contextPoint),
       ...inferredTests,
@@ -1270,7 +1272,8 @@ const writeIndexIfPossible = async (filePath: string, index: BenchmarkResultsInd
   }
 }
 
-const changedFileForContextPoint = (contextPoint: string): string => {
+const changedFileForContextPoint = (contextPoint: string, benchmarkRepo = 'AgentCtx'): string => {
+  if (benchmarkRepo === 'React' && contextPoint === 'tests') return 'react/tests/src/index.ts'
   if (contextPoint.startsWith('react-')) return `react/${contextPoint}/src/index.ts`
   if (
     [
@@ -1314,10 +1317,10 @@ const mockResultForTask = (
   const inputTokens = agentctx ? 1300 * scale : 2600 * scale
   const outputTokens = agentctx ? 520 * scale : 900 * scale
   const changedFiles = agentctx
-    ? task.contextPoints.map(changedFileForContextPoint)
+    ? task.contextPoints.map((contextPoint) => changedFileForContextPoint(contextPoint, task.benchmarkRepo))
     : [
-        ...task.contextPoints.map(changedFileForContextPoint),
-        ...extraLoadedContextPoints(task).map(changedFileForContextPoint),
+        ...task.contextPoints.map((contextPoint) => changedFileForContextPoint(contextPoint, task.benchmarkRepo)),
+        ...extraLoadedContextPoints(task).map((contextPoint) => changedFileForContextPoint(contextPoint, task.benchmarkRepo)),
       ]
 
   return {

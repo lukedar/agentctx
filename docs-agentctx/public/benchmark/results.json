@@ -1045,7 +1045,7 @@
           "providerLatencyMs": 69000
         },
         "changedFiles": [
-          "backend-infra/tests/src/index.cs"
+          "react/tests/src/index.ts"
         ],
         "checksPassed": true,
         "validationNotes": [
@@ -1070,7 +1070,7 @@
           "providerLatencyMs": 37000
         },
         "changedFiles": [
-          "backend-infra/tests/src/index.cs"
+          "react/tests/src/index.ts"
         ],
         "checksPassed": true,
         "validationNotes": [
@@ -1144,10 +1144,10 @@
         {
           "contextPoint": "tests",
           "changedFiles": [
-            "backend-infra/tests/src/index.cs"
+            "react/tests/src/index.ts"
           ],
           "testFiles": [
-            "backend-infra/tests/tests"
+            "react/tests/tests"
           ],
           "status": "covered"
         }

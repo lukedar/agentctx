@@ -2,7 +2,7 @@
 
 <div class="docs-hero">
   <span class="docs-kicker">Operational benchmarking</span>
-  <h1>Benchmark testing framework for evaluating operational context.</h1>
+  <h1>Testing operational context.</h1>
   <p class="docs-lead">
     AgentCtx Bench compares no-context workflows against AgentCtx operational-context workflows across realistic senior engineering tasks.
   </p>

@@ -31,18 +31,30 @@ The result is token waste, inconsistent understanding, hallucinated architecture
 ```text
 repository
   -> semantic context compiler
-  -> operational context infrastructure
-  -> task-aware context surfaces
-  -> autonomous engineering systems
+  -> operational context
+  -> task-aware context
+  -> AI systems
 ```
 
 AgentCtx turns repository understanding into compiled infrastructure. Agents consume structured context instead of reconstructing it from scratch.
 
-## Research-Backed Framing
+## Operational Context
 
-Retrieval-augmented system design points in the same direction: relevance, selection, and evidence quality matter more than dumping more text into the model.
+Current systems often treat repositories as raw material for a giant prompt. That forces AI systems to repeatedly rediscover architecture, boundaries, workflows, dependencies, and validation paths.
 
-Source: [MIT Press Direct](https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00638/119630/Lost-in-the-Middle-How-Language-Models-Use-Long), “Lost in the Middle: How Language Models Use Long Contexts”
+AgentCtx changes the model by compiling repository evidence into operational context optimized for AI systems.
+
+## Why Operational Context Matters
+
+AI systems do not primarily need more prose. They need clear operational understanding:
+
+- responsibilities
+- dependencies
+- invariants
+- risks
+- failure modes
+- safe commands
+- operational boundaries
 
 ## What AgentCtx Adds
 
@@ -57,8 +69,10 @@ Source: [MIT Press Direct](https://direct.mit.edu/tacl/article/doi/10.1162/tacl_
   </div>
   <div class="docs-card docs-span-4 docs-card--accent">
     <h3>Context surfaces</h3>
-    <p>Targets render scoped context for internal agents, public consumers, and future automation systems.</p>
+    <p>Targets render operational context for internal agents, public consumers, and future automation systems.</p>
   </div>
 </div>
 
 AgentCtx exists because autonomous engineering systems need context infrastructure, not larger undifferentiated prompts.
+
+AgentCtx compiles repositories into reusable operational context optimized for AI systems.

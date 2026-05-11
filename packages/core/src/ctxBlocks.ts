@@ -3,6 +3,8 @@ import type {
   CtxBlockModel,
   CtxBlockName,
   CtxGraph,
+  ImportantFile,
+  OperationalContextSections,
   RenderedCtxBlock,
   TokenBudgetName,
 } from './types'
@@ -93,7 +95,106 @@ const model = (partial: Partial<CtxBlockModel>): CtxBlockModel => ({
   workflows: partial.workflows ?? [],
   files: partial.files ?? [],
   warnings: partial.warnings ?? [],
+  ...(partial.operational ? { operational: partial.operational } : {}),
 })
+
+const defaultUsefulFor = (name: CtxBlockName): readonly string[] => {
+  switch (name) {
+    case 'architecture':
+      return ['repo orientation', 'package boundary changes', 'cross-context impact checks']
+    case 'conventions':
+      return ['code style changes', 'tooling updates', 'review preparation']
+    case 'runtime':
+      return ['startup changes', 'runtime dependency updates', 'hosting changes']
+    case 'api':
+      return ['endpoint changes', 'contract updates', 'request-flow debugging']
+    case 'database':
+      return ['schema changes', 'migration review', 'data access updates']
+    case 'operations':
+      return ['deployment changes', 'CI updates', 'infra configuration review']
+    case 'data':
+      return ['pipeline changes', 'schema quality checks', 'reproducibility review']
+    case 'frontend':
+      return ['UI behavior changes', 'route updates', 'state and data-loading changes']
+    case 'testing':
+      return ['test selection', 'fixture updates', 'quality gate checks']
+    case 'workflows':
+      return ['local setup', 'build validation', 'release-safe command selection']
+    case 'glossary':
+      return ['environment variable review', 'naming consistency', 'secret-safety checks']
+    default:
+      return ['repo-aware engineering work']
+  }
+}
+
+const defaultUnsafeChanges = (name: CtxBlockName): readonly string[] => {
+  switch (name) {
+    case 'api':
+      return ['Changing request or response contracts without updating consumers and tests.']
+    case 'database':
+      return ['Applying destructive schema changes without an explicit migration and rollback path.']
+    case 'operations':
+      return ['Changing deployment, CI, or infrastructure behavior without checking environment impact.']
+    case 'frontend':
+      return ['Changing route, auth, or state boundaries without checking related API and test surfaces.']
+    case 'glossary':
+      return ['Emitting secret values or weakening authentication, authorization, or validation boundaries.']
+    case 'workflows':
+      return ['Running destructive reset, deploy, migration, or secret-rotation commands unless explicitly requested.']
+    default:
+      return ['Broad rewrites outside the current context scope without loading related context first.']
+  }
+}
+
+const commandLike = (line: string): boolean => /`[^`]+`/.test(line) || /^(Install|Dev|Start|Build|Test|Lint|Typecheck|E2E|Update context):/.test(line)
+
+const fallback = (label: string): string => `No confirmed ${label} detected.`
+
+const mergeOperationalSections = (
+  name: CtxBlockName,
+  model: CtxBlockModel,
+): OperationalContextSections => {
+  const op = model.operational ?? {}
+  const workflows = model.workflows.filter(commandLike)
+
+  return {
+    responsibilities: op.responsibilities?.length
+      ? op.responsibilities
+      : model.summary.length
+        ? model.summary
+        : [fallback('responsibilities')],
+    dependencies: op.dependencies?.length
+      ? op.dependencies
+      : model.files.length
+        ? model.files.map((file) => `${file.path}: ${file.reason}`)
+        : [fallback('dependencies')],
+    criticalInvariants: op.criticalInvariants?.length
+      ? op.criticalInvariants
+      : model.rules.length
+        ? model.rules.map((rule) => rule.replace(/^- /, ''))
+        : ['Keep generated context deterministic, scoped, and secret-safe.'],
+    failureModes: op.failureModes?.length
+      ? op.failureModes
+      : model.warnings.length
+        ? model.warnings
+        : [fallback('failure modes')],
+    safeCommands: op.safeCommands?.length
+      ? op.safeCommands
+      : workflows.length
+        ? workflows
+        : [fallback('safe commands')],
+    usefulFor: op.usefulFor?.length ? op.usefulFor : defaultUsefulFor(name),
+    unsafeChanges: op.unsafeChanges?.length ? op.unsafeChanges : defaultUnsafeChanges(name),
+    evidence: op.evidence?.length ? op.evidence : model.files,
+  }
+}
+
+const pushSection = (lines: string[], title: string, items: readonly string[]): void => {
+  lines.push(`## ${title}`, '', ...items.map((item) => (item.startsWith('- ') ? item : `- ${item}`)), '')
+}
+
+const evidenceLines = (files: readonly ImportantFile[]): readonly string[] =>
+  files.map((file) => `\`${file.path}\`: ${file.reason}`)
 
 export const planCtxBlocks = (graph: CtxGraph, config: AgentCtxConfig): readonly RenderedCtxBlock[] => {
   const blockConfig = config.ctxBlocks
@@ -699,30 +800,19 @@ export const renderCtxBlock = (
   model: CtxBlockModel,
 ): RenderedCtxBlock => {
   const title = ctxBlockToTitle(name)
+  const operational = mergeOperationalSections(name, model)
 
   const lines: string[] = [`# ${title}`, '']
 
-  if (model.summary.length) {
-    lines.push('## Summary', '', ...model.summary.map((s) => `- ${s}`), '')
-  }
+  pushSection(lines, 'Responsibilities', operational.responsibilities)
+  pushSection(lines, 'Dependencies', operational.dependencies)
+  pushSection(lines, 'Critical Invariants', operational.criticalInvariants)
+  pushSection(lines, 'Failure Modes', operational.failureModes)
+  pushSection(lines, 'Safe Commands', operational.safeCommands)
+  pushSection(lines, 'Useful For', operational.usefulFor)
+  pushSection(lines, 'Unsafe Changes', operational.unsafeChanges)
 
-  if (model.rules.length) {
-    lines.push('## Rules', '', ...model.rules.map((s) => (s.startsWith('- ') ? s : `- ${s}`)), '')
-  }
-
-  if (model.workflows.length) {
-    lines.push('## Workflows', '', ...model.workflows.map((s) => `- ${s}`), '')
-  }
-
-  if (model.files.length) {
-    lines.push('## Important files', '')
-    for (const f of model.files) lines.push(`- \`${f.path}\`: ${f.reason}`)
-    lines.push('')
-  }
-
-  if (model.warnings.length) {
-    lines.push('## Warnings', '', ...model.warnings.map((s) => `- ${s}`), '')
-  }
+  if (operational.evidence.length) pushSection(lines, 'Evidence', evidenceLines(operational.evidence))
 
   const content = lines.join('\n').trimEnd() + '\n'
 

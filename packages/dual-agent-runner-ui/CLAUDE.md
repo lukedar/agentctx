@@ -28,7 +28,7 @@
 
 # Architecture
 
-## Summary
+## Responsibilities
 
 - Context scope: point `dual-agent-runner-ui` at `packages/dual-agent-runner-ui`
 - Point type: frontend
@@ -41,7 +41,35 @@
 - Packages in scope: dual-agent-runner-ui (packages/dual-agent-runner-ui)
 - Internal dependencies: (none detected)
 
-## Important files
+## Dependencies
+
+- agentctx.config.ts: AgentCtx configuration
+- package.json: Project manifest and scripts
+- packages/dual-agent-runner-ui/package.json: Package/app manifest in scope
+
+## Critical Invariants
+
+- Keep generated context deterministic, scoped, and secret-safe.
+
+## Failure Modes
+
+- No confirmed failure modes detected.
+
+## Safe Commands
+
+- No confirmed safe commands detected.
+
+## Useful For
+
+- repo orientation
+- package boundary changes
+- cross-context impact checks
+
+## Unsafe Changes
+
+- Broad rewrites outside the current context scope without loading related context first.
+
+## Evidence
 
 - `agentctx.config.ts`: AgentCtx configuration
 - `package.json`: Project manifest and scripts
@@ -49,46 +77,128 @@
 
 # Runtime
 
-## Summary
+## Responsibilities
 
 - Runtimes detected: node
 - Runtime markers: package.json
 
-## Rules
+## Dependencies
+
+- package.json: Runtime manifest or entrypoint
+
+## Critical Invariants
 
 - Keep package scripts and runtime entrypoints aligned when changing startup behavior.
 
-## Important files
+## Failure Modes
+
+- No confirmed failure modes detected.
+
+## Safe Commands
+
+- No confirmed safe commands detected.
+
+## Useful For
+
+- startup changes
+- runtime dependency updates
+- hosting changes
+
+## Unsafe Changes
+
+- Broad rewrites outside the current context scope without loading related context first.
+
+## Evidence
 
 - `package.json`: Runtime manifest or entrypoint
 
 # Frontend
 
-## Summary
+## Responsibilities
 
 - Frontend-related frameworks detected: react, vite
 - Frontend implementation shape: Component-driven React UI detected. Bundler-led frontend entrypoint detected.
 - Frontend-relevant scope entries: dual-agent-runner-ui (packages/dual-agent-runner-ui)
 
-## Rules
+## Dependencies
+
+- No confirmed dependencies detected.
+
+## Critical Invariants
 
 - Keep components, state boundaries, and adjacent route or data-loading code aligned when changing UI behavior.
 
+## Failure Modes
+
+- No confirmed failure modes detected.
+
+## Safe Commands
+
+- No confirmed safe commands detected.
+
+## Useful For
+
+- UI behavior changes
+- route updates
+- state and data-loading changes
+
+## Unsafe Changes
+
+- Changing route, auth, or state boundaries without checking related API and test surfaces.
+
 # Testing
 
-## Summary
+## Responsibilities
 
 - Detected test runners (deps): vitest
 - Test config files detected: (none)
 
-## Rules
+## Dependencies
+
+- No confirmed dependencies detected.
+
+## Critical Invariants
 
 - Run the smallest relevant test suite before finalizing changes.
 - Preferred: `pnpm run test`
 
+## Failure Modes
+
+- No confirmed failure modes detected.
+
+## Safe Commands
+
+- No confirmed safe commands detected.
+
+## Useful For
+
+- test selection
+- fixture updates
+- quality gate checks
+
+## Unsafe Changes
+
+- Broad rewrites outside the current context scope without loading related context first.
+
 # Workflows
 
-## Workflows
+## Responsibilities
+
+- No confirmed responsibilities detected.
+
+## Dependencies
+
+- No confirmed dependencies detected.
+
+## Critical Invariants
+
+- Keep generated context deterministic, scoped, and secret-safe.
+
+## Failure Modes
+
+- No confirmed failure modes detected.
+
+## Safe Commands
 
 - Install: `pnpm install`
 - Dev: `pnpm run dev`
@@ -96,4 +206,14 @@
 - Test: `pnpm run test`
 - Build: `pnpm run build`
 - Update context: `agentctx build && agentctx sync`
+
+## Useful For
+
+- local setup
+- build validation
+- release-safe command selection
+
+## Unsafe Changes
+
+- Running destructive reset, deploy, migration, or secret-rotation commands unless explicitly requested.
 <!-- agentctx:end -->

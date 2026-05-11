@@ -80,4 +80,25 @@ Excluded:
 
 ## Where AgentCtx Adds Value
 
-AgentCtx turns framework diversity into explicit context rather than token pressure. Each adapter emits evidence for its own stack, while the compiler keeps the cross-system mesh visible to agents.
+AgentCtx turns framework diversity into operational context rather than token pressure. Each adapter emits evidence for its own stack, while the compiler keeps the cross-system mesh visible to agents.
+
+## Operational Context Demonstration
+
+```md
+# Responsibilities
+- Angular routes
+- .NET API contracts
+- Node worker processing
+
+# Critical Invariants
+- shared contracts are source of truth
+- worker payloads match API validation
+
+# Failure Modes
+- contract changes break frontend and worker consumers
+
+# Useful For
+- auth bugs
+- contract updates
+- queue/API integration changes
+```

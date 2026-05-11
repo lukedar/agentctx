@@ -4,7 +4,7 @@
   <span class="docs-kicker">Command surface</span>
   <h1>Run the compiler, then sync the context your team owns.</h1>
   <p class="docs-lead">
-    For everyday use, <code>agentctx build</code> reads <code>agentctx.config.ts</code> and runs it through the compiler. Teams use <code>sync</code> to update the CtxPoints they own, then <code>check</code> to detect drift.
+    For everyday use, <code>agentctx build</code> compiles operational context optimized for AI systems. Teams use <code>sync</code> to update the CtxPoints they own, then <code>check</code> to detect drift.
   </p>
   <div class="docs-terminal">
     <div class="docs-terminal__bar">
@@ -32,7 +32,7 @@
 
 <div class="docs-callout" style="margin-top: 1rem;">
   <h3>Why this is the quality gate</h3>
-  <p>The pipeline is only trustworthy if the context in the repo matches the current source state. <code>build</code> compiles the latest facts, <code>sync</code> publishes the generated surfaces, and <code>check</code> verifies that nothing is stale or drifting before agents rely on it.</p>
+  <p>The workflow is only trustworthy if the context in the repo matches the current source state. <code>build</code> compiles the latest facts into operational context, <code>sync</code> publishes the generated surfaces, and <code>check</code> verifies that nothing is stale or drifting before agents rely on it.</p>
 </div>
 
 <div class="docs-grid">

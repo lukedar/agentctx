@@ -8,7 +8,7 @@
 
 ## System Overview
 
-A CMS often combines an authoring frontend, editor tooling, plugin runtime, APIs, background processing, schemas, permissions, and public documentation. The same repo can serve internal agents and external AI docs consumers.
+A CMS often combines an authoring frontend, editor tooling, plugin runtime, APIs, background processing, schemas, permissions, and public documentation. The same repo can serve internal agents and external AI context consumers.
 
 ## Typical Repository Structure
 
@@ -54,7 +54,7 @@ permissions -> api, editor
 - `AGENTS.md` for internal agent orientation
 - point-level context for editor, plugins, and API ownership
 - `llms.txt` for public-safe docs
-- future `public-manifest.json` for AI-readable docs inventory
+- future `public-manifest.json` for public-safe context inventory
 
 ## Example Task-aware Context Planning
 
@@ -84,4 +84,25 @@ Excluded:
 
 ## Where AgentCtx Adds Value
 
-AgentCtx keeps public and internal surfaces separate while giving agents the permission and plugin context they need for safe CMS changes.
+AgentCtx keeps public and internal surfaces separate while giving agents the operational context they need for safe CMS changes.
+
+## Operational Context Demonstration
+
+```md
+# Responsibilities
+- editor permissions
+- plugin registration
+- content API contracts
+
+# Critical Invariants
+- publishing requires permission checks
+- schemas drive API and worker behavior
+
+# Failure Modes
+- plugin registration changes break editor loading
+
+# Useful For
+- permission bugs
+- plugin updates
+- schema changes
+```

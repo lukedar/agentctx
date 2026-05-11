@@ -12,8 +12,7 @@ export type PackageJson = {
 }
 
 export const listPackageJsonPaths = (ctx: ScanContext): readonly string[] =>
-  ctx.files.files
-    .map((f) => f.path)
+  (ctx.paths ?? ctx.files.files.map((f) => f.path))
     .filter((p) => p.endsWith('package.json'))
     .sort((a, b) => a.localeCompare(b))
 

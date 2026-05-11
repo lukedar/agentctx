@@ -4,7 +4,7 @@
   <span class="docs-kicker">Compiler architecture</span>
   <h1>A semantic context compiler for software systems.</h1>
   <p class="docs-lead">
-    AgentCtx scans repositories, extracts evidence-backed operational facts, builds a context graph, plans Context Blocks, then renders context files and surfaces for AI systems.
+    AgentCtx compiles repositories into operational context optimized for AI systems.
   </p>
 </div>
 
@@ -20,8 +20,7 @@ Source Code + Config + Docs
   -> File Index
   -> Evidence-backed Facts
   -> Context Graph
-  -> Context Blocks
-  -> Context Files
+  -> Operational Context
   -> Context Surfaces
   -> AI Systems
 ```
@@ -81,9 +80,9 @@ The mesh helps agents reason about impact. If a shared schema changes, the relev
 
 ### Context Block
 
-A <a href="/context-block">Context Block</a> is the intermediate semantic unit: evidence-backed, task-aware, token-aware, and visibility-aware operational context.
+A <a href="/context-block">Context Block</a> is the intermediate semantic unit: compact, evidence-backed, task-aware, token-aware, and visibility-aware operational context.
 
-Blocks are not raw summaries. They express what matters for a kind of work: security rules, command safety, route shape, dependency boundaries, public APIs, migration rules, or testing expectations.
+Blocks are not raw summaries. They express what matters for a kind of work: responsibilities, dependencies, invariants, failure modes, safe commands, and task affordances.
 
 AgentCtx uses this model so context can be planned and governed before it is rendered into a specific surface.
 
@@ -159,10 +158,9 @@ AgentCtx is designed for deterministic rendering, changed-file checks, token bud
 ## Reading Order
 
 1. [Why AgentCtx](/why-agentctx)
-2. [Framework Overview](/framework)
-3. [Compiler](/compiler)
-4. [Context Block](/context-block)
-5. [Context Files](/context-files)
-6. [Context Points](/context-points)
-7. [Public-safe Context](/public-safe-context)
-8. [CLI](/cli)
+2. [Compiler](/compiler)
+3. [Context Block](/context-block)
+4. [Context Files](/context-files)
+5. [Context Points](/context-points)
+6. [Public-safe Context](/public-safe-context)
+7. [CLI](/cli)

@@ -4,13 +4,13 @@
   <span class="docs-kicker">Reusable compiler parts</span>
   <h1>The compiler turns repo state into operational context.</h1>
   <p class="docs-lead">
-    AgentCtx is built around a small set of reusable compiler stages that senior teams can reason about, extend, and validate independently.
+    AgentCtx compiles repositories into operational context optimized for AI systems through reusable compiler stages senior teams can reason about independently.
   </p>
 </div>
 
 ## Why It Matters
 
-The compiler is the layer that keeps AgentCtx from becoming a collection of templates. It separates repo discovery from context meaning, and context meaning from final output formats.
+The compiler is the layer that keeps AgentCtx from becoming a collection of templates. It separates repo discovery from operational meaning, and operational meaning from final output formats.
 
 For a senior developer, the important question is not “which Markdown file gets written?” It is “which reusable stage owns this decision?”
 
@@ -35,7 +35,7 @@ For a senior developer, the important question is not “which Markdown file get
   </div>
   <div class="docs-card docs-span-4">
     <h3>Context Blocks</h3>
-    <p>Shapes evidence-backed operational context before it becomes files or surfaces.</p>
+    <p>Shapes compact operational context around responsibilities, dependencies, invariants, risks, and useful tasks.</p>
   </div>
   <div class="docs-card docs-span-4">
     <h3>Target Renderers</h3>
@@ -48,6 +48,15 @@ For a senior developer, the important question is not “which Markdown file get
 ```text
 scope -> file index -> facts -> graph -> context blocks -> target renderers
 ```
+
+## Speed Contract
+
+AgentCtx is a compiler, so repeated work belongs in the compiler, not in every adapter.
+
+- File indexing produces one deterministic path list for the scope.
+- Scan context precomputes path helpers and caches text/JSON reads.
+- Adapters emit compact operational facts; they do not rescan targets or render Markdown.
+- Plugin extraction can reuse detection work when a plugin supports combined extraction.
 
 ## Ownership Rules
 

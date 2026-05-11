@@ -135,6 +135,9 @@ describe('context files', () => {
     const files = renderContextFiles(createGraph(), createConfig())
 
     expect(files.find((file) => file.name === 'overview')?.content).toContain('# Overview')
+    expect(files.find((file) => file.name === 'overview')?.content).toContain('## Responsibilities')
+    expect(files.find((file) => file.name === 'overview')?.content).toContain('## Failure Modes')
+    expect(files.find((file) => file.name === 'overview')?.content).toContain('## Unsafe Changes')
     expect(files.find((file) => file.name === 'security')?.publicSafe).toBe(false)
     expect(files.every((file) => file.tokenEstimate > 0)).toBe(true)
   })

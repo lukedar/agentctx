@@ -2,9 +2,9 @@
 
 <div class="docs-hero">
   <span class="docs-kicker">Semantic context compiler</span>
-  <h1>Context infrastructure for autonomous software engineering systems.</h1>
+  <h1>Context infrastructure for autonomous software.</h1>
   <p class="docs-lead">
-    AgentCtx compiles repositories into structured, secure, token-efficient operational context for coding agents, CI systems, review agents, docs crawlers, and future autonomous engineering workflows.
+    AgentCtx compiles repositories into operational context optimized for AI systems.
   </p>
   <div class="docs-chip-row">
     <span class="docs-chip">Any team</span>
@@ -16,8 +16,16 @@
 
 <div class="docs-callout" style="margin-top: 1rem;">
   <h3>The shift</h3>
-  <p>AgentCtx transforms AI engineering from context reconstruction into context consumption. Agents should not rediscover architecture, ownership, workflows, and security rules on every task. They should consume compiled operational context that is evidence-backed, scoped, and safe.</p>
+  <p>AgentCtx scans repositories, extracts evidence-backed operational facts, builds a graph of system relationships, compiles task-aware context, and renders operational context surfaces for coding agents, CI systems, review agents, docs crawlers, and future autonomous engineering workflows.</p>
 </div>
+
+## What It Provides
+
+- Any team. Any framework. Any repo.
+- Context Points for monorepos and polyglot systems.
+- Public-safe `llms.txt` and AI context surfaces.
+- Benchmark-backed token and runtime improvements.
+- Operational context for autonomous engineering systems.
 
 ## Why It Exists
 
@@ -46,7 +54,7 @@ source code + config + docs
   -> file index
   -> evidence-backed facts
   -> context graph
-  -> context blocks
+  -> operational context
   -> context files
   -> context surfaces
   -> AI systems
@@ -59,13 +67,8 @@ AgentCtx is not a raw-file dumper, embedding chunker, or generic summarizer. It 
 <div class="docs-grid">
   <div class="docs-card docs-span-4">
     <h3>Why AgentCtx</h3>
-    <p>The market problem, research-backed context limits, and the missing infrastructure layer.</p>
+    <p>The market problem, context limits, and the missing infrastructure layer.</p>
     <p><a href="/why-agentctx">Read the argument</a></p>
-  </div>
-  <div class="docs-card docs-span-4">
-    <h3>Framework overview</h3>
-    <p>The reusable parts of AgentCtx: compiler, Context Points, Context Blocks, surfaces, safety, and evaluation.</p>
-    <p><a href="/framework">Read the overview</a></p>
   </div>
   <div class="docs-card docs-span-4">
     <h3>Context files</h3>

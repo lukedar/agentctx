@@ -80,6 +80,9 @@ describe('planCtxBlocks', () => {
       'workflows',
     ])
     expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'architecture')?.content).toContain('Context scope: workspace')
+    expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'architecture')?.content).toContain('## Responsibilities')
+    expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'architecture')?.content).toContain('## Critical Invariants')
+    expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'architecture')?.content).toContain('## Unsafe Changes')
     expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'architecture')?.content).toContain('Package manager: pnpm')
     expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'architecture')?.content).toContain('Apps in scope: @repo/web (apps/web)')
     expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'architecture')?.content).toContain('Internal dependencies: @repo/web -> @repo/shared')
@@ -88,6 +91,7 @@ describe('planCtxBlocks', () => {
     expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'api')?.content).toContain('Route paths detected: /health')
     expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'frontend')?.content).toContain('Frontend implementation shape: Component-driven React UI detected.')
     expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'glossary')?.content).toContain('API_KEY')
+    expect(ctxBlocks.find((ctxBlock) => ctxBlock.name === 'workflows')?.content).toContain('pnpm run test')
   })
 
   it('uses point scope metadata to make point CtxBlocks more specific', () => {

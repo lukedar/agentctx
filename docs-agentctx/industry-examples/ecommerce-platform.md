@@ -83,3 +83,24 @@ Excluded:
 ## Where AgentCtx Adds Value
 
 AgentCtx helps teams narrow agent context around payment and inventory boundaries while keeping security-sensitive operational detail out of public surfaces.
+
+## Operational Context Demonstration
+
+```md
+# Responsibilities
+- checkout orchestration
+- payment authorization
+- stock reservation
+
+# Critical Invariants
+- payment operations must remain authenticated
+- inventory reservations must be idempotent
+
+# Failure Modes
+- retries duplicate orders without idempotency keys
+
+# Useful For
+- checkout bugs
+- inventory updates
+- payment boundary reviews
+```

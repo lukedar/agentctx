@@ -12,6 +12,7 @@ import { domainFilesPlugin } from '../src/plugins/domainFiles'
 import { envExamplePlugin } from '../src/plugins/envExample'
 import { frameworkAdapterRegistry, frameworkAdaptersPlugin } from '../src/frameworkAdapters'
 import { frameworksFromPackageJsonPlugin } from '../src/plugins/frameworksFromPackageJson'
+import { operationalFrameworkFactsPlugin } from '../src/plugins/operationalFrameworkFacts'
 import { packageDependenciesPlugin } from '../src/plugins/packageDependencies'
 import { packageMetadataPlugin } from '../src/plugins/packageMetadata'
 import { packageManagerPlugin } from '../src/plugins/packageManager'
@@ -283,6 +284,54 @@ describe('adapter plugins', () => {
     expect(await frameworksFromPackageJsonPlugin.extract(ctx)).toEqual(expect.arrayContaining([
       expect.objectContaining({ kind: 'runtime', data: expect.objectContaining({ name: 'python' }) }),
       expect.objectContaining({ kind: 'framework', data: expect.objectContaining({ name: 'fastapi' }) }),
+    ]))
+  })
+
+  it('extracts operational facts for V1 framework adapter groups', async () => {
+    const ctx = await buildContext({
+      'package.json': JSON.stringify({
+        name: 'platform',
+        workspaces: ['apps/*', 'packages/*'],
+        dependencies: {
+          next: '^15.0.0',
+          react: '^19.0.0',
+          zod: '^3.0.0',
+          bullmq: '^5.0.0',
+        },
+        devDependencies: {
+          typescript: '^5.0.0',
+        },
+        scripts: {
+          build: 'next build',
+          test: 'vitest run',
+          typecheck: 'tsc --noEmit',
+        },
+      }, null, 2),
+      'angular.json': '{ "version": 1 }',
+      'src/app/auth.guard.ts': 'export class AuthGuard {}\n',
+      'src/app/auth.interceptor.ts': 'headers.set("Authorization", token)\n',
+      'src/app/store/user.reducer.ts': 'export const reducer = {}\n',
+      'app/dashboard/page.tsx': 'export default function Page() { return null }\n',
+      'app/profile/client.tsx': '"use client"\nexport function Profile() { return null }\n',
+      'src/Api/Controllers/OrdersController.cs': 'public class OrdersController {}\n',
+      'src/Api/Program.cs': 'app.UseAuthentication(); app.UseAuthorization();\n',
+      'src/Api/Api.csproj': '<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />\n<PackageReference Include="Hangfire" Version="1.0.0" />\n',
+      'openapi.yaml': 'openapi: 3.1.0\n',
+      'workers/email.retry.ts': 'export const retry = 3\n',
+      '.github/workflows/deploy.yml': 'name: deploy\n',
+      'infra/main.tf': 'terraform {}\n',
+    })
+
+    const facts = await operationalFrameworkFactsPlugin.extract(ctx)
+
+    expect(facts).toEqual(expect.arrayContaining([
+      expect.objectContaining({ kind: 'operational', data: expect.objectContaining({ domain: 'node-typescript', operationalKind: 'safe-command' }) }),
+      expect.objectContaining({ kind: 'operational', data: expect.objectContaining({ domain: 'angular', operationalKind: 'security-boundary' }) }),
+      expect.objectContaining({ kind: 'operational', data: expect.objectContaining({ domain: 'dotnet', operationalKind: 'execution-path' }) }),
+      expect.objectContaining({ kind: 'operational', data: expect.objectContaining({ domain: 'next', operationalKind: 'runtime-boundary' }) }),
+      expect.objectContaining({ kind: 'operational', data: expect.objectContaining({ domain: 'shared-contracts', operationalKind: 'invariant' }) }),
+      expect.objectContaining({ kind: 'operational', data: expect.objectContaining({ domain: 'workers', operationalKind: 'invariant' }) }),
+      expect.objectContaining({ kind: 'operational', data: expect.objectContaining({ domain: 'infrastructure', operationalKind: 'risk' }) }),
     ]))
   })
 })

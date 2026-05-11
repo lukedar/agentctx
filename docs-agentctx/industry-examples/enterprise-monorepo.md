@@ -66,4 +66,4 @@ data -> services, analytics
 
 ## Where AgentCtx Adds Value
 
-AgentCtx makes enterprise context ownable, governable, and measurable instead of treating a monorepo as a single prompt.
+AgentCtx makes enterprise operational context ownable, governable, and measurable instead of treating a monorepo as a single prompt.

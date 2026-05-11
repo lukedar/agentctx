@@ -24,12 +24,16 @@
 
 # Conventions
 
-## Summary
+## Responsibilities
 
 - Tooling detected: typescript
 - Common scripts: build, test, typecheck 
 
-## Rules
+## Dependencies
+
+- packages/core/tsconfig.json: Project convention/config (typescript)
+
+## Critical Invariants
 
 - Keep generated outputs deterministic (stable ordering; no timestamps).
 - Do not include secret values in generated context.
@@ -38,29 +42,95 @@
 - Prefer strict typing; avoid `any` unless unavoidable and justified.
 - Run typecheck for TS changes: `pnpm run typecheck`.
 
-## Important files
+## Failure Modes
+
+- No confirmed failure modes detected.
+
+## Safe Commands
+
+- No confirmed safe commands detected.
+
+## Useful For
+
+- code style changes
+- tooling updates
+- review preparation
+
+## Unsafe Changes
+
+- Broad rewrites outside the current context scope without loading related context first.
+
+## Evidence
 
 - `packages/core/tsconfig.json`: Project convention/config (typescript)
 
 # Testing
 
-## Summary
+## Responsibilities
 
 - Detected test runners (deps): vitest
 - Test config files detected: (none)
 
-## Rules
+## Dependencies
+
+- No confirmed dependencies detected.
+
+## Critical Invariants
 
 - Run the smallest relevant test suite before finalizing changes.
 - Preferred: `pnpm run test`
 
+## Failure Modes
+
+- No confirmed failure modes detected.
+
+## Safe Commands
+
+- No confirmed safe commands detected.
+
+## Useful For
+
+- test selection
+- fixture updates
+- quality gate checks
+
+## Unsafe Changes
+
+- Broad rewrites outside the current context scope without loading related context first.
+
 # Workflows
 
-## Workflows
+## Responsibilities
+
+- No confirmed responsibilities detected.
+
+## Dependencies
+
+- No confirmed dependencies detected.
+
+## Critical Invariants
+
+- Keep generated context deterministic, scoped, and secret-safe.
+
+## Failure Modes
+
+- No confirmed failure modes detected.
+
+## Safe Commands
 
 - Install: `pnpm install`
 - Typecheck: `pnpm run typecheck`
 - Test: `pnpm run test`
 - Build: `pnpm run build`
 - Update context: `agentctx build && agentctx sync`
+
+## Useful For
+
+- local setup
+- build validation
+- release-safe command selection
+
+## Unsafe Changes
+
+- Running destructive reset, deploy, migration, or secret-rotation commands unless explicitly requested.
 <!-- agentctx:end -->

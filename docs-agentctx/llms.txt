@@ -7,7 +7,6 @@ Primary pages:
 - Overview: `/`
 - Why AgentCtx: `/why-agentctx`
 - Architecture: `/architecture`
-- Framework Overview: `/framework`
 - Compiler: `/compiler`
 - Context files: `/context-files`
 - Context points: `/context-points`

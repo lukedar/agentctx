@@ -40,6 +40,7 @@
 - Testing: `.agentctx/context/testing.md`
 - Public Api: `.agentctx/context/public-api.md`
 - Exports: `.agentctx/context/exports.md`
+- Schemas: `.agentctx/context/schemas.md`
 - Compatibility: `.agentctx/context/compatibility.md`
 - Usage: `.agentctx/context/usage.md`
 - Versioning: `.agentctx/context/versioning.md`

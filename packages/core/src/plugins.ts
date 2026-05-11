@@ -20,12 +20,54 @@ const stableStringify = (value: unknown): string => {
 
 export const createScanContext = (input: { rootDir: string; files: RepoFileIndex }): ScanContext => {
   const abs = (p: string) => path.isAbsolute(p) ? p : path.join(input.rootDir, p)
+  const paths = input.files.files.map((file) => file.path)
+  const basenames: Record<string, string> = {}
+  const byBasenameMutable = new Map<string, string[]>()
+  const textCache = new Map<string, Promise<string>>()
+  const jsonCache = new Map<string, Promise<unknown>>()
+
+  for (const filePath of paths) {
+    const base = path.posix.basename(filePath)
+    basenames[filePath] = base
+    const existing = byBasenameMutable.get(base)
+    if (existing) existing.push(filePath)
+    else byBasenameMutable.set(base, [filePath])
+  }
+
+  const byBasename = Object.fromEntries(
+    [...byBasenameMutable.entries()].map(([base, filePaths]) => [
+      base,
+      [...filePaths].sort((a, b) => a.localeCompare(b)),
+    ]),
+  ) as Record<string, readonly string[]>
+
+  const readTextCached = (p: string): Promise<string> => {
+    const normalized = path.isAbsolute(p) ? path.relative(input.rootDir, p) : p
+    const existing = textCache.get(normalized)
+    if (existing) return existing
+
+    const read = fs.readFile(abs(normalized), 'utf8')
+    textCache.set(normalized, read)
+    return read
+  }
 
   return {
     rootDir: input.rootDir,
     files: input.files,
-    readText: async (p: string) => fs.readFile(abs(p), 'utf8'),
-    readJson: async <T = unknown>(p: string) => JSON.parse(await fs.readFile(abs(p), 'utf8')) as T,
+    paths,
+    basenames,
+    byBasename,
+    matchPaths: (predicate) => paths.filter((filePath) => predicate(filePath, basenames[filePath] ?? path.posix.basename(filePath))),
+    readText: readTextCached,
+    readJson: async <T = unknown>(p: string) => {
+      const normalized = path.isAbsolute(p) ? path.relative(input.rootDir, p) : p
+      const existing = jsonCache.get(normalized)
+      if (existing) return await existing as T
+
+      const read = readTextCached(normalized).then((content) => JSON.parse(content) as unknown)
+      jsonCache.set(normalized, read)
+      return await read as T
+    },
   }
 }
 
@@ -40,6 +82,13 @@ export const extractFacts = async (input: {
     const facts: Fact[] = []
 
     for (const plugin of input.plugins) {
+      if (plugin.extractWithDetection) {
+        const result = await plugin.extractWithDetection(ctx)
+        if (!result.detection.detected) continue
+        for (const f of result.facts) facts.push(f)
+        continue
+      }
+
       const detection = await plugin.detect(ctx)
       if (!detection.detected) continue
 

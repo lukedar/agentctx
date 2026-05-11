@@ -1,5 +1,5 @@
 # AgentCtx
 
-AgentCtx compiles repository structure into scoped, secure, token-efficient context for coding agents and AI engineering workflows.
+AgentCtx compiles repositories into operational context optimized for AI systems.
 
 Read the docs: https://lukedar.github.io/agentctx/

@@ -26,7 +26,7 @@ packages/contracts
 
 - SDK changes drift from OpenAPI contracts
 - public docs miss versioning or auth constraints
-- internal runbooks leak into AI-readable docs
+- internal runbooks leak into public-safe context surfaces
 - agents update examples without contract awareness
 - token-heavy docs bury the relevant endpoint context
 
@@ -83,4 +83,4 @@ Excluded:
 
 ## Where AgentCtx Adds Value
 
-AgentCtx lets API teams publish AI-readable public context while keeping internal release, security, and operational workflows scoped to internal agents.
+AgentCtx lets API teams publish public-safe AI context while keeping internal release, security, and operational workflows scoped to internal agents.

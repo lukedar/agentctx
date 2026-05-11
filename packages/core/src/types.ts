@@ -169,6 +169,21 @@ export type FactKind =
   | 'script'
   | 'dependency'
   | 'convention'
+  | 'operational'
+
+export type OperationalFactKind =
+  | 'responsibility'
+  | 'dependency'
+  | 'invariant'
+  | 'failure-mode'
+  | 'risk'
+  | 'execution-path'
+  | 'runtime-boundary'
+  | 'security-boundary'
+  | 'task-affordance'
+  | 'safe-command'
+
+export type VisibilityClass = 'public' | 'internal' | 'sensitive' | 'secret'
 
 export type Fact = Readonly<{
   kind: FactKind
@@ -202,12 +217,24 @@ export type ImportantFile = Readonly<{
   reason: string
 }>
 
+export type OperationalContextSections = Readonly<{
+  responsibilities: readonly string[]
+  dependencies: readonly string[]
+  criticalInvariants: readonly string[]
+  failureModes: readonly string[]
+  safeCommands: readonly string[]
+  usefulFor: readonly string[]
+  unsafeChanges: readonly string[]
+  evidence: readonly ImportantFile[]
+}>
+
 export type CtxBlockModel = Readonly<{
   summary: readonly string[]
   rules: readonly string[]
   workflows: readonly string[]
   files: readonly ImportantFile[]
   warnings: readonly string[]
+  operational?: Partial<OperationalContextSections>
 }>
 
 export type CtxGraph = Readonly<{
@@ -245,6 +272,7 @@ export type DetectionSignalKind =
   | 'manifest'
   | 'project-file'
   | 'source-pattern'
+  | 'operational-marker'
 
 export type DetectionSignal = Readonly<{
   kind: DetectionSignalKind
@@ -275,6 +303,10 @@ export type FrameworkAdapterPhase = 'manifest' | 'project'
 export type ScanContext = Readonly<{
   rootDir: string
   files: RepoFileIndex
+  paths: readonly string[]
+  basenames: Readonly<Record<string, string>>
+  byBasename: Readonly<Record<string, readonly string[]>>
+  matchPaths: (predicate: (path: string, basename: string) => boolean) => readonly string[]
   readText: (path: string) => Promise<string>
   readJson: <T = unknown>(path: string) => Promise<T>
 }>
@@ -283,6 +315,10 @@ export type AgentCtxPlugin = Readonly<{
   name: string
   detect: (ctx: ScanContext) => Promise<DetectionResult>
   extract: (ctx: ScanContext) => Promise<readonly Fact[]>
+  extractWithDetection?: (ctx: ScanContext) => Promise<Readonly<{
+    detection: DetectionResult
+    facts: readonly Fact[]
+  }>>
 }>
 
 export type FrameworkAdapter = Readonly<{

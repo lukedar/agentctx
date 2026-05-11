@@ -28,7 +28,7 @@
 
 # Architecture
 
-## Summary
+## Responsibilities
 
 - Context scope: workspace
 - Package manager: pnpm
@@ -39,7 +39,42 @@
 - Packages in scope: @agentctx/adapters (packages/adapters), @agentctx/core (packages/core), @agentctx/targets (packages/targets), agentctx (packages/cli), agentctx-docs (docs-agentctx), …
 - Internal dependencies: @agentctx/adapters -> @agentctx/core, @agentctx/targets -> @agentctx/core, agentctx -> @agentctx/adapters, agentctx -> @agentctx/core, agentctx -> @agentctx/targets, …
 
-## Important files
+## Dependencies
+
+- agentctx.config.ts: AgentCtx configuration
+- package.json: Project manifest and scripts
+- docs-agentctx/package.json: Package/app manifest in scope
+- docs/package.json: Package/app manifest in scope
+- packages/adapters/package.json: Package/app manifest in scope
+- packages/cli/package.json: Package/app manifest in scope
+- packages/core/package.json: Package/app manifest in scope
+- packages/dual-agent-runner-ui/package.json: Package/app manifest in scope
+- packages/dual-agent-runner/package.json: Package/app manifest in scope
+- packages/targets/package.json: Package/app manifest in scope
+
+## Critical Invariants
+
+- Keep generated context deterministic, scoped, and secret-safe.
+
+## Failure Modes
+
+- No confirmed failure modes detected.
+
+## Safe Commands
+
+- No confirmed safe commands detected.
+
+## Useful For
+
+- repo orientation
+- package boundary changes
+- cross-context impact checks
+
+## Unsafe Changes
+
+- Broad rewrites outside the current context scope without loading related context first.
+
+## Evidence
 
 - `agentctx.config.ts`: AgentCtx configuration
 - `package.json`: Project manifest and scripts
@@ -54,61 +89,153 @@
 
 # Runtime
 
-## Summary
+## Responsibilities
 
 - Runtimes detected: node
 - Runtime markers: docs-agentctx/package.json
 
-## Rules
+## Dependencies
+
+- docs-agentctx/package.json: Runtime manifest or entrypoint
+
+## Critical Invariants
 
 - Keep package scripts and runtime entrypoints aligned when changing startup behavior.
 
-## Important files
+## Failure Modes
+
+- No confirmed failure modes detected.
+
+## Safe Commands
+
+- No confirmed safe commands detected.
+
+## Useful For
+
+- startup changes
+- runtime dependency updates
+- hosting changes
+
+## Unsafe Changes
+
+- Broad rewrites outside the current context scope without loading related context first.
+
+## Evidence
 
 - `docs-agentctx/package.json`: Runtime manifest or entrypoint
 
 # Frontend
 
-## Summary
+## Responsibilities
 
 - Frontend-related frameworks detected: react, vite
 - Frontend implementation shape: Component-driven React UI detected. Bundler-led frontend entrypoint detected.
 - Frontend-relevant scope entries: @agentctx/adapters (packages/adapters), @agentctx/core (packages/core), @agentctx/targets (packages/targets), agentctx (packages/cli), agentctx-docs (docs-agentctx), …
 
-## Rules
+## Dependencies
+
+- No confirmed dependencies detected.
+
+## Critical Invariants
 
 - Keep components, state boundaries, and adjacent route or data-loading code aligned when changing UI behavior.
 
+## Failure Modes
+
+- No confirmed failure modes detected.
+
+## Safe Commands
+
+- No confirmed safe commands detected.
+
+## Useful For
+
+- UI behavior changes
+- route updates
+- state and data-loading changes
+
+## Unsafe Changes
+
+- Changing route, auth, or state boundaries without checking related API and test surfaces.
+
 # Operations
 
-## Summary
+## Responsibilities
 
 - Operational surfaces detected: github-actions
 - Operations implementation shape: Automation workflow definitions detected.
 - Operational artifacts: .github/workflows/dual-agent-gate.yml, .github/workflows/runner-docs.yml
 
-## Rules
+## Dependencies
+
+- .github/workflows/dual-agent-gate.yml: Operational artifact
+- .github/workflows/runner-docs.yml: Operational artifact
+
+## Critical Invariants
 
 - Keep CI and deployment workflow changes deterministic and scoped to the environments they affect.
 
-## Important files
+## Failure Modes
+
+- No confirmed failure modes detected.
+
+## Safe Commands
+
+- No confirmed safe commands detected.
+
+## Useful For
+
+- deployment changes
+- CI updates
+- infra configuration review
+
+## Unsafe Changes
+
+- Changing deployment, CI, or infrastructure behavior without checking environment impact.
+
+## Evidence
 
 - `.github/workflows/dual-agent-gate.yml`: Operational artifact
 - `.github/workflows/runner-docs.yml`: Operational artifact
 
 # Data
 
-## Summary
+## Responsibilities
 
 - Data surfaces detected: job
 - Data implementation shape: Scheduled or batch job definitions detected.
 - Data artifacts: .github/workflows/dual-agent-gate.yml, .github/workflows/runner-docs.yml
 
-## Rules
+## Dependencies
+
+- .github/workflows/dual-agent-gate.yml: Data job or pipeline definition
+- .github/workflows/runner-docs.yml: Data job or pipeline definition
+- .github/workflows/dual-agent-gate.yml: Data or analysis artifact
+- .github/workflows/runner-docs.yml: Data or analysis artifact
+
+## Critical Invariants
 
 - Keep job boundaries, dependencies, and runtime assumptions aligned when changing batch or orchestration behavior.
 
-## Important files
+## Failure Modes
+
+- No confirmed failure modes detected.
+
+## Safe Commands
+
+- No confirmed safe commands detected.
+
+## Useful For
+
+- pipeline changes
+- schema quality checks
+- reproducibility review
+
+## Unsafe Changes
+
+- Broad rewrites outside the current context scope without loading related context first.
+
+## Evidence
 
 - `.github/workflows/dual-agent-gate.yml`: Data job or pipeline definition
 - `.github/workflows/runner-docs.yml`: Data job or pipeline definition
@@ -117,19 +244,57 @@
 
 # Testing
 
-## Summary
+## Responsibilities
 
 - Detected test runners (deps): vitest
 - Test config files detected: (none)
 
-## Rules
+## Dependencies
+
+- No confirmed dependencies detected.
+
+## Critical Invariants
 
 - Run the smallest relevant test suite before finalizing changes.
 - Preferred: `pnpm run test`
 
+## Failure Modes
+
+- No confirmed failure modes detected.
+
+## Safe Commands
+
+- No confirmed safe commands detected.
+
+## Useful For
+
+- test selection
+- fixture updates
+- quality gate checks
+
+## Unsafe Changes
+
+- Broad rewrites outside the current context scope without loading related context first.
+
 # Workflows
 
-## Workflows
+## Responsibilities
+
+- No confirmed responsibilities detected.
+
+## Dependencies
+
+- No confirmed dependencies detected.
+
+## Critical Invariants
+
+- Keep generated context deterministic, scoped, and secret-safe.
+
+## Failure Modes
+
+- No confirmed failure modes detected.
+
+## Safe Commands
 
 - Install: `pnpm install`
 - Dev: `pnpm run dev`
@@ -137,4 +302,14 @@
 - Test: `pnpm run test`
 - Build: `pnpm run build`
 - Update context: `agentctx build && agentctx sync`
+
+## Useful For
+
+- local setup
+- build validation
+- release-safe command selection
+
+## Unsafe Changes
+
+- Running destructive reset, deploy, migration, or secret-rotation commands unless explicitly requested.
 <!-- agentctx:end -->

@@ -4,15 +4,20 @@
   <span class="docs-kicker">Evidence layer</span>
   <h1>Measure whether structured context improves agent outcomes.</h1>
   <p class="docs-lead">
-    AgentCtx Bench testing framework compares agent work with no generated context against work that starts from AgentCtx context surfaces.
+    AgentCtx Bench testing framework compares agent work with no generated context against work that starts from operational context.
   </p>
 </div>
+
+## Why Benchmarks Matter
+
+AgentCtx Bench measures whether operational context improves task success, token usage, runtime, operational correctness, file accuracy, and security findings.
 
 ## What It Measures
 
 - task success
 - token usage
 - runtime
+- operational correctness
 - file accuracy
 - security findings
 - irrelevant edits

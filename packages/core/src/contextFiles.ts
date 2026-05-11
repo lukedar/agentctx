@@ -118,6 +118,26 @@ export const detectContextFileCapabilities = (
   const runtimeNames = new Set(strings(facts, 'runtime', 'name').map((name) => name.toLowerCase()))
   const packageNames = strings(facts, 'package', 'name')
   const dependencyNames = strings(facts, 'dependency', 'name').map((name) => name.toLowerCase())
+  const operationalDomains = new Set(
+    facts
+      .filter((fact) => fact.kind === 'operational')
+      .map((fact) => fact.data.domain)
+      .filter((domain): domain is string => typeof domain === 'string')
+      .map((domain) => domain.toLowerCase()),
+  )
+  const operationalKinds = new Set(
+    facts
+      .filter((fact) => fact.kind === 'operational')
+      .map((fact) => fact.data.operationalKind)
+      .filter((kind): kind is string => typeof kind === 'string')
+      .map((kind) => kind.toLowerCase()),
+  )
+  const hasOperational = (domain: string, kind?: string): boolean =>
+    facts.some((fact) =>
+      fact.kind === 'operational' &&
+      fact.data.domain === domain &&
+      (kind === undefined || fact.data.operationalKind === kind),
+    )
   const scopeType = config.scope?.kind === 'point' ? config.scope.type : undefined
 
   const frontendFrameworks = ['react', 'next', 'angular', 'vue', 'svelte', 'sveltekit', 'solid', 'nuxt', 'astro', 'remix', 'vite']
@@ -128,19 +148,19 @@ export const detectContextFileCapabilities = (
     if (detected) out.push(capability)
   }
 
-  add('frontend', frontendFrameworks.some((name) => frameworks.has(name)) || scopeType === 'frontend')
-  add('routing', hasFact(facts, 'route'))
+  add('frontend', frontendFrameworks.some((name) => frameworks.has(name)) || scopeType === 'frontend' || operationalDomains.has('react') || operationalDomains.has('angular') || operationalDomains.has('next'))
+  add('routing', hasFact(facts, 'route') || operationalKinds.has('execution-path'))
   add('components', hasPath(facts, (source) => /(^|\/)(components|pages|app|src)\//.test(source)))
   add('state', dependencyNames.some((name) => ['redux', '@reduxjs/toolkit', 'zustand', 'pinia', 'vuex', '@ngrx/store', 'jotai', 'recoil'].includes(name)) || hasPath(facts, (source) => /(^|\/)(store|state)\//.test(source)))
   add('api', hasFact(facts, 'api') || apiFrameworks.some((name) => frameworks.has(name)) || scopeType === 'backend')
-  add('auth', hasFact(facts, 'auth') || hasPath(facts, (source) => source.toLowerCase().includes('auth')))
-  add('database', hasFact(facts, 'database'))
-  add('worker', scopeType === 'worker' || hasPath(facts, (source) => /(worker|job|cron|schedule|queue)/i.test(source)))
-  add('queue', hasPath(facts, (source) => /(queue|bull|sqs|rabbit|kafka)/i.test(source)))
-  add('shared-package', scopeType === 'package' || packageNames.length > 0)
-  add('schemas', hasFact(facts, 'data') || hasPath(facts, (source) => /(schema|contract|openapi|proto)/i.test(source)))
-  add('infrastructure', scopeType === 'infra' || hasFact(facts, 'operations') || hasPath(facts, (source) => /(^|\/)(infra|infrastructure|ops|k8s|helm|charts|\.github\/workflows)\//.test(source)))
-  add('deployment', hasFact(facts, 'operations') || hasPath(facts, (source) => /(Dockerfile|docker-compose|deploy|terraform|pulumi|kubernetes|helm)/i.test(source)))
+  add('auth', hasFact(facts, 'auth') || operationalKinds.has('security-boundary') || hasPath(facts, (source) => source.toLowerCase().includes('auth')))
+  add('database', hasFact(facts, 'database') || hasOperational('dotnet', 'runtime-boundary'))
+  add('worker', scopeType === 'worker' || operationalDomains.has('workers') || hasPath(facts, (source) => /(worker|job|cron|schedule|queue)/i.test(source)))
+  add('queue', operationalDomains.has('workers') || hasPath(facts, (source) => /(queue|bull|sqs|rabbit|kafka)/i.test(source)))
+  add('shared-package', scopeType === 'package' || packageNames.length > 0 || operationalDomains.has('shared-contracts'))
+  add('schemas', hasFact(facts, 'data') || operationalDomains.has('shared-contracts') || hasPath(facts, (source) => /(schema|contract|openapi|proto)/i.test(source)))
+  add('infrastructure', scopeType === 'infra' || operationalDomains.has('infrastructure') || hasFact(facts, 'operations') || hasPath(facts, (source) => /(^|\/)(infra|infrastructure|ops|k8s|helm|charts|\.github\/workflows)\//.test(source)))
+  add('deployment', operationalDomains.has('infrastructure') || hasFact(facts, 'operations') || hasPath(facts, (source) => /(Dockerfile|docker-compose|deploy|terraform|pulumi|kubernetes|helm)/i.test(source)))
   add('ci', hasPath(facts, (source) => /(^|\/)(\.github\/workflows|\.gitlab-ci|azure-pipelines)/.test(source)))
 
   if (runtimeNames.has('node')) add('api', hasFact(facts, 'api'))
@@ -211,6 +231,9 @@ const listOrNone = (items: readonly string[], empty = '(none detected)'): string
 const section = (title: string, lines: readonly string[]): string =>
   [`## ${title}`, '', ...(lines.length ? lines : ['_(none detected)_']), ''].join('\n')
 
+const bulletSection = (title: string, lines: readonly string[]): string =>
+  section(title, lines.length ? lines.map((line) => (line.startsWith('- ') ? line : `- ${line}`)) : [])
+
 const factsByPath = (facts: readonly Fact[], kind: Fact['kind'], key: string): readonly string[] => {
   const values = facts
     .filter((fact) => fact.kind === kind)
@@ -239,108 +262,229 @@ const renderBody = (
   const databaseFiles = factsByPath(graph.facts, 'database', 'path')
   const operationFiles = factsByPath(graph.facts, 'operations', 'path')
   const dataFiles = factsByPath(graph.facts, 'data', 'path')
-
-  switch (definition.name) {
-    case 'overview':
-      return [
-        section('Purpose', [`- Summarize the ${scope} and when an agent should load it.`]),
-        section('Responsibilities', ['- Owns the files and workflows detected within this context point.']),
-        section('Non-Responsibilities', ['- Avoid changes outside this context point unless a related context file says to load them.']),
-        section('Primary Technologies', [`- Languages: ${listOrNone(languages)}`, `- Frameworks: ${listOrNone(frameworks)}`, `- Package managers: ${listOrNone(packageManagers)}`]),
-        section('Related Context Points', graph.relationships.map((rel) => `- ${rel.from} ${rel.type} ${rel.to}`).slice(0, 8)),
-      ].join('\n')
-    case 'architecture':
-      return [
-        section('High-Level Structure', [`- Scope: ${scope}`]),
-        section('Main Modules', [...graph.apps.map((app) => `- App: ${app.name ?? app.id} (${app.path})`), ...graph.packages.map((pkg) => `- Package: ${pkg.name ?? pkg.id} (${pkg.path})`)].slice(0, 12)),
-        section('Data Flow', graph.relationships.map((rel) => `- ${rel.from} ${rel.type} ${rel.to}`).slice(0, 10)),
-        section('Key Design Decisions', ['- Prefer metadata scanning and deterministic generated output.']),
-        section('Known Constraints', ['- Generated context should stay compact and avoid source dumps.']),
-      ].join('\n')
-    case 'conventions':
-      return [
-        section('Naming', ['- Follow existing package and file naming in the context point.']),
-        section('Folder Structure', factsByPath(graph.facts, 'convention', 'path').map((file) => `- ${file}`)),
-        section('Code Style', factIndex.strings('convention', 'tool').map((tool) => `- ${tool}`)),
-        section('Error Handling', ['- Match existing local error patterns.']),
-        section('Logging', ['- Match existing local logging patterns.']),
-        section('Anti-Patterns', ['- Avoid broad refactors unrelated to the task.']),
-      ].join('\n')
-    case 'commands':
-    case 'global-commands':
-      return [
-        section('Install', packageManagers.map((pm) => `- ${pm} install`)),
-        section('Development', scripts.includes('dev') ? ['- Use the local dev script from package.json.'] : []),
-        section('Build', scripts.includes('build') ? ['- Run the build script for the smallest relevant scope.'] : []),
-        section('Test', scripts.includes('test') ? ['- Run targeted tests first, then broader tests if shared behavior changed.'] : []),
-        section('Lint', scripts.includes('lint') ? ['- Run lint before finalizing style-sensitive changes.'] : []),
-        section('Typecheck', scripts.includes('typecheck') ? ['- Run typecheck for TypeScript changes.'] : []),
-        section('Safe Targeted Commands', scripts.map((name) => `- package script: ${name}`).slice(0, 12)),
-        section('Commands To Avoid', ['- Do not run destructive data, reset, deployment, or secret-rotation commands unless explicitly requested.']),
-      ].join('\n')
-    case 'dependencies':
-      return [
-        section('Internal Dependencies', graph.relationships.filter((rel) => rel.type === 'depends-on').map((rel) => `- ${rel.from} -> ${rel.to}`).slice(0, 12)),
-        section('External Dependencies', dependencies.map((dep) => `- ${dep}`)),
-        section('Runtime Dependencies', dependencies.map((dep) => `- ${dep}`)),
-        section('Development Dependencies', factIndex.strings('convention', 'tool').map((tool) => `- ${tool}`)),
-        section('Dependency Boundaries', ['- Keep imports aligned with existing dependency direction.']),
-        section('Risky Dependencies', ['- Review generated, auth, database, and deployment dependencies before changing contracts.']),
-      ].join('\n')
-    case 'testing':
-      return [
-        section('Test Frameworks', testRunners.map((runner) => `- ${runner}`)),
-        section('Test Locations', factsByPath(graph.facts, 'test-runner', 'path').map((file) => `- ${file}`)),
-        section('Test Naming', ['- Follow existing `.test` or `.spec` naming where present.']),
-        section('How To Run Targeted Tests', ['- Prefer the smallest relevant package or file-level test command before full workspace tests.']),
-        section('Mocking Rules', ['- Match existing test doubles and fixtures.']),
-        section('Coverage Expectations', ['- Cover changed public behavior and high-risk edge cases.']),
-        section('Common Test Failures', ['- Type mismatches, stale generated output, and broad workspace assumptions.']),
-      ].join('\n')
-    case 'security':
-    case 'secrets':
-      return [
-        section('Authentication', factIndex.strings('auth', 'name').map((name) => `- ${name}`)),
-        section('Authorization', ['- Preserve existing authorization boundaries.']),
-        section('Secret Handling', factIndex.strings('env-var', 'name').map((name) => `- ${name}`)),
-        section('Sensitive Files', ['- `.env*`, private keys, certificates, production credentials, and generated secret material are excluded or redacted.']),
-        section('Input Validation', ['- Validate external input at API, job, and data boundaries.']),
-        section('Data Exposure Risks', ['- Do not copy secret values into generated context or public outputs.']),
-        section('Security Anti-Patterns', ['- Do not log secrets, bypass auth checks, or weaken validation to satisfy tests.']),
-      ].join('\n')
-    case 'boundaries':
-      return [
-        section('Owns', [`- ${scope}`]),
-        section('Does Not Own', ['- Unrelated context points, generated dependencies, and production infrastructure unless explicitly configured.']),
-        section('Allowed Changes', ['- Local changes that preserve detected contracts and dependency direction.']),
-        section('Restricted Changes', ['- Cross-context rewrites, public API changes, data migrations, and auth/security changes require extra review.']),
-        section('Cross-Context Dependencies', graph.relationships.map((rel) => `- ${rel.from} ${rel.type} ${rel.to}`).slice(0, 12)),
-        section('When To Load Related Context', ['- Load related context before changing shared contracts, imports, APIs, database schemas, or deployment behavior.']),
-      ].join('\n')
-    case 'workspace':
-      return [
-        section('Repository Purpose', [`- Workspace-level context for ${config.workspace?.name ?? 'this repository'}.`]),
-        section('Repository Structure', [...graph.apps.map((app) => `- ${app.path}`), ...graph.packages.map((pkg) => `- ${pkg.path}`)].slice(0, 12)),
-        section('Context Points', config.ctxPoints.map((point) => `- ${point.name}: ${point.path}`)),
-        section('Primary Workflows', scripts.map((script) => `- ${script}`)),
-        section('Global Constraints', ['- Keep generated context deterministic and secret-safe.']),
-      ].join('\n')
-    case 'mesh':
-      return [
-        section('System Graph', graph.relationships.map((rel) => `- ${rel.from} ${rel.type} ${rel.to}`).slice(0, 12)),
-        section('Dependency Direction', ['- Follow detected dependency direction and existing import edges.']),
-        section('Runtime Communication', apiFiles.map((file) => `- ${file}`)),
-        section('Shared Contracts', dataFiles.map((file) => `- ${file}`)),
-        section('Cross-System Change Rules', ['- Update producers, consumers, tests, and docs together for contract changes.']),
-      ].join('\n')
-    default:
-      return [
-        section('Detected Capabilities', capabilities.map((capability) => `- ${capability}`)),
-        section('Relevant Files', [...routes, ...apiFiles, ...databaseFiles, ...operationFiles, ...dataFiles].slice(0, 12).map((file) => `- ${file}`)),
-        section('Rules', [`- This file is generated because ${definition.requiredCapabilities.length ? definition.requiredCapabilities.join(', ') : 'it is part of the base context set'}.`]),
-        section('Anti-Patterns', ['- Do not infer missing architecture from this file alone. Load the related context files listed in AGENTS.md.']),
-      ].join('\n')
+  const operationalFacts = graph.facts.filter((fact) => fact.kind === 'operational')
+  const operationalDomainsFor = (name: string): readonly string[] | undefined => {
+    switch (name) {
+      case 'overview':
+      case 'architecture':
+      case 'workspace':
+      case 'mesh':
+        return undefined
+      case 'commands':
+      case 'global-commands':
+        return ['node-typescript']
+      case 'dependencies':
+        return ['node-typescript', 'shared-contracts']
+      case 'security':
+      case 'secrets':
+      case 'boundaries':
+        return ['angular', 'dotnet', 'shared-contracts', 'infrastructure']
+      case 'routes':
+      case 'components':
+      case 'state':
+      case 'api-client':
+        return ['angular', 'react', 'next']
+      case 'api':
+      case 'middleware':
+      case 'validation':
+      case 'errors':
+        return ['dotnet', 'next', 'node-typescript']
+      case 'database':
+      case 'schema':
+      case 'migrations':
+      case 'queries':
+      case 'data-access':
+        return ['dotnet', 'shared-contracts']
+      case 'jobs':
+      case 'queues':
+      case 'scheduling':
+      case 'retries':
+      case 'idempotency':
+        return ['workers']
+      case 'exports':
+      case 'schemas':
+      case 'versioning':
+      case 'compatibility':
+      case 'public-api':
+      case 'usage':
+        return ['shared-contracts', 'node-typescript']
+      case 'deployments':
+      case 'environments':
+      case 'ci-cd':
+      case 'permissions':
+        return ['infrastructure']
+      default:
+        return []
+    }
   }
+  const operationalSummaries = (
+    name: string,
+    kinds: readonly string[],
+  ): readonly string[] => {
+    const domains = operationalDomainsFor(name)
+    return operationalFacts
+      .filter((fact) => {
+        const operationalKind = fact.data.operationalKind
+        const domain = fact.data.domain
+        if (typeof operationalKind !== 'string' || !kinds.includes(operationalKind)) return false
+        if (!domains) return true
+        return typeof domain === 'string' && domains.includes(domain)
+      })
+      .map((fact) => fact.data.summary)
+      .filter((summary): summary is string => typeof summary === 'string' && summary.trim().length > 0)
+      .map((summary) => summary.trim())
+      .filter((summary, index, all) => all.indexOf(summary) === index)
+      .sort((a, b) => a.localeCompare(b))
+      .slice(0, 8)
+  }
+  const relationships = graph.relationships.map((rel) => `${rel.from} ${rel.type} ${rel.to}`).slice(0, 12)
+  const relevantFiles = [...uniq([...routes, ...apiFiles, ...databaseFiles, ...operationFiles, ...dataFiles])]
+    .sort((a, b) => a.localeCompare(b))
+    .slice(0, 12)
+  const safeCommands = [
+    ...packageManagers.map((pm) => `${pm} install`),
+    ...(scripts.includes('dev') ? [`${packageManagers[0] ?? 'npm'} run dev`] : []),
+    ...(scripts.includes('build') ? [`${packageManagers[0] ?? 'npm'} run build`] : []),
+    ...(scripts.includes('test') ? [`${packageManagers[0] ?? 'npm'} run test`] : []),
+    ...(scripts.includes('typecheck') ? [`${packageManagers[0] ?? 'npm'} run typecheck`] : []),
+    ...(scripts.includes('lint') ? [`${packageManagers[0] ?? 'npm'} run lint`] : []),
+  ].slice(0, 10)
+  const responsibilityFor = (name: string): readonly string[] => {
+    switch (name) {
+      case 'overview':
+        return [`Orient agents to the ${scope}.`, 'Summarize when this context should be loaded.']
+      case 'architecture':
+        return ['Explain repo structure, packages, apps, and operational boundaries.']
+      case 'commands':
+      case 'global-commands':
+        return ['List safe local commands and validation workflows.']
+      case 'dependencies':
+        return ['Show internal and external dependency direction before cross-system changes.']
+      case 'security':
+      case 'secrets':
+        return ['Preserve auth, secret-handling, validation, and data-exposure boundaries.']
+      case 'boundaries':
+        return ['Define what this scope owns and when related context must be loaded.']
+      case 'testing':
+        return ['Help agents choose the smallest relevant validation path.']
+      default:
+        return [`Provide operational context for ${titleFor(name).toLowerCase()} work.`]
+    }
+  }
+  const invariantFor = (name: string): readonly string[] => {
+    const base = ['Keep generated context deterministic, scoped, and secret-safe.']
+    switch (name) {
+      case 'security':
+      case 'secrets':
+        return ['Secret values are never emitted.', 'Environment variables appear as names only.', 'Do not weaken authentication, authorization, or validation boundaries.']
+      case 'boundaries':
+        return ['Load related context before changing shared contracts, imports, APIs, schemas, or deployment behavior.']
+      case 'dependencies':
+        return ['Keep dependency direction aligned with existing graph edges.']
+      case 'commands':
+      case 'global-commands':
+        return ['Run targeted validation before broad workspace validation.', 'Avoid destructive commands unless explicitly requested.']
+      default:
+        return base
+    }
+  }
+  const failureModesFor = (name: string): readonly string[] => {
+    switch (name) {
+      case 'api':
+      case 'api-client':
+      case 'validation':
+      case 'errors':
+        return ['Request or response contract changes can break consumers when handlers, schemas, and tests are not updated together.']
+      case 'database':
+      case 'schema':
+      case 'migrations':
+      case 'queries':
+      case 'data-access':
+        return ['Schema and query changes can break runtime behavior when migrations, callers, and tests drift.']
+      case 'security':
+      case 'secrets':
+      case 'permissions':
+        return ['Auth, permission, or secret-handling changes can expose internal data if public-safe boundaries are bypassed.']
+      case 'deployments':
+      case 'environments':
+      case 'ci-cd':
+      case 'operations':
+        return ['Deployment and CI changes can affect environments outside the edited files.']
+      case 'routes':
+      case 'components':
+      case 'state':
+        return ['Frontend route, state, or data-loading changes can drift from API contracts and tests.']
+      default:
+        return ['Low-evidence changes can become unsafe when agents infer missing architecture from one context file alone.']
+    }
+  }
+  const usefulFor = (name: string): readonly string[] => {
+    switch (name) {
+      case 'overview':
+        return ['first-pass orientation', 'task scoping', 'choosing deeper context files']
+      case 'commands':
+      case 'global-commands':
+        return ['local validation', 'CI preparation', 'safe command selection']
+      case 'security':
+      case 'secrets':
+        return ['auth changes', 'secret-safety review', 'public-safe output checks']
+      case 'boundaries':
+        return ['ownership checks', 'cross-context changes', 'impact analysis']
+      default:
+        return [`${titleFor(name).toLowerCase()} changes`, 'review preparation', 'agent task planning']
+    }
+  }
+  const unsafeChangesFor = (name: string): readonly string[] => {
+    switch (name) {
+      case 'security':
+      case 'secrets':
+        return ['Do not copy secret values into generated context or public outputs.']
+      case 'database':
+      case 'migrations':
+      case 'schema':
+        return ['Do not make destructive data changes without explicit migration and rollback intent.']
+      case 'deployments':
+      case 'environments':
+      case 'ci-cd':
+        return ['Do not change deployment behavior without checking environment scope and rollout impact.']
+      default:
+        return ['Do not infer missing architecture from this file alone. Load related context before broad edits.']
+    }
+  }
+
+  return [
+    bulletSection('Responsibilities', [
+      ...responsibilityFor(definition.name),
+      ...operationalSummaries(definition.name, ['responsibility', 'runtime-boundary', 'execution-path']),
+    ]),
+    bulletSection('Dependencies', [
+      ...(relationships.length ? relationships : dependencies.map((dep) => `external package: ${dep}`)),
+      ...operationalSummaries(definition.name, ['dependency']),
+    ]),
+    bulletSection('Critical Invariants', [
+      ...invariantFor(definition.name),
+      ...operationalSummaries(definition.name, ['invariant', 'security-boundary']),
+    ]),
+    bulletSection('Failure Modes', [
+      ...failureModesFor(definition.name),
+      ...operationalSummaries(definition.name, ['failure-mode', 'risk']),
+    ]),
+    bulletSection('Safe Commands', [
+      ...safeCommands,
+      ...operationalSummaries(definition.name, ['safe-command']),
+    ]),
+    bulletSection('Useful For', [
+      ...usefulFor(definition.name),
+      ...operationalSummaries(definition.name, ['task-affordance']),
+    ]),
+    bulletSection('Unsafe Changes', unsafeChangesFor(definition.name)),
+    bulletSection('Evidence', relevantFiles.length
+      ? relevantFiles
+      : [...uniq(graph.facts.map((fact) => fact.source).filter((source) => source.trim()))]
+        .sort((a, b) => a.localeCompare(b))
+        .slice(0, 12)),
+  ].join('\n')
+
 }
 
 export const renderContextFiles = (

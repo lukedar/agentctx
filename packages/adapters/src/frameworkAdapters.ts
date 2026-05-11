@@ -40,7 +40,7 @@ type AdapterDefinition = Readonly<{
   data?: Readonly<Record<string, unknown>>
 }>
 
-const filePaths = (ctx: ScanContext): readonly string[] => ctx.files.files.map((file) => file.path)
+const filePaths = (ctx: ScanContext): readonly string[] => ctx.paths ?? ctx.files.files.map((file) => file.path)
 const basename = (filePath: string): string => filePath.split('/').at(-1) ?? filePath
 
 const findNamedFiles = (
@@ -562,6 +562,26 @@ const detectionToFact = (detection: FrameworkDetection): Fact => ({
 
 export const frameworkAdaptersPlugin: AgentCtxPlugin = {
   name: 'framework-adapters',
+
+  async extractWithDetection(ctx): Promise<Readonly<{
+    detection: DetectionResult
+    facts: readonly Fact[]
+  }>> {
+    const detections = await detectFrameworks(ctx)
+    const confidence = detections.reduce((max, detection) => Math.max(max, detection.confidence), 0)
+    const detection: DetectionResult = {
+      detected: detections.length > 0,
+      confidence,
+      reason: detections.length > 0
+        ? `Detected ${detections.length} framework/runtime signals`
+        : 'No framework adapter signals matched',
+    }
+
+    return {
+      detection,
+      facts: detections.map(detectionToFact),
+    }
+  },
 
   async detect(ctx): Promise<DetectionResult> {
     const detections = await detectFrameworks(ctx)

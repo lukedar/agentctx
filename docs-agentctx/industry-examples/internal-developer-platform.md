@@ -82,4 +82,4 @@ Excluded:
 
 ## Where AgentCtx Adds Value
 
-AgentCtx makes operational policy visible to agents and turns context freshness into a pipeline quality gate.
+AgentCtx makes operational policy visible as operational context and turns context freshness into a workflow quality gate.

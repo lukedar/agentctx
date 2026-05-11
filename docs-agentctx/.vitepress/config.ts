@@ -101,7 +101,6 @@ export default defineConfig({
       {
         text: 'Framework',
         items: [
-          { text: 'Framework Overview', link: '/framework' },
           { text: 'Compiler', link: '/compiler' },
           { text: 'Context Points', link: '/context-points' },
           { text: 'Context Block', link: '/context-block' },

@@ -12,6 +12,7 @@ export * from './plugins/packageScripts'
 export * from './plugins/apiDatabaseFiles'
 export * from './plugins/routesFromFiles'
 export * from './plugins/domainFiles'
+export * from './plugins/operationalFrameworkFacts'
 
 import type { AgentCtxPlugin } from '@agentctx/core'
 
@@ -20,6 +21,7 @@ import { configFilesPlugin } from './plugins/configFiles'
 import { domainFilesPlugin } from './plugins/domainFiles'
 import { envExamplePlugin } from './plugins/envExample'
 import { frameworkAdaptersPlugin } from './frameworkAdapters'
+import { operationalFrameworkFactsPlugin } from './plugins/operationalFrameworkFacts'
 import { packageDependenciesPlugin } from './plugins/packageDependencies'
 import { packageMetadataPlugin } from './plugins/packageMetadata'
 import { packageManagerPlugin } from './plugins/packageManager'
@@ -36,6 +38,7 @@ export const mvpPlugins: readonly AgentCtxPlugin[] = [
   workspacePlugin,
   typescriptPlugin,
   frameworkAdaptersPlugin,
+  operationalFrameworkFactsPlugin,
   testRunnersFromPackageJsonPlugin,
   packageScriptsPlugin,
   routesFromFilesPlugin,

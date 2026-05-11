@@ -838,12 +838,34 @@ export const renderBenchmarkCoverageHtml = (report: BenchmarkReport): string => 
 }
 
 export const renderBenchmarkIndexHtml = (reports: readonly BenchmarkReport[]): string => {
-  const rows = sortReports(reports)
+  const sortedReports = sortReports(reports)
+  const passed = sortedReports.filter((report) => report.comparison.outcome === 'helped').length
+  const testBlocks = sortedReports
     .map((report) => {
       const runPath = `../runs/${report.benchmark.taskId}/index.html`
       const coveragePath = `../runs/${report.benchmark.taskId}/coverage/index.html`
       const runtimeDeltaPercent = deltaPercent(report.noContext.elapsedMs, report.comparison.speedDeltaMs)
-      return `<tr><td><a href="${runPath}">${escapeHtml(report.benchmark.taskName)}</a></td><td>${escapeHtml(report.benchmark.ctxPoint)}</td><td><span class="pill ${report.comparison.outcome}">${report.comparison.outcome}</span></td><td>${report.tokenSummary.noContextTotal}</td><td>${report.tokenSummary.agentctxContextTotal}</td><td>${percent(report.tokenSummary.reductionPercent)} <small>${signedPercent(report.tokenSummary.reductionPercent)}</small></td><td>${seconds(report.comparison.speedDeltaMs)} <small>${signedPercent(runtimeDeltaPercent)}</small></td><td>${report.testCoverageSummary.coveredContextPoints}/${report.testCoverageSummary.totalContextPoints}</td><td><a href="${coveragePath}">coverage</a></td></tr>`
+      const coverageDelta = report.testCoverageSummary.coveredContextPoints
+
+      return `<section class="test">
+      <div class="test-title">
+        <span class="status-dot"></span>
+        <a href="${runPath}">${escapeHtml(report.benchmark.taskName)}</a>
+        <span class="pill ${report.comparison.outcome}">${report.comparison.outcome}</span>
+      </div>
+      <table>
+        <thead><tr><th>Metric</th><th>No context</th><th>AgentCtx context</th><th>Delta</th></tr></thead>
+        <tbody>
+          <tr><td>Status</td><td>${report.noContext.status}</td><td>${report.agentctxContext.status}</td><td>${report.comparison.outcome}</td></tr>
+          <tr><td>Tokens</td><td>${report.tokenSummary.noContextTotal}</td><td>${report.tokenSummary.agentctxContextTotal}</td><td>${report.tokenSummary.delta} <small>${signedPercent(report.tokenSummary.reductionPercent)}</small></td></tr>
+          <tr><td>Runtime</td><td>${seconds(report.noContext.elapsedMs)}</td><td>${seconds(report.agentctxContext.elapsedMs)}</td><td>${seconds(report.comparison.speedDeltaMs)} <small>${signedPercent(runtimeDeltaPercent)}</small></td></tr>
+          <tr><td>Evaluator score</td><td>${report.noContext.evaluatorScore.toFixed(1)}</td><td>${report.agentctxContext.evaluatorScore.toFixed(1)}</td><td>${report.comparison.evaluatorScoreDelta.toFixed(1)}</td></tr>
+          <tr><td>Tool calls</td><td>${report.noContext.agentCompute.toolCalls}</td><td>${report.agentctxContext.agentCompute.toolCalls}</td><td>${report.comparison.computeDelta.toolCalls}</td></tr>
+          <tr><td>Context Point coverage</td><td>0/${report.testCoverageSummary.totalContextPoints}</td><td>${report.testCoverageSummary.coveredContextPoints}/${report.testCoverageSummary.totalContextPoints}</td><td>+${coverageDelta}</td></tr>
+          <tr><td>Coverage report</td><td colspan="3"><a href="${coveragePath}">Open coverage details</a></td></tr>
+        </tbody>
+      </table>
+    </section>`
     })
     .join('')
 
@@ -855,28 +877,40 @@ export const renderBenchmarkIndexHtml = (reports: readonly BenchmarkReport[]): s
   <title>AgentCtx Bench Reports</title>
   <style>
     :root { color-scheme: dark; --bg: #080c11; --panel: #101820; --line: #263340; --text: #e6edf3; --muted: #91a4b7; --good: #4ade80; --warn: #facc15; --bad: #fb7185; --accent: #38bdf8; }
-    body { margin: 0; background: linear-gradient(180deg, #101820, var(--bg)); color: var(--text); font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    main { max-width: 1180px; margin: 0 auto; padding: 44px 20px; }
-    h1 { margin: 0; font-size: clamp(2.4rem, 6vw, 4.8rem); line-height: 1; letter-spacing: 0; }
+    body { margin: 0; background: #080c11; color: var(--text); font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { max-width: 1060px; margin: 0 auto; padding: 40px 20px; }
+    h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.8rem); line-height: 1; letter-spacing: 0; }
     p { color: var(--muted); max-width: 760px; }
-    table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin-top: 28px; }
-    th, td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; }
+    .summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 24px 0 28px; }
+    .summary div { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+    .summary span { color: var(--muted); display: block; font-size: .72rem; text-transform: uppercase; }
+    .summary strong { display: block; font-size: 1.35rem; margin-top: 3px; }
+    .test { border-top: 1px solid var(--line); padding: 20px 0 24px; }
+    .test-title { align-items: center; display: flex; gap: 10px; font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+    .status-dot { background: var(--good); border-radius: 50%; box-shadow: 0 0 18px color-mix(in srgb, var(--good), transparent 35%); height: 9px; width: 9px; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    th, td { padding: 9px 11px; border-bottom: 1px solid var(--line); text-align: left; }
     th { color: var(--muted); font-size: .75rem; text-transform: uppercase; }
     a { color: var(--accent); text-decoration: none; }
     .pill { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px 8px; font-size: .8rem; }
     .helped { color: var(--good); border-color: color-mix(in srgb, var(--good), transparent 55%); }
     .neutral, .inconclusive { color: var(--warn); border-color: color-mix(in srgb, var(--warn), transparent 55%); }
     .hurt { color: var(--bad); border-color: color-mix(in srgb, var(--bad), transparent 55%); }
+    small { color: var(--good); font-size: .8rem; margin-left: 4px; }
+    @media (max-width: 760px) { .summary { grid-template-columns: 1fr 1fr; } }
   </style>
 </head>
 <body>
   <main>
     <h1>AgentCtx Bench Reports</h1>
-    <p>Evidence for senior engineers: no-context versus AgentCtx-context task execution, token deltas, runtime deltas, evaluator score movement, scope control, and Context Point test coverage.</p>
-    <table>
-      <thead><tr><th>Task</th><th>Context point</th><th>Outcome</th><th>No-context tokens</th><th>AgentCtx tokens</th><th>Reduction</th><th>Runtime saved</th><th>Coverage</th><th>Links</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
+    <p>Test-runner view for no-context versus AgentCtx-context execution: each benchmark keeps its own concise result table.</p>
+    <section class="summary">
+      <div><span>Status</span><strong>complete</strong></div>
+      <div><span>Tests</span><strong>${sortedReports.length}</strong></div>
+      <div><span>Passed</span><strong>${passed}</strong></div>
+      <div><span>Mode</span><strong>A/B</strong></div>
+    </section>
+    ${testBlocks}
   </main>
 </body>
 </html>

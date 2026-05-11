@@ -8,13 +8,45 @@
   </p>
 </div>
 
-## Executive Metrics
+## Test Run Summary
 
-| Task | Outcome | No-context tokens | AgentCtx tokens | Token reduction | Runtime saved | Context Point coverage |
-|---|---|---:|---:|---:|---:|---:|
-| Add Token Summary to Bench JSON Report | helped | 3,500 | 1,820 | 48.0% `+48.0%` | 36.0s `+46.2%` | 1/1 |
-| Add Context Point Coverage to Bench Reports | helped | 7,000 | 3,640 | 48.0% `+48.0%` | 72.0s `+46.2%` | 2/2 |
-| Add Public-safe Context Validation to Bench and CLI | helped | 10,500 | 5,460 | 48.0% `+48.0%` | 108.0s `+46.2%` | 4/4 |
+| Status | Tests | Passed | Outcome |
+|---|---:|---:|---|
+| complete | 3 | 3 | AgentCtx improved runtime, token usage, and coverage across all mock tasks. |
+
+## Add Token Summary to Bench JSON Report
+
+| Metric | No context | AgentCtx context | Delta |
+|---|---:|---:|---:|
+| Status | completed | completed | helped |
+| Tokens | 3,500 | 1,820 | 1,680 `+48.0%` |
+| Runtime | 78.0s | 42.0s | 36.0s `+46.2%` |
+| Evaluator score | 3.3 | 4.4 | +1.1 |
+| Tool calls | 10 | 5 | -5 |
+| Context Point coverage | 0/1 | 1/1 | +1 |
+
+## Add Context Point Coverage to Bench Reports
+
+| Metric | No context | AgentCtx context | Delta |
+|---|---:|---:|---:|
+| Status | completed | completed | helped |
+| Tokens | 7,000 | 3,640 | 3,360 `+48.0%` |
+| Runtime | 156.0s | 84.0s | 72.0s `+46.2%` |
+| Evaluator score | 3.3 | 4.4 | +1.1 |
+| Tool calls | 12 | 6 | -6 |
+| Context Point coverage | 0/2 | 2/2 | +2 |
+
+## Add Public-safe Context Validation to Bench and CLI
+
+| Metric | No context | AgentCtx context | Delta |
+|---|---:|---:|---:|
+| Status | completed | completed | helped |
+| Tokens | 10,500 | 5,460 | 5,040 `+48.0%` |
+| Runtime | 234.0s | 126.0s | 108.0s `+46.2%` |
+| Evaluator score | 3.3 | 4.4 | +1.1 |
+| Tool calls | 14 | 7 | -7 |
+| Context Point coverage | 0/4 | 4/4 | +4 |
+| Public-safe validation | unchecked | passed | passed |
 
 ## Coverage
 

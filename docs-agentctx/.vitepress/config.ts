@@ -112,7 +112,6 @@ export default defineConfig({
           { text: 'Bench', link: '/bench/' },
           { text: 'Bench Reports', link: '/bench/reports' },
           { text: 'Bench Metrics', link: '/bench/metrics' },
-          { text: 'Bench Methodology', link: '/bench/methodology' },
           { text: 'Dual Agent Runner', link: '/quality-gate' },
         ],
       },

@@ -111,7 +111,6 @@ export default defineConfig({
           { text: 'Framework Support', link: '/frameworks/support-matrix' },
           { text: 'Bench', link: '/bench/' },
           { text: 'Bench Reports', link: '/bench/reports' },
-          { text: 'Bench Metrics', link: '/bench/metrics' },
           { text: 'Dual Agent Runner', link: '/quality-gate' },
         ],
       },

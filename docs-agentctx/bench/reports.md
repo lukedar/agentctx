@@ -2,7 +2,7 @@
 
 <div class="docs-hero">
   <span class="docs-kicker">Operational proof</span>
-  <h1>AgentCtx Bench Metrics dashboard.</h1>
+  <h1>AgentCtx Bench dashboard.</h1>
   <p class="docs-lead">
     Real-world benchmark evidence for React-style frontend complexity and backend + infrastructure operational complexity.
   </p>

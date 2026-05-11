@@ -38,7 +38,17 @@ try {
   // eslint-disable-next-line no-console
   console.log(`[docs-agentctx] synced benchmark results -> ${path.relative(docsDir, benchmarkDest)}`)
 } catch {
-  await writeFile(benchmarkDest, JSON.stringify({ version: 1, results: [] }, null, 2) + '\n', 'utf8')
-  // eslint-disable-next-line no-console
-  console.warn(`[docs-agentctx] no benchmark-results.json found; wrote fallback -> ${path.relative(docsDir, benchmarkDest)}`)
+  try {
+    const existing = JSON.parse(await readFile(benchmarkDest, 'utf8'))
+    if (Array.isArray(existing.results) && existing.results.length > 0) {
+      // eslint-disable-next-line no-console
+      console.warn(`[docs-agentctx] no benchmark-results.json found; kept committed ${path.relative(docsDir, benchmarkDest)}`)
+    } else {
+      throw new Error('committed benchmark results are empty')
+    }
+  } catch {
+    await writeFile(benchmarkDest, JSON.stringify({ version: 1, results: [] }, null, 2) + '\n', 'utf8')
+    // eslint-disable-next-line no-console
+    console.warn(`[docs-agentctx] no benchmark-results.json found; wrote fallback -> ${path.relative(docsDir, benchmarkDest)}`)
+  }
 }

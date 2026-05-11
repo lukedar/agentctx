@@ -25,16 +25,39 @@
 | Success Rate | pending real run | pending real run | not published |
 | Irrelevant Edits | pending real run | pending real run | not published |
 
-## Benchmark Matrix
+## Benchmark Matrix: React
 
-| Repo | Task | Complexity | Context Precision | Performance Delta | Tokens Delta | Runtime Delta | Status |
-|---|---|---|---:|---:|---:|---:|---|
-| React | Add React test metadata summary | 5+ days | pending | pending | pending | pending | real run required |
-| React | Add package Context Point mapping | 10+ days | pending | pending | pending | pending | real run required |
-| React | Add cross-package regression benchmark | 15+ days | pending | pending | pending | pending | real run required |
-| .NET backend | Add service command summary | 5+ days | pending | pending | pending | pending | real run required |
-| .NET backend | Add API-to-data Context Mesh map | 10+ days | pending | pending | pending | pending | real run required |
-| .NET backend | Add infrastructure-aware operational context report | 15+ days | pending | pending | pending | pending | real run required |
+| Task | Field | Value |
+|---|---|---|
+| Add React test metadata summary | Complexity | 5+ days |
+| Add React test metadata summary | Context Precision | pending real run |
+| Add React test metadata summary | Performance Delta | not published |
+| Add React test metadata summary | Status | real run required |
+| Add package Context Point mapping | Complexity | 10+ days |
+| Add package Context Point mapping | Context Precision | pending real run |
+| Add package Context Point mapping | Performance Delta | not published |
+| Add package Context Point mapping | Status | real run required |
+| Add cross-package regression benchmark | Complexity | 15+ days |
+| Add cross-package regression benchmark | Context Precision | pending real run |
+| Add cross-package regression benchmark | Performance Delta | not published |
+| Add cross-package regression benchmark | Status | real run required |
+
+## Benchmark Matrix: .NET Backend
+
+| Task | Field | Value |
+|---|---|---|
+| Add service command summary | Complexity | 5+ days |
+| Add service command summary | Context Precision | pending real run |
+| Add service command summary | Performance Delta | not published |
+| Add service command summary | Status | real run required |
+| Add API-to-data Context Mesh map | Complexity | 10+ days |
+| Add API-to-data Context Mesh map | Context Precision | pending real run |
+| Add API-to-data Context Mesh map | Performance Delta | not published |
+| Add API-to-data Context Mesh map | Status | real run required |
+| Add infrastructure-aware operational context report | Complexity | 15+ days |
+| Add infrastructure-aware operational context report | Context Precision | pending real run |
+| Add infrastructure-aware operational context report | Performance Delta | not published |
+| Add infrastructure-aware operational context report | Status | real run required |
 
 ## React
 

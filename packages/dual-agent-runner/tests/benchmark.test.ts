@@ -253,4 +253,29 @@ describe('benchmark', () => {
     expect(reportJson.publicSafeValidation.checked).toBe(true)
     expect(reportJson.coverageByContextPoint.length).toBeGreaterThan(0)
   })
+
+  it('generates analytical metrics for the real-world validation suite', async () => {
+    const repo = await mkRepo()
+    const repoRoot = path.resolve(__dirname, '../../..')
+    const suitePath = path.join(repoRoot, 'bench/suites/real-world-validation.md')
+    const suite = await parseBenchmarkSuiteFile(suitePath)
+    const tasks = await Promise.all(
+      suite.tasks.map((taskPath) => parseBenchmarkTaskFile(path.resolve(path.dirname(suitePath), taskPath))),
+    )
+
+    const result = await runBenchmarkTasks(repo, tasks)
+    const indexHtml = await fs.readFile(result.reportIndexPath, 'utf8')
+    const detailHtml = await fs.readFile(
+      path.join(repo, '.agentctx/bench/reports/react/react-large-cross-package-regression-benchmark.html'),
+      'utf8',
+    )
+
+    expect(result.reports).toHaveLength(6)
+    expect(result.reports.map((report) => report.operationalScope.benchmarkRepo)).toContain('React')
+    expect(result.reports.map((report) => report.operationalScope.benchmarkRepo)).toContain('Backend + Infra')
+    expect(result.reports.every((report) => report.metrics.performanceImprovementPercent > 0)).toBe(true)
+    expect(indexHtml).toContain('Benchmark Matrix')
+    expect(indexHtml).toContain('Context Precision')
+    expect(detailHtml).toContain('Operational Metrics')
+  })
 })

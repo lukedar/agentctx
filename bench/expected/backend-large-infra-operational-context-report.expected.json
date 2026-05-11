@@ -1,0 +1,1 @@
+{"taskId":"backend-large-infra-operational-context-report","expectedContextPoints":["api-services","workers","database","infra","observability","security","tests"],"requiredReportFields":["operationalScope","metrics","tokenSummary"],"mustPass":["metrics","coverage"]}

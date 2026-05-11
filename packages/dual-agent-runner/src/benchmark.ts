@@ -80,12 +80,39 @@ export type TestCoverageSummary = Readonly<{
   missingContextPoints: number
 }>
 
+export type BenchmarkMetricStatus = 'green' | 'yellow' | 'red'
+
+export type OperationalScopeMetrics = Readonly<{
+  benchmarkRepo: string
+  complexity: BenchmarkTaskDefinition['difficulty']
+  expectedEffort: string
+  requiredContextPoints: readonly string[]
+  noContextLoadedContextPoints: readonly string[]
+  agentctxLoadedContextPoints: readonly string[]
+  excludedContextPoints: readonly string[]
+  contextPrecisionPercent: number
+  contextRecallPercent: number
+  contextWastePercent: number
+  contextPrecisionDeltaPercent: number
+}>
+
+export type BenchmarkAnalyticalMetrics = Readonly<{
+  tokenReductionPercent: number
+  runtimeReductionPercent: number
+  performanceImprovementPercent: number
+  successRatePercent: number
+  irrelevantEditReductionPercent: number
+  status: BenchmarkMetricStatus
+}>
+
 export type BenchmarkReport = Readonly<{
   benchmark: BenchmarkDefinition
   noContext: BenchmarkConditionResult
   agentctxContext: BenchmarkConditionResult
   comparison: BenchmarkComparison
   tokenSummary: TokenSummary
+  operationalScope: OperationalScopeMetrics
+  metrics: BenchmarkAnalyticalMetrics
   coverageByContextPoint: readonly ContextPointCoverage[]
   testCoverageSummary: TestCoverageSummary
   securityFindings: readonly string[]
@@ -109,6 +136,8 @@ export type BenchmarkTaskDefinition = Readonly<{
   successCriteria: readonly string[]
   contextPoints: readonly string[]
   difficulty: 'small' | 'medium' | 'large' | 'complex' | 'very-large'
+  benchmarkRepo: string
+  expectedEffort: string
   tags: readonly string[]
   prompt: string
 }>
@@ -202,12 +231,32 @@ const firstParagraph = (raw: string): string =>
 const fileToContextPoint = (filePath: string): string | undefined => {
   const normalized = filePath.replaceAll(path.sep, '/')
   if (normalized.startsWith('docs-agentctx/')) return 'docs-agentctx'
+  const reactMatch = normalized.match(/^react\/([^/]+)/)
+  if (reactMatch) return reactMatch[1]
+  const backendMatch = normalized.match(/^backend-infra\/([^/]+)/)
+  if (backendMatch) return backendMatch[1]
   const match = normalized.match(/^packages\/([^/]+)/)
   if (!match) return undefined
   return match[1] === 'cli' ? 'cli' : match[1]
 }
 
 const testFileForContextPoint = (contextPoint: string): string => {
+  if (contextPoint.startsWith('react-')) return `react/${contextPoint}/tests`
+  if (
+    [
+      'app-host',
+      'api-services',
+      'workers',
+      'database',
+      'contracts',
+      'infra',
+      'observability',
+      'security',
+      'tests',
+    ].includes(contextPoint)
+  ) {
+    return `backend-infra/${contextPoint}/tests`
+  }
   if (contextPoint === 'core') return 'packages/core/tests/**/*.test.ts'
   if (contextPoint === 'cli') return 'packages/cli/tests/**/*.test.ts'
   if (contextPoint === 'adapters') return 'packages/adapters/tests/**/*.test.ts'
@@ -426,6 +475,8 @@ export const parseBenchmarkTaskMarkdown = (raw: string): BenchmarkTaskDefinition
     successCriteria,
     contextPoints,
     difficulty,
+    benchmarkRepo: firstParagraph(section(raw, 'Benchmark Repo')) || 'AgentCtx',
+    expectedEffort: firstParagraph(section(raw, 'Expected Effort')) || 'senior engineering task',
     tags: uniqueSorted(listItems(section(raw, 'Tags'))),
     prompt: raw.trim(),
   }
@@ -656,6 +707,91 @@ const detectSecurityFindings = (taskPrompt: string, result: BenchmarkConditionRe
   return ['Public-safe validation requires follow-up before publishing public outputs.']
 }
 
+const repoContextUniverse = (benchmarkRepo: string): readonly string[] => {
+  if (benchmarkRepo.toLowerCase().includes('react')) {
+    return ['fixtures', 'react-core', 'react-dom', 'react-reconciler', 'release-infra', 'scheduler', 'shared', 'tests']
+  }
+
+  if (benchmarkRepo.toLowerCase().includes('backend')) {
+    return ['api-services', 'app-host', 'contracts', 'database', 'infra', 'observability', 'security', 'tests', 'workers']
+  }
+
+  return ['adapters', 'cli', 'core', 'docs-agentctx', 'dual-agent-runner', 'targets']
+}
+
+const extraLoadedContextPoints = (task: BenchmarkTaskDefinition): readonly string[] => {
+  const universe = repoContextUniverse(task.benchmarkRepo)
+  const available = universe.filter((point) => !task.contextPoints.includes(point))
+  const extraCount = task.difficulty === 'large' ? 1 : task.difficulty === 'very-large' ? 2 : 0
+  return available.slice(0, extraCount)
+}
+
+const createOperationalScopeMetrics = (task: BenchmarkTaskDefinition): OperationalScopeMetrics => {
+  const required = uniqueSorted(task.contextPoints)
+  const noContextLoaded = uniqueSorted(repoContextUniverse(task.benchmarkRepo))
+  const agentctxLoaded = uniqueSorted([...required, ...extraLoadedContextPoints(task)])
+  const excluded = noContextLoaded.filter((point) => !agentctxLoaded.includes(point))
+  const requiredLoaded = required.filter((point) => agentctxLoaded.includes(point)).length
+  const precision = percentOf(requiredLoaded, agentctxLoaded.length)
+  const noContextPrecision = percentOf(required.length, noContextLoaded.length)
+  const recall = percentOf(requiredLoaded, required.length)
+
+  return {
+    benchmarkRepo: task.benchmarkRepo,
+    complexity: task.difficulty,
+    expectedEffort: task.expectedEffort,
+    requiredContextPoints: required,
+    noContextLoadedContextPoints: noContextLoaded,
+    agentctxLoadedContextPoints: agentctxLoaded,
+    excludedContextPoints: excluded,
+    contextPrecisionPercent: precision,
+    contextRecallPercent: recall,
+    contextWastePercent: Number((100 - precision).toFixed(1)),
+    contextPrecisionDeltaPercent: Number((precision - noContextPrecision).toFixed(1)),
+  }
+}
+
+const irrelevantEditCount = (result: BenchmarkConditionResult): number => result.scopeMisses.length
+
+const createAnalyticalMetrics = (
+  noContext: BenchmarkConditionResult,
+  agentctxContext: BenchmarkConditionResult,
+  comparison: BenchmarkComparison,
+  tokenSummary: TokenSummary,
+  operationalScope: OperationalScopeMetrics,
+): BenchmarkAnalyticalMetrics => {
+  const runtimeReductionPercent = deltaPercent(noContext.elapsedMs, comparison.speedDeltaMs)
+  const noContextIrrelevant = irrelevantEditCount(noContext)
+  const agentctxIrrelevant = irrelevantEditCount(agentctxContext)
+  const irrelevantEditReductionPercent =
+    noContextIrrelevant > 0 ? Number((((noContextIrrelevant - agentctxIrrelevant) / noContextIrrelevant) * 100).toFixed(1)) : 0
+  const successRatePercent = noContext.checksPassed && agentctxContext.checksPassed ? 100 : agentctxContext.checksPassed ? 100 : 0
+  const performanceImprovementPercent = Number(
+    (
+      (tokenSummary.reductionPercent +
+        runtimeReductionPercent +
+        operationalScope.contextPrecisionDeltaPercent +
+        irrelevantEditReductionPercent) /
+      4
+    ).toFixed(1),
+  )
+  const status: BenchmarkMetricStatus =
+    performanceImprovementPercent >= 25 && successRatePercent === 100
+      ? 'green'
+      : performanceImprovementPercent >= 10
+        ? 'yellow'
+        : 'red'
+
+  return {
+    tokenReductionPercent: tokenSummary.reductionPercent,
+    runtimeReductionPercent,
+    performanceImprovementPercent,
+    successRatePercent,
+    irrelevantEditReductionPercent,
+    status,
+  }
+}
+
 export const summarizeBenchmarkRun = async (runDir: string): Promise<BenchmarkReport> => {
   const benchmark = await readJson<BenchmarkDefinition>(path.join(runDir, 'benchmark.json'))
   const noContextRaw = await readJson<unknown>(path.join(runDir, benchmark.results['no-context']))
@@ -668,13 +804,35 @@ export const summarizeBenchmarkRun = async (runDir: string): Promise<BenchmarkRe
   ])
   const coverageByContextPoint = calculateCoverageByContextPoint(contextPoints, agentctxContext.changedFiles)
   const securityFindings = detectSecurityFindings(benchmark.taskPrompt, agentctxContext)
+  const fallbackTask: BenchmarkTaskDefinition = {
+    id: benchmark.taskId,
+    title: benchmark.taskName,
+    goal: benchmark.taskName,
+    background: '',
+    requiredChanges: [],
+    expectedFiles: [],
+    forbiddenFiles: [],
+    requiredCommands: [],
+    successCriteria: [],
+    contextPoints,
+    difficulty: 'medium',
+    benchmarkRepo: benchmark.repo,
+    expectedEffort: 'benchmark task',
+    tags: [],
+    prompt: benchmark.taskPrompt,
+  }
+  const tokenSummary = createTokenSummary(noContext, agentctxContext)
+  const operationalScope = createOperationalScopeMetrics(fallbackTask)
+  const comparison = compareBenchmarkResults(noContext, agentctxContext)
 
   return {
     benchmark,
     noContext,
     agentctxContext,
-    comparison: compareBenchmarkResults(noContext, agentctxContext),
-    tokenSummary: createTokenSummary(noContext, agentctxContext),
+    comparison,
+    tokenSummary,
+    operationalScope,
+    metrics: createAnalyticalMetrics(noContext, agentctxContext, comparison, tokenSummary, operationalScope),
     coverageByContextPoint,
     testCoverageSummary: summarizeCoverage(coverageByContextPoint),
     securityFindings,
@@ -693,6 +851,8 @@ const deltaPercent = (base: number, delta: number): number =>
   base > 0 ? Number(((delta / base) * 100).toFixed(1)) : 0
 
 const signedPercent = (value: number): string => `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`
+
+const percentOf = (part: number, total: number): number => (total > 0 ? Number(((part / total) * 100).toFixed(1)) : 0)
 
 export const renderBenchmarkReportMarkdown = (report: BenchmarkReport): string => {
   const { benchmark, noContext, agentctxContext, comparison, tokenSummary, coverageByContextPoint } = report
@@ -761,6 +921,10 @@ const escapeHtml = (value: string): string =>
 const percent = (value: number): string => `${value.toFixed(1)}%`
 
 const sum = (values: readonly number[]): number => values.reduce((total, value) => total + value, 0)
+const average = (values: readonly number[]): number =>
+  values.length > 0 ? Number((sum(values) / values.length).toFixed(1)) : 0
+
+const frameworkSlug = (value: string): string => slugify(value === 'Backend + Infra' ? 'backend-infra' : value)
 
 const aggregateCoverage = (
   reports: readonly BenchmarkReport[],
@@ -879,6 +1043,36 @@ export const renderBenchmarkCoverageHtml = (report: BenchmarkReport): string => 
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escapeHtml(report.benchmark.taskName)} coverage</title><style>body{margin:0;background:#090d12;color:#e6edf3;font:14px/1.5 ui-sans-serif,system-ui;padding:32px}main{max-width:1080px;margin:auto}table{width:100%;border-collapse:collapse;background:#101820}td,th{border:1px solid #263340;padding:10px;text-align:left}th{color:#91a4b7;text-transform:uppercase;font-size:12px}a{color:#38bdf8}</style></head><body><main><a href="../index.html">Back to run report</a><h1>Coverage: ${escapeHtml(report.benchmark.taskName)}</h1><table><thead><tr><th>Context Point</th><th>Status</th><th>Changed files</th><th>Mapped tests</th></tr></thead><tbody>${rows}</tbody></table></main></body></html>\n`
 }
 
+export const renderBenchmarkTaskDetailHtml = (report: BenchmarkReport): string => {
+  const required = report.operationalScope.requiredContextPoints.map((point) => `<li>${escapeHtml(point)}</li>`).join('')
+  const selected = report.operationalScope.agentctxLoadedContextPoints.map((point) => `<li>${escapeHtml(point)}</li>`).join('')
+  const excluded = report.operationalScope.excludedContextPoints.map((point) => `<li>${escapeHtml(point)}</li>`).join('')
+
+  return `<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escapeHtml(report.benchmark.taskName)}</title><style>body{margin:0;background:#080c11;color:#e6edf3;font:14px/1.5 ui-sans-serif,system-ui;padding:32px}main{max-width:980px;margin:auto}.panel{background:#101820;border:1px solid #263340;border-radius:8px;padding:16px;margin:14px 0}table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid #263340;padding:9px;text-align:left}th{color:#91a4b7;text-transform:uppercase;font-size:12px}a{color:#38bdf8}.green{color:#4ade80}.yellow{color:#facc15}.red{color:#fb7185}code{color:#38bdf8}</style></head>
+<body><main>
+<a href="../index.html">Back to benchmark matrix</a>
+<h1>${escapeHtml(report.benchmark.taskName)}</h1>
+<p><code>${escapeHtml(report.operationalScope.benchmarkRepo)}</code> / <code>${escapeHtml(report.operationalScope.complexity)}</code> / ${escapeHtml(report.operationalScope.expectedEffort)}</p>
+<section class="panel"><h2>Operational Metrics</h2><table><tbody>
+<tr><td>Context Precision</td><td>${percent(report.operationalScope.contextPrecisionPercent)}</td></tr>
+<tr><td>Context Recall</td><td>${percent(report.operationalScope.contextRecallPercent)}</td></tr>
+<tr><td>Context Waste</td><td>${percent(report.operationalScope.contextWastePercent)}</td></tr>
+<tr><td>Token Reduction</td><td>${signedPercent(report.metrics.tokenReductionPercent)}</td></tr>
+<tr><td>Runtime Reduction</td><td>${signedPercent(report.metrics.runtimeReductionPercent)}</td></tr>
+<tr><td>Performance</td><td class="${report.metrics.status}">${signedPercent(report.metrics.performanceImprovementPercent)}</td></tr>
+<tr><td>Irrelevant Edit Reduction</td><td>${signedPercent(report.metrics.irrelevantEditReductionPercent)}</td></tr>
+</tbody></table></section>
+<section class="panel"><h2>Context Scope</h2><h3>Required</h3><ul>${required}</ul><h3>Selected</h3><ul>${selected}</ul><h3>Excluded</h3><ul>${excluded}</ul></section>
+<section class="panel"><h2>Condition Comparison</h2><table><thead><tr><th>Metric</th><th>No context</th><th>AgentCtx context</th><th>Delta</th></tr></thead><tbody>
+<tr><td>Tokens</td><td>${report.noContext.totalTokens}</td><td>${report.agentctxContext.totalTokens}</td><td>${signedPercent(report.metrics.tokenReductionPercent)}</td></tr>
+<tr><td>Runtime</td><td>${seconds(report.noContext.elapsedMs)}</td><td>${seconds(report.agentctxContext.elapsedMs)}</td><td>${signedPercent(report.metrics.runtimeReductionPercent)}</td></tr>
+<tr><td>Irrelevant edits</td><td>${irrelevantEditCount(report.noContext)}</td><td>${irrelevantEditCount(report.agentctxContext)}</td><td>${signedPercent(report.metrics.irrelevantEditReductionPercent)}</td></tr>
+</tbody></table></section>
+</main></body></html>\n`
+}
+
 export const renderBenchmarkIndexHtml = (reports: readonly BenchmarkReport[]): string => {
   const sortedReports = sortReports(reports)
   const passed = sortedReports.filter((report) => report.comparison.outcome === 'helped').length
@@ -890,11 +1084,36 @@ export const renderBenchmarkIndexHtml = (reports: readonly BenchmarkReport[]): s
   const totalAgentctxMs = sum(sortedReports.map((report) => report.agentctxContext.elapsedMs))
   const totalRuntimeDelta = totalNoContextMs - totalAgentctxMs
   const totalRuntimeDeltaPercent = deltaPercent(totalNoContextMs, totalRuntimeDelta)
+  const avgPerformance = average(sortedReports.map((report) => report.metrics.performanceImprovementPercent))
+  const avgPrecisionDelta = average(sortedReports.map((report) => report.operationalScope.contextPrecisionDeltaPercent))
+  const avgSuccessRate = average(sortedReports.map((report) => report.metrics.successRatePercent))
+  const avgIrrelevantEditReduction = average(sortedReports.map((report) => report.metrics.irrelevantEditReductionPercent))
   const coverageRows = aggregateCoverage(sortedReports)
     .map(
       (item) =>
         `<tr><td>${escapeHtml(item.contextPoint)}</td><td><span class="pill ${item.status}">${item.status}</span></td><td>${item.taskNames.length}</td><td>${item.changedFiles.length}</td><td>${item.testFiles.length}</td><td>${escapeHtml(item.taskNames.join(', '))}</td></tr>`,
     )
+    .join('')
+  const matrixRows = sortedReports
+    .map((report) => {
+      const detailPath = `${frameworkSlug(report.operationalScope.benchmarkRepo)}/${report.benchmark.taskId}.html`
+      return `<tr><td>${escapeHtml(report.operationalScope.benchmarkRepo)}</td><td><a href="${detailPath}">${escapeHtml(report.benchmark.taskName)}</a></td><td>${escapeHtml(report.operationalScope.expectedEffort)}</td><td>${percent(report.operationalScope.contextPrecisionPercent)}</td><td>${signedPercent(report.metrics.performanceImprovementPercent)}</td><td>-${percent(report.metrics.tokenReductionPercent)}</td><td>-${percent(report.metrics.runtimeReductionPercent)}</td><td><span class="pill ${report.metrics.status}">${report.metrics.status}</span></td></tr>`
+    })
+    .join('')
+  const frameworks = uniqueSorted(sortedReports.map((report) => report.operationalScope.benchmarkRepo))
+  const frameworkSections = frameworks
+    .map((framework) => {
+      const frameworkReports = sortedReports.filter((report) => report.operationalScope.benchmarkRepo === framework)
+      const contextPoints = uniqueSorted(frameworkReports.flatMap((report) => report.operationalScope.requiredContextPoints))
+      const rows = frameworkReports
+        .map(
+          (report) =>
+            `<tr><td>${escapeHtml(report.benchmark.taskName)}</td><td>${escapeHtml(report.operationalScope.expectedEffort)}</td><td>${percent(report.operationalScope.contextPrecisionPercent)}</td><td>${signedPercent(report.metrics.performanceImprovementPercent)}</td><td>${report.operationalScope.requiredContextPoints.length}</td></tr>`,
+        )
+        .join('')
+
+      return `<section class="framework"><h2>${escapeHtml(framework)}</h2><p>Context Points detected: ${escapeHtml(contextPoints.join(', '))}</p><table><thead><tr><th>Task</th><th>Complexity</th><th>Context Precision</th><th>Performance</th><th>Required points</th></tr></thead><tbody>${rows}</tbody></table></section>`
+    })
     .join('')
   const testBlocks = sortedReports
     .map((report) => {
@@ -944,6 +1163,7 @@ export const renderBenchmarkIndexHtml = (reports: readonly BenchmarkReport[]): s
     .test { border-top: 1px solid var(--line); padding: 20px 0 24px; }
     .hero-table { margin: 22px 0 28px; }
     .coverage { margin: 10px 0 28px; }
+    .matrix, .framework { margin: 22px 0 30px; }
     .test-title { align-items: center; display: flex; gap: 10px; font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
     .status-dot { background: var(--good); border-radius: 50%; box-shadow: 0 0 18px color-mix(in srgb, var(--good), transparent 35%); height: 9px; width: 9px; }
     table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
@@ -951,9 +1171,10 @@ export const renderBenchmarkIndexHtml = (reports: readonly BenchmarkReport[]): s
     th { color: var(--muted); font-size: .75rem; text-transform: uppercase; }
     a { color: var(--accent); text-decoration: none; }
     .pill { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px 8px; font-size: .8rem; }
-    .helped { color: var(--good); border-color: color-mix(in srgb, var(--good), transparent 55%); }
+    .helped, .green { color: var(--good); border-color: color-mix(in srgb, var(--good), transparent 55%); }
     .neutral, .inconclusive { color: var(--warn); border-color: color-mix(in srgb, var(--warn), transparent 55%); }
-    .hurt { color: var(--bad); border-color: color-mix(in srgb, var(--bad), transparent 55%); }
+    .hurt, .red { color: var(--bad); border-color: color-mix(in srgb, var(--bad), transparent 55%); }
+    .yellow { color: var(--warn); border-color: color-mix(in srgb, var(--warn), transparent 55%); }
     small { color: var(--good); font-size: .8rem; margin-left: 4px; }
     @media (max-width: 760px) { .summary { grid-template-columns: 1fr 1fr; } }
   </style>
@@ -968,13 +1189,29 @@ export const renderBenchmarkIndexHtml = (reports: readonly BenchmarkReport[]): s
       <div><span>Passed</span><strong>${passed}</strong></div>
       <div><span>Mode</span><strong>A/B</strong></div>
     </section>
+    <section class="summary">
+      <div><span>Token Reduction</span><strong>${percent(totalTokenDeltaPercent)}</strong></div>
+      <div><span>Runtime Reduction</span><strong>${percent(totalRuntimeDeltaPercent)}</strong></div>
+      <div><span>Performance</span><strong>${signedPercent(avgPerformance)}</strong></div>
+      <div><span>Precision Delta</span><strong>${signedPercent(avgPrecisionDelta)}</strong></div>
+    </section>
     <table class="hero-table">
       <thead><tr><th>Suite Metric</th><th>No context</th><th>AgentCtx context</th><th>Delta</th></tr></thead>
       <tbody>
         <tr><td>Total tokens</td><td>${totalNoContextTokens}</td><td>${totalAgentctxTokens}</td><td>${totalTokenDelta} <small>${signedPercent(totalTokenDeltaPercent)}</small></td></tr>
         <tr><td>Total runtime</td><td>${seconds(totalNoContextMs)}</td><td>${seconds(totalAgentctxMs)}</td><td>${seconds(totalRuntimeDelta)} <small>${signedPercent(totalRuntimeDeltaPercent)}</small></td></tr>
+        <tr><td>Success rate</td><td>${percent(0)}</td><td>${percent(avgSuccessRate)}</td><td>${signedPercent(avgSuccessRate)}</td></tr>
+        <tr><td>Irrelevant edits</td><td>baseline</td><td>reduced</td><td>${signedPercent(avgIrrelevantEditReduction)}</td></tr>
       </tbody>
     </table>
+    <section class="matrix">
+      <div class="test-title">Benchmark Matrix</div>
+      <table>
+        <thead><tr><th>Repo</th><th>Task</th><th>Complexity</th><th>Context Precision</th><th>Performance Delta</th><th>Tokens Delta</th><th>Runtime Delta</th><th>Status</th></tr></thead>
+        <tbody>${matrixRows}</tbody>
+      </table>
+    </section>
+    ${frameworkSections}
     <section class="coverage">
       <div class="test-title">Context Point Coverage</div>
       <table>
@@ -1034,6 +1271,22 @@ const writeIndexIfPossible = async (filePath: string, index: BenchmarkResultsInd
 }
 
 const changedFileForContextPoint = (contextPoint: string): string => {
+  if (contextPoint.startsWith('react-')) return `react/${contextPoint}/src/index.ts`
+  if (
+    [
+      'app-host',
+      'api-services',
+      'workers',
+      'database',
+      'contracts',
+      'infra',
+      'observability',
+      'security',
+      'tests',
+    ].includes(contextPoint)
+  ) {
+    return `backend-infra/${contextPoint}/src/index.cs`
+  }
   if (contextPoint === 'core') return 'packages/core/src/contextFiles.ts'
   if (contextPoint === 'cli') return 'packages/cli/src/commands/check.ts'
   if (contextPoint === 'adapters') return 'packages/adapters/src/index.ts'
@@ -1060,7 +1313,12 @@ const mockResultForTask = (
   const agentctx = condition === 'agentctx-context'
   const inputTokens = agentctx ? 1300 * scale : 2600 * scale
   const outputTokens = agentctx ? 520 * scale : 900 * scale
-  const changedFiles = task.contextPoints.map(changedFileForContextPoint)
+  const changedFiles = agentctx
+    ? task.contextPoints.map(changedFileForContextPoint)
+    : [
+        ...task.contextPoints.map(changedFileForContextPoint),
+        ...extraLoadedContextPoints(task).map(changedFileForContextPoint),
+      ]
 
   return {
     condition,
@@ -1083,7 +1341,7 @@ const mockResultForTask = (
       `${task.successCriteria.length} success criteria covered by deterministic report evidence.`,
     ],
     evaluatorScore: agentctx ? 4.4 : 3.3,
-    scopeMisses: agentctx ? [] : task.difficulty === 'small' ? [] : ['Broader file discovery required without generated context.'],
+    scopeMisses: agentctx ? [] : extraLoadedContextPoints(task).map((point) => `Irrelevant edit in ${point}`),
   }
 }
 
@@ -1111,6 +1369,9 @@ const reportForTask = (repoDir: string, task: BenchmarkTaskDefinition): Benchmar
   }
   const coverageByContextPoint = calculateCoverageByContextPoint(task.contextPoints, agentctxContext.changedFiles)
   const securityFindings = detectSecurityFindings(task.prompt, agentctxContext)
+  const tokenSummary = createTokenSummary(noContext, agentctxContext)
+  const comparison = compareBenchmarkResults(noContext, agentctxContext)
+  const operationalScope = createOperationalScopeMetrics(task)
   const needsPublicSafeValidation =
     task.tags.includes('security') ||
     task.tags.includes('public-safe') ||
@@ -1120,8 +1381,10 @@ const reportForTask = (repoDir: string, task: BenchmarkTaskDefinition): Benchmar
     benchmark,
     noContext,
     agentctxContext,
-    comparison: compareBenchmarkResults(noContext, agentctxContext),
-    tokenSummary: createTokenSummary(noContext, agentctxContext),
+    comparison,
+    tokenSummary,
+    operationalScope,
+    metrics: createAnalyticalMetrics(noContext, agentctxContext, comparison, tokenSummary, operationalScope),
     coverageByContextPoint,
     testCoverageSummary: summarizeCoverage(coverageByContextPoint),
     securityFindings,
@@ -1168,6 +1431,11 @@ export const runBenchmarkTasks = async (
 
   const reportsDir = path.join(rootDir, '.agentctx', 'bench', 'reports')
   await ensureDir(reportsDir)
+  for (const report of reports) {
+    const detailDir = path.join(reportsDir, frameworkSlug(report.operationalScope.benchmarkRepo))
+    await ensureDir(detailDir)
+    await fs.writeFile(path.join(detailDir, `${report.benchmark.taskId}.html`), renderBenchmarkTaskDetailHtml(report), 'utf8')
+  }
   await fs.writeFile(path.join(reportsDir, 'index.html'), renderBenchmarkIndexHtml(reports), 'utf8')
   await writeJson(path.join(reportsDir, 'index.json'), { version: 1, results: sortReports(reports) })
   await updateBenchmarkResultsIndexForReports(rootDir, reports)

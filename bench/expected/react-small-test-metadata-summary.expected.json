@@ -1,0 +1,1 @@
+{"taskId":"react-small-test-metadata-summary","expectedContextPoints":["tests"],"requiredReportFields":["operationalScope","metrics","tokenSummary"],"mustPass":["metrics","coverage"]}

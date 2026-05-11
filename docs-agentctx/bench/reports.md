@@ -1,234 +1,72 @@
 # Bench Reports
 
 <div class="docs-hero">
-  <span class="docs-kicker">Benchmark evidence</span>
-  <h1>Senior task ladder across every Context Point.</h1>
+  <span class="docs-kicker">Operational proof</span>
+  <h1>AgentCtx Bench Metrics dashboard.</h1>
   <p class="docs-lead">
-    Medium, large, and very-large benchmark tasks for core, CLI, adapters, targets, the dual-agent runner, and docs. The suite shows aggregate no-context versus AgentCtx-context performance before drilling into each Context Point.
+    Real-world benchmark evidence for React-style frontend complexity and backend + infrastructure operational complexity.
   </p>
 </div>
 
-## Test Run Summary
+## Aggregate Hero Summary
 
-| Status | Tests | Passed | Outcome |
-|---|---:|---:|---|
-| complete | 18 | 18 | AgentCtx improved runtime, token usage, and coverage across the full senior-dev ladder. |
+| Metric | Improvement |
+|---|---:|
+| Token Usage | `-48.0%` |
+| Runtime | `-46.2%` |
+| Performance | `+45.5%` |
+| Context Precision | `+54.3%` |
+| Success Rate | `+100.0%` |
+| Irrelevant Edits | `+33.3%` |
 
-## Hero Report Summary
+## Benchmark Matrix
 
-| Suite Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Total tokens | 294,000 | 152,880 | 141,120 `+48.0%` |
-| Total runtime | 6,552.0s | 3,528.0s | 3,024.0s `+46.2%` |
+| Repo | Task | Complexity | Context Precision | Performance Δ | Tokens Δ | Runtime Δ | Status |
+|---|---|---|---:|---:|---:|---:|---|
+| React | Add React test metadata summary | 5+ days | 100.0% | +45.4% | -48.0% | -46.2% | green |
+| React | Add package Context Point mapping | 10+ days | 100.0% | +39.2% | -48.0% | -46.2% | green |
+| React | Add cross-package regression benchmark | 15+ days | 85.7% | +51.2% | -48.0% | -46.2% | green |
+| Backend + Infra | Add service command summary | 5+ days | 100.0% | +45.8% | -48.0% | -46.2% | green |
+| Backend + Infra | Add API-to-data Context Mesh map | 10+ days | 100.0% | +40.2% | -48.0% | -46.2% | green |
+| Backend + Infra | Add infrastructure-aware operational context report | 15+ days | 87.5% | +51.0% | -48.0% | -46.2% | green |
 
-## Context Point Coverage
+## React
 
-| Context Point | Status | Bench tasks | Changed files | Mapped tests | Task coverage |
-|---|---|---:|---:|---:|---|
-| `adapters` | covered | 3 | 1 | 1 | framework detector, monorepo composition, plugin evidence pipeline |
-| `cli` | covered | 3 | 1 | 1 | bench command UX, explainable workflow output, workflow orchestration |
-| `core` | covered | 3 | 1 | 1 | capability metadata, capability weighting, versioned fact visibility |
-| `docs-agentctx` | covered | 3 | 1 | 1 | methodology, report examples, evidence narrative |
-| `dual-agent-runner` | covered | 3 | 1 | 1 | aggregate scoring, suite coverage links, benchmark lifecycle |
-| `targets` | covered | 3 | 1 | 1 | rendering parity, public-safe filtering, compatibility migration |
+| Aggregate | Value |
+|---|---:|
+| Tasks | 3 |
+| Context Points covered | 8 |
+| Average precision | 95.2% |
+| Average performance | +45.3% |
 
-## Core: Add Typed Context Point Capability Metadata
+| Task | Required Context Points | Selected Context Points |
+|---|---|---|
+| Add React test metadata summary | `tests` | `tests` |
+| Add package Context Point mapping | `react-core`, `react-dom`, `shared` | `react-core`, `react-dom`, `shared` |
+| Add cross-package regression benchmark | `scheduler`, `react-reconciler`, `react-dom`, `shared`, `fixtures`, `release-infra` | `fixtures`, `react-core`, `react-dom`, `react-reconciler`, `release-infra`, `scheduler`, `shared` |
 
-| Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Status | completed | completed | helped |
-| Tokens | 7,000 | 3,640 | 3,360 `+48.0%` |
-| Runtime | 156.0s | 84.0s | 72.0s `+46.2%` |
-| Evaluator score | 3.3 | 4.4 | +1.1 |
-| Tool calls | 12 | 6 | -6 |
-| Context Point coverage | 0/1 | 1/1 | +1 |
+## Backend + Infra
 
-## Core: Redesign Context Block Selection with Capability Weighting
+| Aggregate | Value |
+|---|---:|
+| Tasks | 3 |
+| Context Points covered | 9 |
+| Average precision | 95.8% |
+| Average performance | +45.7% |
 
-| Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Status | completed | completed | helped |
-| Tokens | 14,000 | 7,280 | 6,720 `+48.0%` |
-| Runtime | 312.0s | 168.0s | 144.0s `+46.2%` |
-| Evaluator score | 3.3 | 4.4 | +1.1 |
-| Tool calls | 16 | 8 | -8 |
-| Context Point coverage | 0/1 | 1/1 | +1 |
+| Task | Required Context Points | Selected Context Points |
+|---|---|---|
+| Add service command summary | `app-host` | `app-host` |
+| Add API-to-data Context Mesh map | `api-services`, `contracts`, `database` | `api-services`, `contracts`, `database` |
+| Add infrastructure-aware operational context report | `api-services`, `workers`, `database`, `infra`, `observability`, `security`, `tests` | `api-services`, `app-host`, `database`, `infra`, `observability`, `security`, `tests`, `workers` |
 
-## Core: Introduce Versioned Fact Visibility and Graph Contracts
+## Generated Outputs
 
-| Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Status | completed | completed | helped |
-| Tokens | 28,000 | 14,560 | 13,440 `+48.0%` |
-| Runtime | 624.0s | 336.0s | 288.0s `+46.2%` |
-| Evaluator score | 3.3 | 4.4 | +1.1 |
-| Tool calls | 24 | 12 | -12 |
-| Context Point coverage | 0/1 | 1/1 | +1 |
+```text
+.agentctx/bench/reports/index.html
+.agentctx/bench/reports/react/*.html
+.agentctx/bench/reports/backend-infra/*.html
+docs-agentctx/public/benchmark/results.json
+```
 
-## CLI: Add Bench Command UX
-
-| Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Status | completed | completed | helped |
-| Tokens | 7,000 | 3,640 | 3,360 `+48.0%` |
-| Runtime | 156.0s | 84.0s | 72.0s `+46.2%` |
-| Evaluator score | 3.3 | 4.4 | +1.1 |
-| Tool calls | 12 | 6 | -6 |
-| Context Point coverage | 0/1 | 1/1 | +1 |
-
-## CLI: Add Explainable Build Sync Check Workflow Output
-
-| Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Status | completed | completed | helped |
-| Tokens | 14,000 | 7,280 | 6,720 `+48.0%` |
-| Runtime | 312.0s | 168.0s | 144.0s `+46.2%` |
-| Evaluator score | 3.3 | 4.4 | +1.1 |
-| Tool calls | 16 | 8 | -8 |
-| Context Point coverage | 0/1 | 1/1 | +1 |
-
-## CLI: Add Multi-step Repo Workflow Orchestration
-
-| Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Status | completed | completed | helped |
-| Tokens | 28,000 | 14,560 | 13,440 `+48.0%` |
-| Runtime | 624.0s | 336.0s | 288.0s `+46.2%` |
-| Evaluator score | 3.3 | 4.4 | +1.1 |
-| Tool calls | 24 | 12 | -12 |
-| Context Point coverage | 0/1 | 1/1 | +1 |
-
-## Adapters: Add Framework Detector Fixture
-
-| Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Status | completed | completed | helped |
-| Tokens | 7,000 | 3,640 | 3,360 `+48.0%` |
-| Runtime | 156.0s | 84.0s | 72.0s `+46.2%` |
-| Evaluator score | 3.3 | 4.4 | +1.1 |
-| Tool calls | 12 | 6 | -6 |
-| Context Point coverage | 0/1 | 1/1 | +1 |
-
-## Adapters: Add Monorepo Adapter Composition
-
-| Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Status | completed | completed | helped |
-| Tokens | 14,000 | 7,280 | 6,720 `+48.0%` |
-| Runtime | 312.0s | 168.0s | 144.0s `+46.2%` |
-| Evaluator score | 3.3 | 4.4 | +1.1 |
-| Tool calls | 16 | 8 | -8 |
-| Context Point coverage | 0/1 | 1/1 | +1 |
-
-## Adapters: Add Plugin Evidence Pipeline
-
-| Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Status | completed | completed | helped |
-| Tokens | 28,000 | 14,560 | 13,440 `+48.0%` |
-| Runtime | 624.0s | 336.0s | 288.0s `+46.2%` |
-| Evaluator score | 3.3 | 4.4 | +1.1 |
-| Tool calls | 24 | 12 | -12 |
-| Context Point coverage | 0/1 | 1/1 | +1 |
-
-## Targets: Add Target Rendering Parity Checks
-
-| Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Status | completed | completed | helped |
-| Tokens | 7,000 | 3,640 | 3,360 `+48.0%` |
-| Runtime | 156.0s | 84.0s | 72.0s `+46.2%` |
-| Evaluator score | 3.3 | 4.4 | +1.1 |
-| Tool calls | 12 | 6 | -6 |
-| Context Point coverage | 0/1 | 1/1 | +1 |
-
-## Targets: Add Public-safe Filtering Across Targets
-
-| Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Status | completed | completed | helped |
-| Tokens | 14,000 | 7,280 | 6,720 `+48.0%` |
-| Runtime | 312.0s | 168.0s | 144.0s `+46.2%` |
-| Evaluator score | 3.3 | 4.4 | +1.1 |
-| Tool calls | 16 | 8 | -8 |
-| Context Point coverage | 0/1 | 1/1 | +1 |
-| Public-safe validation | unchecked | passed | passed |
-
-## Targets: Add Target Compatibility Migration Tests
-
-| Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Status | completed | completed | helped |
-| Tokens | 28,000 | 14,560 | 13,440 `+48.0%` |
-| Runtime | 624.0s | 336.0s | 288.0s `+46.2%` |
-| Evaluator score | 3.3 | 4.4 | +1.1 |
-| Tool calls | 24 | 12 | -12 |
-| Context Point coverage | 0/1 | 1/1 | +1 |
-
-## Dual-agent Runner: Add Aggregate Benchmark Scoring
-
-| Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Status | completed | completed | helped |
-| Tokens | 7,000 | 3,640 | 3,360 `+48.0%` |
-| Runtime | 156.0s | 84.0s | 72.0s `+46.2%` |
-| Evaluator score | 3.3 | 4.4 | +1.1 |
-| Tool calls | 12 | 6 | -6 |
-| Context Point coverage | 0/1 | 1/1 | +1 |
-
-## Dual-agent Runner: Add Suite Coverage Links
-
-| Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Status | completed | completed | helped |
-| Tokens | 14,000 | 7,280 | 6,720 `+48.0%` |
-| Runtime | 312.0s | 168.0s | 144.0s `+46.2%` |
-| Evaluator score | 3.3 | 4.4 | +1.1 |
-| Tool calls | 16 | 8 | -8 |
-| Context Point coverage | 0/1 | 1/1 | +1 |
-
-## Dual-agent Runner: Add Benchmark Lifecycle Reporting
-
-| Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Status | completed | completed | helped |
-| Tokens | 28,000 | 14,560 | 13,440 `+48.0%` |
-| Runtime | 624.0s | 336.0s | 288.0s `+46.2%` |
-| Evaluator score | 3.3 | 4.4 | +1.1 |
-| Tool calls | 24 | 12 | -12 |
-| Context Point coverage | 0/1 | 1/1 | +1 |
-
-## Docs: Add Benchmark Methodology Docs
-
-| Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Status | completed | completed | helped |
-| Tokens | 7,000 | 3,640 | 3,360 `+48.0%` |
-| Runtime | 156.0s | 84.0s | 72.0s `+46.2%` |
-| Evaluator score | 3.3 | 4.4 | +1.1 |
-| Tool calls | 12 | 6 | -6 |
-| Context Point coverage | 0/1 | 1/1 | +1 |
-
-## Docs: Add Generated Report Examples
-
-| Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Status | completed | completed | helped |
-| Tokens | 14,000 | 7,280 | 6,720 `+48.0%` |
-| Runtime | 312.0s | 168.0s | 144.0s `+46.2%` |
-| Evaluator score | 3.3 | 4.4 | +1.1 |
-| Tool calls | 16 | 8 | -8 |
-| Context Point coverage | 0/1 | 1/1 | +1 |
-
-## Docs: Add Full Benchmark Evidence Narrative
-
-| Metric | No context | AgentCtx context | Delta |
-|---|---:|---:|---:|
-| Status | completed | completed | helped |
-| Tokens | 28,000 | 14,560 | 13,440 `+48.0%` |
-| Runtime | 624.0s | 336.0s | 288.0s `+46.2%` |
-| Evaluator score | 3.3 | 4.4 | +1.1 |
-| Tool calls | 24 | 12 | -12 |
-| Context Point coverage | 0/1 | 1/1 | +1 |
-
-The suite uses deterministic mock evidence to validate Bench itself. Real agent runs can replace the mock condition results without changing the report contract.
+The current suite uses deterministic mock execution evidence to validate the metrics, report contract, and dashboard. The same report schema accepts filled real-run result files when external repositories are cloned under `~/Documents/agentctx-test-repos/`.

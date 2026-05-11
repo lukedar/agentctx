@@ -1,0 +1,1 @@
+{"taskId":"backend-small-service-command-summary","expectedContextPoints":["app-host"],"requiredReportFields":["operationalScope","metrics","tokenSummary"],"mustPass":["metrics","coverage"]}

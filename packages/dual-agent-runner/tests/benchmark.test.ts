@@ -198,9 +198,17 @@ describe('benchmark', () => {
     const plan = createBenchmarkRunPlan(tasks, suite.conditions)
 
     expect(suite.conditions).toEqual(['no-context', 'agentctx-context'])
-    expect(plan).toHaveLength(3)
-    expect(plan.map((item) => item.difficulty)).toEqual(['small', 'medium', 'complex'])
-    expect(plan.at(1)?.contextPoints).toContain('core')
+    expect(plan).toHaveLength(6)
+    expect(plan.map((item) => item.difficulty)).toEqual(['small', 'small', 'medium', 'medium', 'complex', 'complex'])
+    expect(plan.at(2)?.contextPoints).toContain('core')
+    expect(plan.at(5)?.contextPoints).toEqual([
+      'adapters',
+      'cli',
+      'core',
+      'docs-agentctx',
+      'dual-agent-runner',
+      'targets',
+    ])
   })
 
   it('calculates token summary and Context Point coverage states', () => {
@@ -240,9 +248,10 @@ describe('benchmark', () => {
       'utf8',
     )
 
-    expect(result.reports).toHaveLength(3)
+    expect(result.reports).toHaveLength(6)
     expect(indexHtml).toContain('AgentCtx Bench Reports')
-    expect(indexHtml).toContain('Token')
+    expect(indexHtml).toContain('Suite Metric')
+    expect(indexHtml).toContain('Context Point Coverage')
     expect(coverageHtml).toContain('Context Point')
     expect(reportJson.publicSafeValidation.checked).toBe(true)
     expect(reportJson.coverageByContextPoint.length).toBeGreaterThan(0)

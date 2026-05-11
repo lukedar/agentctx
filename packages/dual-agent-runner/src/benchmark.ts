@@ -201,6 +201,7 @@ const firstParagraph = (raw: string): string =>
 
 const fileToContextPoint = (filePath: string): string | undefined => {
   const normalized = filePath.replaceAll(path.sep, '/')
+  if (normalized.startsWith('docs-agentctx/')) return 'docs-agentctx'
   const match = normalized.match(/^packages\/([^/]+)/)
   if (!match) return undefined
   return match[1] === 'cli' ? 'cli' : match[1]
@@ -209,8 +210,10 @@ const fileToContextPoint = (filePath: string): string | undefined => {
 const testFileForContextPoint = (contextPoint: string): string => {
   if (contextPoint === 'core') return 'packages/core/tests/**/*.test.ts'
   if (contextPoint === 'cli') return 'packages/cli/tests/**/*.test.ts'
+  if (contextPoint === 'adapters') return 'packages/adapters/tests/**/*.test.ts'
   if (contextPoint === 'targets') return 'packages/targets/tests/**/*.test.ts'
   if (contextPoint === 'dual-agent-runner') return 'packages/dual-agent-runner/tests/benchmark.test.ts'
+  if (contextPoint === 'docs-agentctx') return 'VITEPRESS_BASE=/agentctx/ pnpm -C docs-agentctx build'
   return `packages/${contextPoint}/tests/**/*.test.ts`
 }
 
@@ -751,6 +754,39 @@ const escapeHtml = (value: string): string =>
 
 const percent = (value: number): string => `${value.toFixed(1)}%`
 
+const sum = (values: readonly number[]): number => values.reduce((total, value) => total + value, 0)
+
+const aggregateCoverage = (
+  reports: readonly BenchmarkReport[],
+): readonly (ContextPointCoverage & { taskNames: readonly string[] })[] => {
+  const byPoint = new Map<string, { changedFiles: string[]; testFiles: string[]; taskNames: string[] }>()
+
+  for (const report of reports) {
+    for (const item of report.coverageByContextPoint) {
+      const existing = byPoint.get(item.contextPoint) ?? { changedFiles: [], testFiles: [], taskNames: [] }
+      existing.changedFiles.push(...item.changedFiles)
+      existing.testFiles.push(...item.testFiles)
+      existing.taskNames.push(report.benchmark.taskName)
+      byPoint.set(item.contextPoint, existing)
+    }
+  }
+
+  return [...byPoint.entries()]
+    .map(([contextPoint, value]) => {
+      const changedFiles = uniqueSorted(value.changedFiles)
+      const testFiles = uniqueSorted(value.testFiles)
+      const status: CoverageStatus =
+        changedFiles.length > 0 && testFiles.length > 0
+          ? 'covered'
+          : changedFiles.length > 0 || testFiles.length > 0
+            ? 'partial'
+            : 'missing'
+
+      return { contextPoint, changedFiles, testFiles, taskNames: uniqueSorted(value.taskNames), status }
+    })
+    .sort((a, b) => a.contextPoint.localeCompare(b.contextPoint))
+}
+
 export const renderBenchmarkReportHtml = (report: BenchmarkReport): string => {
   const { benchmark, noContext, agentctxContext, comparison, tokenSummary, testCoverageSummary } = report
   const runtimeDeltaPercent = deltaPercent(noContext.elapsedMs, comparison.speedDeltaMs)
@@ -840,6 +876,20 @@ export const renderBenchmarkCoverageHtml = (report: BenchmarkReport): string => 
 export const renderBenchmarkIndexHtml = (reports: readonly BenchmarkReport[]): string => {
   const sortedReports = sortReports(reports)
   const passed = sortedReports.filter((report) => report.comparison.outcome === 'helped').length
+  const totalNoContextTokens = sum(sortedReports.map((report) => report.noContext.totalTokens))
+  const totalAgentctxTokens = sum(sortedReports.map((report) => report.agentctxContext.totalTokens))
+  const totalTokenDelta = totalNoContextTokens - totalAgentctxTokens
+  const totalTokenDeltaPercent = deltaPercent(totalNoContextTokens, totalTokenDelta)
+  const totalNoContextMs = sum(sortedReports.map((report) => report.noContext.elapsedMs))
+  const totalAgentctxMs = sum(sortedReports.map((report) => report.agentctxContext.elapsedMs))
+  const totalRuntimeDelta = totalNoContextMs - totalAgentctxMs
+  const totalRuntimeDeltaPercent = deltaPercent(totalNoContextMs, totalRuntimeDelta)
+  const coverageRows = aggregateCoverage(sortedReports)
+    .map(
+      (item) =>
+        `<tr><td>${escapeHtml(item.contextPoint)}</td><td><span class="pill ${item.status}">${item.status}</span></td><td>${item.taskNames.length}</td><td>${item.changedFiles.length}</td><td>${item.testFiles.length}</td><td>${escapeHtml(item.taskNames.join(', '))}</td></tr>`,
+    )
+    .join('')
   const testBlocks = sortedReports
     .map((report) => {
       const runPath = `../runs/${report.benchmark.taskId}/index.html`
@@ -886,6 +936,8 @@ export const renderBenchmarkIndexHtml = (reports: readonly BenchmarkReport[]): s
     .summary span { color: var(--muted); display: block; font-size: .72rem; text-transform: uppercase; }
     .summary strong { display: block; font-size: 1.35rem; margin-top: 3px; }
     .test { border-top: 1px solid var(--line); padding: 20px 0 24px; }
+    .hero-table { margin: 22px 0 28px; }
+    .coverage { margin: 10px 0 28px; }
     .test-title { align-items: center; display: flex; gap: 10px; font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
     .status-dot { background: var(--good); border-radius: 50%; box-shadow: 0 0 18px color-mix(in srgb, var(--good), transparent 35%); height: 9px; width: 9px; }
     table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
@@ -909,6 +961,20 @@ export const renderBenchmarkIndexHtml = (reports: readonly BenchmarkReport[]): s
       <div><span>Tests</span><strong>${sortedReports.length}</strong></div>
       <div><span>Passed</span><strong>${passed}</strong></div>
       <div><span>Mode</span><strong>A/B</strong></div>
+    </section>
+    <table class="hero-table">
+      <thead><tr><th>Suite Metric</th><th>No context</th><th>AgentCtx context</th><th>Delta</th></tr></thead>
+      <tbody>
+        <tr><td>Total tokens</td><td>${totalNoContextTokens}</td><td>${totalAgentctxTokens}</td><td>${totalTokenDelta} <small>${signedPercent(totalTokenDeltaPercent)}</small></td></tr>
+        <tr><td>Total runtime</td><td>${seconds(totalNoContextMs)}</td><td>${seconds(totalAgentctxMs)}</td><td>${seconds(totalRuntimeDelta)} <small>${signedPercent(totalRuntimeDeltaPercent)}</small></td></tr>
+      </tbody>
+    </table>
+    <section class="coverage">
+      <div class="test-title">Context Point Coverage</div>
+      <table>
+        <thead><tr><th>Context Point</th><th>Status</th><th>Bench tasks</th><th>Changed files</th><th>Mapped tests</th><th>Task coverage</th></tr></thead>
+        <tbody>${coverageRows}</tbody>
+      </table>
     </section>
     ${testBlocks}
   </main>
@@ -964,8 +1030,10 @@ const writeIndexIfPossible = async (filePath: string, index: BenchmarkResultsInd
 const changedFileForContextPoint = (contextPoint: string): string => {
   if (contextPoint === 'core') return 'packages/core/src/contextFiles.ts'
   if (contextPoint === 'cli') return 'packages/cli/src/commands/check.ts'
+  if (contextPoint === 'adapters') return 'packages/adapters/src/index.ts'
   if (contextPoint === 'targets') return 'packages/targets/src/index.ts'
   if (contextPoint === 'dual-agent-runner') return 'packages/dual-agent-runner/src/benchmark.ts'
+  if (contextPoint === 'docs-agentctx') return 'docs-agentctx/bench/reports.md'
   return `packages/${contextPoint}/src/index.ts`
 }
 

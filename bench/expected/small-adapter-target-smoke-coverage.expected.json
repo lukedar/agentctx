@@ -1,0 +1,6 @@
+{
+  "taskId": "small-adapter-target-smoke-coverage",
+  "expectedContextPoints": ["adapters", "targets"],
+  "requiredReportFields": ["coverageByContextPoint"],
+  "mustPass": ["tests", "typecheck"]
+}

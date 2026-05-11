@@ -1,0 +1,6 @@
+{
+  "taskId": "complex-compiler-surface-integration",
+  "expectedContextPoints": ["core", "adapters", "targets", "cli", "dual-agent-runner", "docs-agentctx"],
+  "requiredReportFields": ["tokenSummary", "coverageByContextPoint", "testCoverageSummary"],
+  "mustPass": ["tests", "typecheck", "build", "docs-build"]
+}

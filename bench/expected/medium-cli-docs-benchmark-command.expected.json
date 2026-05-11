@@ -1,0 +1,6 @@
+{
+  "taskId": "medium-cli-docs-benchmark-command",
+  "expectedContextPoints": ["dual-agent-runner", "docs-agentctx"],
+  "requiredReportFields": ["tokenSummary", "coverageByContextPoint"],
+  "mustPass": ["tests", "typecheck", "docs-build"]
+}

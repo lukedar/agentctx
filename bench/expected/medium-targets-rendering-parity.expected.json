@@ -1,1 +1,0 @@
-{"taskId":"medium-targets-rendering-parity","expectedContextPoints":["targets"],"requiredReportFields":["tokenSummary","coverageByContextPoint"],"mustPass":["tests","typecheck"]}

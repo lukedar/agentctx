@@ -1,0 +1,374 @@
+{
+  "artifact": "agentCtx_graph",
+  "commands": [
+    {
+      "command": "pnpm --dir packages/agentctx/node_modules/cac build",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/node_modules/cac/package.json",
+      "id": "agentctx-build",
+      "purpose": "Build project"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/node_modules/fast-glob build",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/node_modules/fast-glob/package.json",
+      "id": "agentctx-build",
+      "purpose": "Build project"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/node_modules/pathe build",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/node_modules/pathe/package.json",
+      "id": "agentctx-build",
+      "purpose": "Build project"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/node_modules/tsup build",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/node_modules/tsup/package.json",
+      "id": "agentctx-build",
+      "purpose": "Build project"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/node_modules/zod build",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/node_modules/zod/package.json",
+      "id": "agentctx-build",
+      "purpose": "Build project"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx build",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/package.json",
+      "id": "agentctx-build",
+      "purpose": "Build project"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/test/fixtures/basic-js build",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/test/fixtures/basic-js/package.json",
+      "id": "agentctx-build",
+      "purpose": "Build project"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/test/fixtures/frontend-api/apps/web build",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/test/fixtures/frontend-api/apps/web/package.json",
+      "id": "agentctx-build",
+      "purpose": "Build project"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/test/fixtures/frontend-api build",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/test/fixtures/frontend-api/package.json",
+      "id": "agentctx-build",
+      "purpose": "Build project"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/test/fixtures/frontend-api/packages/contracts build",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/test/fixtures/frontend-api/packages/contracts/package.json",
+      "id": "agentctx-build",
+      "purpose": "Build project"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/node_modules/pathe dev",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/node_modules/pathe/package.json",
+      "id": "agentctx-dev",
+      "purpose": "Start development server"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/node_modules/tsup dev",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/node_modules/tsup/package.json",
+      "id": "agentctx-dev",
+      "purpose": "Start development server"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/test/fixtures/frontend-api/apps/web dev",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/test/fixtures/frontend-api/apps/web/package.json",
+      "id": "agentctx-dev",
+      "purpose": "Start development server"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/test/fixtures/frontend-api/services/api dev",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/test/fixtures/frontend-api/services/api/package.json",
+      "id": "agentctx-dev",
+      "purpose": "Start development server"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/node_modules/fast-glob lint",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/node_modules/fast-glob/package.json",
+      "id": "agentctx-lint",
+      "purpose": "Run lint checks"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/node_modules/fs-extra lint",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/node_modules/fs-extra/package.json",
+      "id": "agentctx-lint",
+      "purpose": "Run lint checks"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/node_modules/pathe lint",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/node_modules/pathe/package.json",
+      "id": "agentctx-lint",
+      "purpose": "Run lint checks"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/node_modules/cac test",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/node_modules/cac/package.json",
+      "id": "agentctx-test",
+      "purpose": "Run tests"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/node_modules/fast-glob test",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/node_modules/fast-glob/package.json",
+      "id": "agentctx-test",
+      "purpose": "Run tests"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/node_modules/fs-extra test",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/node_modules/fs-extra/package.json",
+      "id": "agentctx-test",
+      "purpose": "Run tests"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/node_modules/pathe test",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/node_modules/pathe/package.json",
+      "id": "agentctx-test",
+      "purpose": "Run tests"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/node_modules/tsup test",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/node_modules/tsup/package.json",
+      "id": "agentctx-test",
+      "purpose": "Run tests"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/node_modules/zod test",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/node_modules/zod/package.json",
+      "id": "agentctx-test",
+      "purpose": "Run tests"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx test",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/package.json",
+      "id": "agentctx-test",
+      "purpose": "Run tests"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/test/fixtures/basic-js test",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/test/fixtures/basic-js/package.json",
+      "id": "agentctx-test",
+      "purpose": "Run tests"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/test/fixtures/frontend-api/apps/web test",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/test/fixtures/frontend-api/apps/web/package.json",
+      "id": "agentctx-test",
+      "purpose": "Run tests"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/test/fixtures/frontend-api test",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/test/fixtures/frontend-api/package.json",
+      "id": "agentctx-test",
+      "purpose": "Run tests"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx/test/fixtures/frontend-api/services/api test",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/test/fixtures/frontend-api/services/api/package.json",
+      "id": "agentctx-test",
+      "purpose": "Run tests"
+    },
+    {
+      "command": "pnpm --dir packages/agentctx typecheck",
+      "context_point": "agentctx",
+      "evidence": "packages/agentctx/package.json",
+      "id": "agentctx-typecheck",
+      "purpose": "Run type checks"
+    },
+    {
+      "command": "pnpm --dir packages/dual-agent-runner/node_modules/tsup build",
+      "context_point": "dual-agent-runner",
+      "evidence": "packages/dual-agent-runner/node_modules/tsup/package.json",
+      "id": "dual-agent-runner-build",
+      "purpose": "Build project"
+    },
+    {
+      "command": "pnpm --dir packages/dual-agent-runner build",
+      "context_point": "dual-agent-runner",
+      "evidence": "packages/dual-agent-runner/package.json",
+      "id": "dual-agent-runner-build",
+      "purpose": "Build project"
+    },
+    {
+      "command": "pnpm --dir packages/dual-agent-runner/node_modules/tsup dev",
+      "context_point": "dual-agent-runner",
+      "evidence": "packages/dual-agent-runner/node_modules/tsup/package.json",
+      "id": "dual-agent-runner-dev",
+      "purpose": "Start development server"
+    },
+    {
+      "command": "pnpm --dir packages/dual-agent-runner/node_modules/tsup test",
+      "context_point": "dual-agent-runner",
+      "evidence": "packages/dual-agent-runner/node_modules/tsup/package.json",
+      "id": "dual-agent-runner-test",
+      "purpose": "Run tests"
+    },
+    {
+      "command": "pnpm --dir packages/dual-agent-runner test",
+      "context_point": "dual-agent-runner",
+      "evidence": "packages/dual-agent-runner/package.json",
+      "id": "dual-agent-runner-test",
+      "purpose": "Run tests"
+    },
+    {
+      "command": "pnpm --dir packages/dual-agent-runner typecheck",
+      "context_point": "dual-agent-runner",
+      "evidence": "packages/dual-agent-runner/package.json",
+      "id": "dual-agent-runner-typecheck",
+      "purpose": "Run type checks"
+    },
+    {
+      "command": "pnpm build",
+      "context_point": "global",
+      "evidence": "package.json",
+      "id": "global-build",
+      "purpose": "Build project"
+    },
+    {
+      "command": "pnpm test",
+      "context_point": "global",
+      "evidence": "package.json",
+      "id": "global-test",
+      "purpose": "Run tests"
+    },
+    {
+      "command": "pnpm typecheck",
+      "context_point": "global",
+      "evidence": "package.json",
+      "id": "global-typecheck",
+      "purpose": "Run type checks"
+    }
+  ],
+  "edges": [],
+  "nodes": [
+    {
+      "artifact": ".context/context-points/agentctx.context.md",
+      "confidence": "high",
+      "frameworks": [
+        "Express",
+        "Jest",
+        "React",
+        "TypeScript",
+        "Vite",
+        "Vitest"
+      ],
+      "id": "agentctx",
+      "languages": [
+        "JSON",
+        "JavaScript",
+        "Markdown",
+        "TypeScript"
+      ],
+      "name": "Agentctx",
+      "primary_paths": [
+        "packages/agentctx"
+      ],
+      "related_paths": [
+        "packages/agentctx/dist/chunk-IJTA5T2F.js",
+        "packages/agentctx/dist/cli/cli.d.ts",
+        "packages/agentctx/dist/cli/cli.js"
+      ],
+      "risk_level": "medium",
+      "type": "package"
+    },
+    {
+      "artifact": ".context/context-points/docs.context.md",
+      "confidence": "high",
+      "frameworks": [],
+      "id": "docs",
+      "languages": [
+        "JSON",
+        "JavaScript",
+        "Markdown",
+        "TypeScript"
+      ],
+      "name": "Docs",
+      "primary_paths": [
+        "docs"
+      ],
+      "related_paths": [
+        "docs/index.md",
+        "docs/package.json"
+      ],
+      "risk_level": "medium",
+      "type": "documentation-surface"
+    },
+    {
+      "artifact": ".context/context-points/dual-agent-runner.context.md",
+      "confidence": "high",
+      "frameworks": [
+        "TypeScript",
+        "Vitest"
+      ],
+      "id": "dual-agent-runner",
+      "languages": [
+        "JSON",
+        "JavaScript",
+        "Markdown",
+        "TypeScript"
+      ],
+      "name": "Dual Agent Runner",
+      "primary_paths": [
+        "packages/dual-agent-runner"
+      ],
+      "related_paths": [
+        "packages/dual-agent-runner/dist/index.d.ts",
+        "packages/dual-agent-runner/dist/index.js",
+        "packages/dual-agent-runner/node_modules/.bin/tsc"
+      ],
+      "risk_level": "medium",
+      "type": "package"
+    },
+    {
+      "artifact": ".context/context-points/github-workflows.context.md",
+      "confidence": "high",
+      "frameworks": [],
+      "id": "github-workflows",
+      "languages": [
+        "JSON",
+        "JavaScript",
+        "Markdown",
+        "TypeScript"
+      ],
+      "name": "GitHub Workflows",
+      "primary_paths": [
+        ".github/workflows"
+      ],
+      "related_paths": [
+        ".github/workflows/pages.yml"
+      ],
+      "risk_level": "medium",
+      "type": "ci-workflow"
+    }
+  ],
+  "version": 1
+}

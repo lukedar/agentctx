@@ -1,1 +1,0 @@
-{"taskId":"backend-medium-api-data-context-mesh","expectedContextPoints":["api-services","contracts","database"],"requiredReportFields":["operationalScope","metrics","tokenSummary"],"mustPass":["metrics","coverage"]}

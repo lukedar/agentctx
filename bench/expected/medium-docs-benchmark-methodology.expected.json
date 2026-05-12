@@ -1,1 +1,0 @@
-{"taskId":"medium-docs-benchmark-methodology","expectedContextPoints":["docs-agentctx"],"requiredReportFields":["tokenSummary","coverageByContextPoint"],"mustPass":["docs-build","typecheck"]}

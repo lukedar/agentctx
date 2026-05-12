@@ -1,0 +1,14 @@
+{
+  "name": "@fixture/api",
+  "type": "module",
+  "scripts": {
+    "dev": "node src/index.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "express": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

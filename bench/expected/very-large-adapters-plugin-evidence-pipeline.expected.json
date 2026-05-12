@@ -1,1 +1,0 @@
-{"taskId":"very-large-adapters-plugin-evidence-pipeline","expectedContextPoints":["adapters"],"requiredReportFields":["tokenSummary","coverageByContextPoint"],"mustPass":["tests","typecheck","build"]}

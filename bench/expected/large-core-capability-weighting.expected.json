@@ -1,1 +1,0 @@
-{"taskId":"large-core-capability-weighting","expectedContextPoints":["core"],"requiredReportFields":["tokenSummary","coverageByContextPoint"],"mustPass":["tests","typecheck"]}

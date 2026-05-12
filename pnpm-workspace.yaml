@@ -1,7 +1,2 @@
 packages:
-  - packages/*
-  - docs
-  - docs-agentctx
-
-onlyBuiltDependencies:
-  - esbuild
+  - "packages/*"

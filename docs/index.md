@@ -1,20 +1,13 @@
-# dual-agent-runner
+# AgentCtx
 
-A local-first framework for running engineering tasks with a **Builder** and an **Evaluator**.
+AgentCtx generates compact operational context for coding agents.
 
-## Why
-Senior teams adopt it to systematically enforce:
-- performance and efficiency
-- security and secret-safety
-- readable, maintainable code
-- token-usage-aware context shaping (for AI-agent contexts)
+## Quick Start
 
-## What you get
-- Decision Records + Evaluations
-- a scoring rubric (incl. `tokenUsage`)
-- guardrails (security/perf/token)
-- an optional local UI dashboard
+```bash
+agentctx init
+agentctx build
+agentctx check
+```
 
-## Architecture
-Walk through the internal Builder → Evaluator pipeline:
-- [Architecture diagram](/architecture)
+Generated context lives in `.context/`, with pointer surfaces in `AGENTS.md` and `llms.txt`.

@@ -1,1 +1,0 @@
-{"taskId":"react-large-cross-package-regression-benchmark","expectedContextPoints":["scheduler","react-reconciler","react-dom","shared","fixtures","release-infra"],"requiredReportFields":["operationalScope","metrics","tokenSummary"],"mustPass":["metrics","coverage"]}

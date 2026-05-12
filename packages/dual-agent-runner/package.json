@@ -1,31 +1,16 @@
 {
   "name": "dual-agent-runner",
-  "version": "0.0.0",
+  "version": "0.0.0-prototype",
   "type": "module",
-  "sideEffects": false,
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./events": {
-      "types": "./dist/events.d.ts",
-      "default": "./dist/events.js"
-    }
+    ".": "./dist/index.js"
   },
-  "bin": {
-    "dar": "./dist/cli.js"
-  },
-  "files": ["dist"],
   "scripts": {
-    "build": "tsup",
-    "test": "vitest run",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "devDependencies": {
-    "@types/node": "^22.15.29",
-    "tsup": "^8.5.0",
-    "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "tsup": "^8.0.0"
   }
 }

@@ -1,1 +1,0 @@
-{"taskId":"very-large-cli-workflow-orchestration","expectedContextPoints":["cli"],"requiredReportFields":["tokenSummary","coverageByContextPoint"],"mustPass":["tests","typecheck","build"]}

@@ -1,1 +1,0 @@
-{"taskId":"react-medium-package-context-point-mapping","expectedContextPoints":["react-core","react-dom","shared"],"requiredReportFields":["operationalScope","metrics","tokenSummary"],"mustPass":["metrics","coverage"]}

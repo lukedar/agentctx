@@ -1,28 +1,14 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@agentctx/core": ["packages/core/src/index.ts"],
-      "@agentctx/adapters": ["packages/adapters/src/index.ts"],
-      "@agentctx/targets": ["packages/targets/src/index.ts"],
-      "dual-agent-runner": ["packages/dual-agent-runner/src/index.ts"]
-    },
     "target": "ES2022",
-    "lib": ["ES2022"],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-    "useUnknownInCatchVariables": true,
-    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
     "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "noEmit": true
+    "sourceMap": true
   }
 }

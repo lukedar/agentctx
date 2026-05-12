@@ -1,0 +1,66 @@
+version: 1
+artifact: agentCtx_manifest
+generated_at: unknown
+repository:
+  name: agentctx-workspace
+  root: .
+  primary_languages:
+    - JavaScript
+    - JSON
+    - Markdown
+    - TypeScript
+  package_managers:
+    - pnpm
+  confidence: high
+
+loading_strategy:
+  default: progressive_disclosure
+  description: Load repo context first, then only the context points relevant to the task.
+
+global_context:
+  path: .context/repo.context.md
+
+graph:
+  path: .context/graph.json
+
+context_points:
+  - id: agentctx
+    name: Agentctx
+    type: package
+    path: .context/context-points/agentctx.context.md
+    primary_paths:
+      - packages/agentctx
+    load_when:
+      - Tasks touching packages/agentctx
+    risk_level: medium
+    confidence: high
+  - id: docs
+    name: Docs
+    type: documentation-surface
+    path: .context/context-points/docs.context.md
+    primary_paths:
+      - docs
+    load_when:
+      - Tasks touching docs
+    risk_level: medium
+    confidence: high
+  - id: dual-agent-runner
+    name: Dual Agent Runner
+    type: package
+    path: .context/context-points/dual-agent-runner.context.md
+    primary_paths:
+      - packages/dual-agent-runner
+    load_when:
+      - Tasks touching packages/dual-agent-runner
+    risk_level: medium
+    confidence: high
+  - id: github-workflows
+    name: GitHub Workflows
+    type: ci-workflow
+    path: .context/context-points/github-workflows.context.md
+    primary_paths:
+      - .github/workflows
+    load_when:
+      - Tasks touching .github/workflows
+    risk_level: medium
+    confidence: high

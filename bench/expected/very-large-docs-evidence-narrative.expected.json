@@ -1,1 +1,0 @@
-{"taskId":"very-large-docs-evidence-narrative","expectedContextPoints":["docs-agentctx"],"requiredReportFields":["tokenSummary","coverageByContextPoint"],"mustPass":["docs-build","typecheck","build"]}

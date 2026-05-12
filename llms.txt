@@ -1,51 +1,11 @@
-<!-- agentctx:start -->
-<div class="docs-hero">
-<div class="docs-kicker">llms.txt</div>
-<h1>Project index</h1>
-<p class="docs-lead">Compact generated entry point for language-model consumers.</p>
-<div class="docs-chip-row"><span class="docs-chip">Always generated</span><span class="docs-chip">Stable ordering</span><span class="docs-chip">Automatic updates</span></div>
-</div>
+# AgentCtx
 
-<h2>Outputs</h2>
-<div class="docs-grid">
-<div class="docs-card docs-span-6">
-<h3>AGENTS.md</h3>
-<p>Primary agent operating guide.</p>
-</div>
-<div class="docs-card docs-span-6">
-<h3>CLAUDE.md</h3>
-<p>Claude project context with the same underlying CtxBlocks.</p>
-</div>
-<div class="docs-card docs-span-6">
-<h3>.cursor/rules/project.mdc</h3>
-<p>Editor rules for Cursor.</p>
-</div>
-<div class="docs-card docs-span-6">
-<h3>.github/copilot-instructions.md</h3>
-<p>Copilot instructions for the repository.</p>
-</div>
-</div>
+This repository exposes operational context for LLMs and coding agents.
 
-<h2>Notes</h2>
+Start here:
 
-- Generated automatically.
-- Use public-safe linked context files for the full repo schematic.
+- `.context/manifest.yaml`
+- `.context/repo.context.md`
+- `.context/context-points/`
 
-<h2>Public Context Files</h2>
-- Overview: `.agentctx/context/overview.md`
-- Architecture: `.agentctx/context/architecture.md`
-- Conventions: `.agentctx/context/conventions.md`
-- Commands: `.agentctx/context/commands.md`
-- Dependencies: `.agentctx/context/dependencies.md`
-- Testing: `.agentctx/context/testing.md`
-- Workspace: `.agentctx/context/workspace.md`
-- Mesh: `.agentctx/context/mesh.md`
-- Global Commands: `.agentctx/context/global-commands.md`
-- Public Api: `.agentctx/context/public-api.md`
-- Exports: `.agentctx/context/exports.md`
-- Schemas: `.agentctx/context/schemas.md`
-- Compatibility: `.agentctx/context/compatibility.md`
-- Ci Cd: `.agentctx/context/ci-cd.md`
-- Usage: `.agentctx/context/usage.md`
-- Versioning: `.agentctx/context/versioning.md`
-<!-- agentctx:end -->
+Loading rule: read the manifest first, then load only the relevant Context Point. Do not load every context file by default.

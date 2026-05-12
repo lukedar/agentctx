@@ -1,1 +1,0 @@
-{"taskId":"medium-runner-aggregate-scoring","expectedContextPoints":["dual-agent-runner"],"requiredReportFields":["tokenSummary","coverageByContextPoint"],"mustPass":["tests","typecheck"]}

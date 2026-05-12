@@ -1,0 +1,26 @@
+{
+  "name": "agentctx-workspace",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.15.9",
+  "scripts": {
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "verify": "pnpm typecheck && pnpm test && pnpm build && pnpm docs:build",
+    "prototype:verify": "pnpm verify && pnpm --filter agentctx test:e2e",
+    "da:eval": "pnpm --filter dual-agent-runner test"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0",
+    "vitepress": "^1.0.0",
+    "vitest": "^2.0.0"
+  }
+}

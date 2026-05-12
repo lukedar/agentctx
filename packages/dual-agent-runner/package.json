@@ -1,0 +1,16 @@
+{
+  "name": "dual-agent-runner",
+  "version": "0.0.0-prototype",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0"
+  }
+}
